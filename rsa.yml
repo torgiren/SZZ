@@ -1,0 +1,7 @@
+---
+- hosts: all
+  gather_facts: False
+  tasks:
+  - name: Wgrywanie klucza ssh
+    authorized_key: user=root
+                    key="{{ lookup('file', './id_rsa.pub') }}"

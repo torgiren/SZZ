@@ -1,0 +1,11 @@
+[centos]
+node[1:6]
+
+[http]
+node2
+node3
+
+[director]
+
+[haproxy]
+node1

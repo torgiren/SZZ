@@ -1,0 +1,10 @@
+- name: Instalacja libselinux-python
+  yum: name=libselinux-python state=latest
+- name: Dodawanie repo epel
+  copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root mode=0644
+- name: Dodawanie klucza repo epel
+  copy: src=RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+- name: Włączanie repo epel
+  ini_file: dest=/etc/yum.repos.d/epel.repo section=epel option=enabled value=1
+- name: Instalacja epel-release
+  yum: name=epel-release state=latest

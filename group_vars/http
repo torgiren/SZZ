@@ -1,0 +1,8 @@
+---
+php_apps:
+  test1:
+    repo: 'https://github.com/torgiren/mgr_test1.git'
+    dest: /var/www/test1/ 
+  test2:
+    repo: 'https://github.com/torgiren/mgr_test2.git'
+    dest: /var/www/test2/ 

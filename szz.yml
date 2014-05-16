@@ -1,0 +1,10 @@
+---
+- hosts: http
+  roles:
+  - http
+- hosts: director
+  roles:
+  - director
+- hosts: haproxy
+  roles:
+  - haproxy

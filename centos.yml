@@ -1,0 +1,4 @@
+---
+- hosts: centos
+  roles:
+  - { role: centos }

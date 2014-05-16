@@ -1,0 +1,9 @@
+- name: Instalacja HAProxy
+  yum: name=haproxy state=latest
+- name: wgrywanie configu
+  template: src=haproxy.cfg.jinja2 dest=/etc/haproxy/haproxy.cfg
+  notify: restart_haproxy
+- name: uruchomienie haproxy
+  service: name=haproxy state=started
+- name: autostart haproxy
+  service: name=haproxy enabled=yes
