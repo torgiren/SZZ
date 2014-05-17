@@ -17,7 +17,9 @@
 - name: Tworzenie konfiguracji aplikacji
   template: src=php_app.jinja2 dest=/etc/httpd/conf.d/vhosts.conf
   notify: restart_http
+  tags: deploy
 - name: Deploy aplikacji
   git: repo={{ item.value.repo }}
        dest={{ item.value.dest }}
   with_dict: php_apps
+  tags: deploy
