@@ -1,7 +1,9 @@
-- name: Instalacja HAProxy
-  yum: name=haproxy state=latest
+- include: centos.yml
+  when: ansible_os_family == "RedHat"
+- include: debian.yml
+  when: ansible_os_family == "Debian"
 - name: wgrywanie configu
-  template: src=haproxy.cfg.jinja2 dest=/etc/haproxy/haproxy.cfg
+  template: src=haproxy.cfg.jinja2 dest={{haproxy_conf}}
   notify: restart_haproxy
 - name: uruchomienie haproxy
   service: name=haproxy state=started

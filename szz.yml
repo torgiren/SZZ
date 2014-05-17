@@ -1,14 +1,14 @@
 ---
 - hosts: http
-  accelerate: true
-  connection: paramiko
+#  accelerate: true
+#  connection: paramiko
   roles:
   - http
 - hosts: director
   roles:
   - director
 - hosts: haproxy
-  accelerate: true
-  connection: paramiko
+#  accelerate: true
+#  connection: paramiko
   roles:
   - haproxy

@@ -1,21 +1,13 @@
-- name: instalacja gita
-  yum: name=git state=latest
-- name: instalacja httpd
-  yum: name=httpd state=latest
-- name: Instalacja php
-  yum: name=php state=latest
-  notify: restarT_http
+- include: centos.yml
+  when: ansible_os_family == "RedHat"
+- include: debian.yml
+  when: ansible_os_family == "Debian"
 - name: autostart http
-  service: name=httpd enabled=yes
+  service: name={{apache}} enabled=yes
 - name: uruchamianie http
-  service: name=httpd state=started
-- name: wgrywanie vhosta testowego
-  template: src=hello.jinja2 dest=/etc/httpd/conf.d/hello.conf
-  notify: restart_http
-- name: wgrywanie strony
-  template: src=index.jinja2 dest=/var/www/html/index.html
+  service: name={{apache}} state=started
 - name: Tworzenie konfiguracji aplikacji
-  template: src=php_app.jinja2 dest=/etc/httpd/conf.d/vhosts.conf
+  template: src=php_app.jinja2 dest={{ apache_vhosts}}/vhosts.conf
   notify: restart_http
   tags: deploy
 - name: Deploy aplikacji

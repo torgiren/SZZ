@@ -1,0 +1,3 @@
+- name: Instalacja HAProxy
+  yum: name=haproxy state=latest
+

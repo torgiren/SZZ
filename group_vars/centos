@@ -1,2 +1,4 @@
 ---
-ansible_ssh_user: root
+apache: httpd
+apache_vhosts: /etc/httpd/conf.d
+haproxy_conf: /etc/haproxy/haproxy.cfg

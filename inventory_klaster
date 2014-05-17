@@ -1,0 +1,16 @@
+[debian]
+hyperion
+japet
+kojos
+rea
+teja
+temida
+
+[http]
+japet
+kojos
+
+[director]
+
+[haproxy]
+hyperion

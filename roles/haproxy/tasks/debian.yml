@@ -1,0 +1,4 @@
+- name: Instalacja HAProxy
+  apt: name=haproxy state=latest
+- name: aktywacja HAProxy
+  copy: src=defaults_haproxy dest=/etc/default/haproxy

@@ -1,0 +1,7 @@
+- name: instalacja gita
+  yum: name=git state=latest
+- name: instalacja httpd
+  yum: name=httpd state=latest
+- name: Instalacja php
+  yum: name=php state=latest
+  notify: restart_http
