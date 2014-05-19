@@ -1,8 +1,8 @@
 ---
 php_apps:
-  test1:
+  test1.mgr.fabrykowski.pl:
     repo: 'https://github.com/torgiren/mgr_test1.git'
     dest: /var/www/test1/ 
-  test2:
+  test2.mgr.fabrykowski.pl:
     repo: 'https://github.com/torgiren/mgr_test2.git'
     dest: /var/www/test2/ 

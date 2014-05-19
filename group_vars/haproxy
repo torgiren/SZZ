@@ -1,2 +1,2 @@
 ---
-haproxy_port: 2705
+haproxy_port: 80
