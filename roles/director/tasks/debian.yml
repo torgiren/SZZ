@@ -1,0 +1,3 @@
+- name: instalacja ipvsadm
+  apt: name=ipvsadm state=latest
+

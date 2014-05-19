@@ -12,3 +12,6 @@
 #  connection: paramiko
   roles:
   - haproxy
+- hosts: realserver
+  roles:
+  - realserver
