@@ -1,0 +1,7 @@
+- name: instalacja php-fpm
+  apt: name=php5-fpm state=latest
+- name: wgrywanie poola
+  template: src=pool.jinja2 dest=/etc/php5/fpm/pool.d/pool.conf
+  notify: restart_php
+- name: ustwiania service
+  service: name=php5-fpm state=running enabled=yes
