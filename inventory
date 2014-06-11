@@ -1,11 +1,41 @@
 [centos]
 node[1:6]
 
-[http]
-node2
-node3
+#[http]
+#node2
+#node3
 
 [director]
 
 [haproxy]
 node1
+
+[devel]
+mgr5
+
+
+[workers]
+mgr2
+mgr3
+
+
+[pula1]
+mgr2
+mgr3
+
+[pula2]
+mgr4
+
+
+[http]
+mgr4
+
+[proj_test.pl:children]
+pula1
+
+[proj_test.ru:children]
+pula1
+pula2
+
+[proj_test.uk:children]
+pula2
