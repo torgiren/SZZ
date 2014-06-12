@@ -15,3 +15,7 @@
 - hosts: realserver
   roles:
   - realserver
+
+- host: worker
+  roles:
+  - worker

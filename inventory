@@ -17,17 +17,17 @@ mgr5
 [workers]
 mgr2
 mgr3
+mgr4
 
+[http]
+mgr6
 
 [pula1]
 mgr2
 mgr3
+mgr6
 
 [pula2]
-mgr4
-
-
-[http]
 mgr4
 
 [proj_test.pl:children]
@@ -35,7 +35,4 @@ pula1
 
 [proj_test.ru:children]
 pula1
-pula2
-
-[proj_test.uk:children]
 pula2

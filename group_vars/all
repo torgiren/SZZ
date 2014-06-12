@@ -1,2 +1,9 @@
 ---
 ansible_ssh_user: root
+projects:
+  test.pl:
+    - id: 9005
+    - git: 'https://github.com/torgiren/mgr_test1.git'
+  test.ru:
+    - id: 9006
+    - git: 'https://github.com/torgiren/mgr_test2.git'
