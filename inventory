@@ -1,18 +1,20 @@
-[centos]
-node[1:6]
+#[centos]
+#node[1:6]
 
 #[http]
 #node2
 #node3
 
-[director]
+#[director]
 
-[haproxy]
-node1
+#[haproxy]
+#node1
 
 [devel]
 mgr5
 
+[datastore]
+mgr0
 
 [workers]
 mgr2
