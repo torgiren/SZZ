@@ -1,0 +1,9 @@
+- name: instalacja nginxa
+  apt: name=nginx state=latest
+- name: instalacja konfigu
+  template: src=default.j2 dest=/etc/nginx/sites-enabled/default
+  notify: restart_nginx
+- name: uruchaniamie nginx
+  service: name=nginx state=started
+- name: autostart nginxa
+  service: name=nginx enabled=yes
