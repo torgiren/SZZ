@@ -1,0 +1,8 @@
+- name: instalacja nfs
+  apt: name=nfs-common state=latest
+- name: Tworzenie katalogu
+  file: path=/datastore state=directory
+- name: dodawanie zasobu
+  mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=present
+- name: montowanie zasobu
+  mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=mounted
