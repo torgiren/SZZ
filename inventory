@@ -7,11 +7,11 @@
 
 #[director]
 
-#[haproxy]
-#node1
+[haproxy]
+mgr7
 
-#[devel]
-#mgr5
+[devel]
+mgr7
 
 [datastore]
 mgr0
@@ -21,18 +21,23 @@ mgr2
 mgr3
 mgr4
 mgr5
+mgr6
 
 [http]
 mgr1
+mgr8
 
 [pula1]
 mgr1
 mgr2
 mgr3
+mgr7
 
 [pula2]
 mgr4
 mgr5
+mgr6
+mgr8
 
 [proj_test.pl:children]
 pula1
