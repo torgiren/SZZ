@@ -3,7 +3,7 @@
 [{{i[5:]}}]
 user = www-data
 group = www-data
-listen = 127.0.0.1:{{projects[i[5:]]['id']}}
+listen = 0.0.0.0:{{projects[i[5:]]['id']}}
 pm = dynamic
 pm.max_children = 5
 pm.start_servers = 2
