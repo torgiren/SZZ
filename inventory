@@ -10,8 +10,8 @@
 #[haproxy]
 #node1
 
-[devel]
-mgr5
+#[devel]
+#mgr5
 
 [datastore]
 mgr0
@@ -20,21 +20,27 @@ mgr0
 mgr2
 mgr3
 mgr4
+mgr5
 
 [http]
-mgr6
+mgr1
 
 [pula1]
+mgr1
 mgr2
 mgr3
-mgr6
 
 [pula2]
 mgr4
+mgr5
 
 [proj_test.pl:children]
 pula1
 
 [proj_test.ru:children]
+pula1
+pula2
+
+[proj_test2.pl:children]
 pula1
 pula2
