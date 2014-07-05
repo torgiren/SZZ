@@ -1,4 +1,10 @@
 ---
+- hosts: all
+  roles:
+  - common
+- hosts: datastore
+  roles:
+  - datastore
 - hosts: http
 #  accelerate: true
 #  connection: paramiko
@@ -16,6 +22,6 @@
   roles:
   - realserver
 
-- host: worker
+- hosts: workers
   roles:
   - worker
