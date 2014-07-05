@@ -7,3 +7,6 @@ projects:
   test.ru:
     id: 9006
     repo: 'https://github.com/torgiren/mgr_test2.git'
+  test2.pl:
+    id: 9007
+    repo: 'https://github.com/torgiren/mgr_test1.git'
