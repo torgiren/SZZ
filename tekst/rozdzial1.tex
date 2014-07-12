@@ -1,0 +1,36 @@
+\chaper{Wstęp do klastrowania}
+\section{Idea klastrowania}
+W czasach kiedy powstał internet, narodziła się potrzeba udostępniania informacji. Początkowo był to zwykle czysty tekst, który umieszczano na wtedy standardowych komputerach. Liczba odbiorców również nie była nie była duża, co wynikało z dopiero tworzącej się sieci internet.
+W miarę upływu czasu, strony internetowe zaczęły się rozrastać. Zaczęto dodawać obrazy a następnie animacje i inne elementy poprawiające możliwości stron oraz odczucia wizualne. Zaczęła również, w związku z coraz łatwiejszym dostępem do internetu, liczba użytkowników chcących uzyskać dostęp do stron.\\
+Wymusiło to potrzebę używania coraz to mocniejszych maszyn do serwowania treści. Niestety, liczba użytkowników oraz wymagań stawianych stronom internetowym rosła szybciej niż postępował rozwój mocy obliczeniowych komputerów. Zaczęto używać dedykowanych serwerów dla aplikacji WWW zamiast zwykłych komputerów domowych. Jednak i to okazało się niewystarczające w obliczu wymaganiom stawianym przez dzisiejszy świat.
+
+Aby rozwiązać ten problem, narodziła się idea połączenia kilku maszyn w jeden twór, tak aby zwiększyć całkowitą moc przeznaczoną na serwowanie treści.
+\section{Rodzaje klastrów}
+Istnieją dwa główne rodzaje klastrów.
+\begin{itemize}
+\item klastry wysokiej dostępności
+\item klastry wysokiej wydajności
+\end{itemize}ch 
+Podział ten nie jest jednak bardzo sztywny.
+Niektóre rzeczywiste klastry należą tylko do jednej grupy, jednak najczęściej mają one cechy obu tych grup.
+\subsection{Klastry wysokiej dostępności}
+Klastry wysokiej dostępności (ang. \textit{high availability, HA}) tworzone są głównie po to, aby zapewnić jak najwyższy poziom dostępności danej usługi.
+Konstrukcje te składają się zwykle z wielu maszyn, z których jakaś część nie uczestniczy w serwowaniu danych, a jedynie czeka w gotowości i w przypadku awarii maszyn aktywnych, przejmuje ich zadanie. Efektem jest ciągła dostępność usługi dla klienta.\\
+Brak dostępności portalu może wiązać się z kosztami bądź brakiem zysków dla właściciela, dlatego często stosuje się klastry wysokiej dostępności.
+\subsection{Klastry wysokiej wydajności}
+Klastry wysokiej wydajności (ang. \textit{high performance, HP}) tworzone są głównie po to, aby zapewnić jak najwyższy poziom wydajności danej usługi.
+Celem tego typu klastrów jest zapewnienie komfortu korzystania z serwisu dla klienta. W tej architekturze, pracują wszystkie maszyny, oraz każda z nim wykonuje jakąś część zadania w celu jak najszybszego skonstruowania odpowiedzi dla klienta.\\
+W wersji ideowej, awaria jakiejś maszyny, unieruchamia klaster, ponieważ nie jest możliwe uzyskanie części odpowiedzi za którą odpowiadała maszyna która uległa awarii. W praktyce rzadko spotyka się czyste klastry wysokiej wydajności.
+\subsection{Klastry mieszane}
+Klastry mieszane są najczęściej spotykanymi klastrami. Posiadają one cechy obu powyższych grup, czyli najczęściej pracują wszystkie maszyny w klastrze, jednak ich konfiguracja pozwala im na wykonywanie dowolnego zadania (z puli przewidzianych zadań), w taki sposób, że podczas pracy wszystkich maszyn w klastrze, następuje szybsza odpowiedź do klienta - cecha wysokiej wydajności - jednak po awarii którejś z maszyn, pozostałe są w stanie przejąć jej obowiązki pozwalając odpowiedzieć na zapytanie - wysoka dostępność.\\
+Można zauważyć, że podczas awarii węzłów w takim rodzaju klastra, spada wydajność, lecz zachowana jest ciągłość dostępu usługi, bo zwykle daje czas administratorowi na usunięcie usterki, bądź - jak zostanie pokazane w dalszej części tej pracy - skonfigurowanie nowych węzłów w celu zastąpienia tych które uległy awarii.
+\section{Zarządzanie konfiguracją}
+W czasach gdy strony były serwowane przez ich twórców na ich własnych komputerach, oni sami dbali o konfigurację swojej maszyny aby spełniała swoje zadanie.\\
+W miarę jak zaczęto potrzebować coraz to większych mocy obliczeniowych, zaczęto wynajmować mocne serwery z dobrymi łączami, aby to one serwowały dane dla klientów.
+Konfiguracją takiego serwera zajmował się twórca strony, bądź zatrudniony administrator.
+
+Jednak, gdy zaczęto używać klastrów pojawił się problem ich konfiguracji. Gdy klaster składał się z kilku węzłów, było bardzo mozolną pracą skonfigurowanie każdego węzła osobno oraz pilnowanie, aby konfiguracje na każdym węźle były odpowiednie.
+Po przypadkowej zmianie parametrów konfiguracji na jednej maszynie, trudno jest później znaleźć błąd.
+
+Problem pojawił się również, gdy klastry zaczęły mieć więcej niż kilka węzłów. Skonfigurowanie kilkuset maszyn nie było prostym zadaniem, jak również prowadziło do wielu pomyłek. Dlatego administratorzy klastrów starali się ułatwić sobie pracę a zarazem uniknąć przypadkowych błędów.\\
+Tak też powstały narzędzia do kontrolowania konfiguracji na wielu maszynach.
