@@ -1,0 +1,12 @@
+$ dig rr.mgr.fabrykowski.pl +short
+10.13.0.100
+10.13.0.101
+10.13.0.102
+$ dig rr.mgr.fabrykowski.pl +short
+10.13.0.101
+10.13.0.102
+10.13.0.100
+$ dig rr.mgr.fabrykowski.pl +short
+10.13.0.102
+10.13.0.100
+10.13.0.101

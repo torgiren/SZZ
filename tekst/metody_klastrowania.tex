@@ -1,0 +1,22 @@
+\chapter{Metody klastrowania}
+W rozdziale tym przedstawię podstawowe metody wykorzystywane przy tworzeniu klastrów pod aplikacje internetowe.
+\section{DNS round robin}
+\subsection{Opis}
+Metoda ta polega na odpowiednim skonfigurowaniu strefy na serwerze DNS, w taki sposób, aby pod jedna nazwa rozwiązywała się na kilka adresów IP.
+W efekcie, gdy serwer otrzyma zapytanie o daną nazwę domenową, zostanie mu zwrócona pula adresów zamiast jednego.
+Aplikacja która otrzyma listę adresów IP, powinna połączyć się na losowy z nich.
+Niestety nigdy nie ma pewności, że aplikacja posiada zaimplementowaną obsługę wielu adresów zwracanych przez serwer DNS, dlatego serwer wprowadza zabezpieczenie przed takim zachowaniem, a mianowicie tytułowy algorytm \textit{round robin}, który zwraca adresy IP, jednak za każdym razem ich permutację.\\
+Dla przykładu, poniżej zamieszczone trzy zapytania wykonane po sobie.
+\lstinputlisting{lst/rr_dig.shell}[language=bash]
+Widzimy, że przy każdym zapytaniu, jako pierwszy adres zwracany jest kolejny adres z puli. Zapewnia to prawidłowe balansowanie ruchu, nawet przy aplikacjach nie potrafiących obsłużyć wielu adresów i łączących się na pierwszy otrzymany.
+
+Metoda ta jest metodą wysokiej wydajności, ponieważ pozwala w sposób niewidoczny dla użytkownika rozdzielić ruch na kilka serwerów, a tym samym rozłożyć obciążenie, to skutkować będzie szybszą odpowiedzią klientowi na zapytanie.
+Metoda ta nie zapewnia natywnie wykrywania niedostępności któregoś z serwerów, dlatego nie może służyć bezpośrednio jako metoda wysokiej dostępności.
+Pośrednio występuje tutaj jednak mechanizm broniący przed niedostępnością któregoś z serwerów. W przypadku gdy aplikacja próbować się będzie połączyć z losowym adresem z puli, a połączenie nie będzie mogło być nawiązane, osiągnięty zostanie limit czasu połączenia (tzw. \textit{timeout}. W takiej sytuacji, dobrze napisana aplikacja, będzie próbować połączyć się na kolejny adres z puli, w nadziei, że będzie on dostępny.
+W takiej sytuacji, połączenie zostanie nawiązane i klient otrzyma odpowiedź, jednak do czasu generowania odpowiedzi, trzeba doliczyć czas potrzebny na osiągnięcie \textit{timeout-u}. Może on wynieść od kilku, do kilkudziesięciu sekund.
+\subsection{Konfiguracja}
+Konfiguracja DNS round robin jest stosunkowo prosta.
+W konfiguracji strefy, należy umieścić wpis z wieloma rekordami \textit{A} dla jednej nazwy.
+Przykład takiej strefy zamieszczony został poniżej
+\lstinputlisting{lst/rr_zone.zone}
+W powyższym przykładzie, dla nazwy \texttt{rr.mgr.fabrykowski.pl} zostały zdefiniowane trzy adresy IP.
