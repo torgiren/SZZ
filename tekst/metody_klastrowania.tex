@@ -3,8 +3,8 @@ W rozdziale tym przedstawię podstawowe metody wykorzystywane przy tworzeniu kla
 \section{DNS round robin}
 \subsection{Czym jest DNS}
 DNS (ang {\textit{Domain Name System}) jest to system nazw domenowych. Usługa której najważniejszą funkcją jest przyporządkowanie nazwom domenowym (czytelnym dla człowieka) adresów IP.
-Oznacza to, że system taki, jest w stanie zamienić nazwę \textit{www.ftj.agh.edu.pl} na adres \texttt{149.156.110.3}.
-Funkcjonalność taka w znacznym stopniu ułatwia korzystanie z sieci Internet, ponieważ przeciętnemu człowiekowi jest prościej zapamiętać mnemonik \textit{www.ftj.agh.edu.pl} bądź \textit{www.duckduckgo.com} niż ciągi czterech liczb.
+Oznacza to, że system taki, jest w stanie zamienić nazwę \texttt{www.ftj.agh.edu.pl} na adres \texttt{149.156.110.3}.
+Funkcjonalność taka w znacznym stopniu ułatwia korzystanie z sieci Internet, ponieważ przeciętnemu człowiekowi jest prościej zapamiętać mnemonik \texttt{www.ftj.agh.edu.pl} bądź \texttt{www.duckduckgo.com} niż ciągi czterech liczb.
 Do zamiany nazwy domenowej na adres IP służą rekordy \texttt{A} oraz \texttt{AAAA}, wykorzystywane odpowiednio do adresów IPv4 oraz IPv6.
 Przykład zastosowania rekordu \texttt{A} przedstawiam na poniższym listingu:
 \lstinputlisting{lst/rr_arecord.lst}
@@ -27,13 +27,13 @@ Wartość \texttt{5} oznacza poziom preferencji danego serwera. Mając zdefiniow
 \item[TXT] rekord który zgodnie z założeniami DNS miał zawierać dane tekstowe czytelne dla człowieka.
 Obecnie rzadko zawiera dane dla użytkowników. Wykorzystywany jest głównie do konfiguracji SPF, co wykracza poza tematykę tej pracy.
 \end{description}
-\subsection{Opis}
+\subsection{Opis metody}
 Metoda ta polega na odpowiednim skonfigurowaniu strefy na serwerze DNS, w taki sposób, aby pod jedna nazwa rozwiązywała się na kilka adresów IP.
 W efekcie, gdy serwer otrzyma zapytanie o daną nazwę domenową, zostanie mu zwrócona pula adresów zamiast jednego.
 Aplikacja która otrzyma listę adresów IP, powinna połączyć się na losowy z nich.
 Niestety nigdy nie ma pewności, że aplikacja posiada zaimplementowaną obsługę wielu adresów zwracanych przez serwer DNS, dlatego serwer wprowadza zabezpieczenie przed takim zachowaniem, a mianowicie tytułowy algorytm \textit{round robin}, który zwraca adresy IP, jednak za każdym razem ich permutację.\\
 Dla przykładu, poniżej zamieszczone trzy zapytania wykonane po sobie.
-\lstinputlisting{lst/rr_dig.shell}[language=bash]
+\lstinputlisting{lst/rr_dig.shell}
 Widzimy, że przy każdym zapytaniu, jako pierwszy adres zwracany jest kolejny adres z puli. Zapewnia to prawidłowe balansowanie ruchu, nawet przy aplikacjach nie potrafiących obsłużyć wielu adresów i łączących się na pierwszy otrzymany.
 
 Metoda ta jest metodą wysokiej wydajności, ponieważ pozwala w sposób niewidoczny dla użytkownika rozdzielić ruch na kilka serwerów, a tym samym rozłożyć obciążenie, to skutkować będzie szybszą odpowiedzią klientowi na zapytanie.
@@ -50,5 +50,51 @@ Przykład takiej strefy zamieszczony został poniżej
 \lstinputlisting{lst/rr_zone.zone}
 W powyższym przykładzie, dla nazwy \texttt{rr.mgr.fabrykowski.pl} zostały zdefiniowane trzy adresy IP.
 \section{Nginx}
-\subsection{Opis}
+\subsection{Czym jest nginx}
+Nginx jest serwerem proxy oraz serwerem treści statycznych.
+Wykorzystywany jest zwykle w połączeniu z serwerem Apache który serwuje treści PHP, podczas gdy sam dostarcza pliki statyczne (JavaScript, CSS, JPEG itp).
+Drugim często wykorzystywanym modelem wykorzystania Nginx-a jest serwowanie treści statycznych oraz wykonywanie \textit{fastcgi pass}
+\paragraph{Fastcgi pass} \hspace{0pt} \\
+Moduł ten pozwala na komunikacje z procesami FastCGI.
+Wykorzystanie FastCGI daje dużą niezależność w technologi opracowania aplikacji, która może zostać wykonana w PHP, Pythonie bądź Rubym.
+Istnieje również możliwość zmiany wersji aplikacji, bądź technologii jej wykonania bez zmian w konfiguracji serwera, jeżeli aplikacja udostępnia to samo api FastCGI.
 
+Do obsługi języka PHP zostanie wykorzystany php-fpm (\textit{PHP FastCGI Process Manager}.
+Jest to alternatywna implementacja PHP FastCGI.
+Pozwala ona na większą kontrolę w zakresie pul procesów - ich liczby oraz sposobu uruchamiania, jak również dowolność w kwestiach sieciowych - adres oraz port do nasłuchiwania.
+
+Porównanie testów wydajności PHP-fpm oraz mod_php do Apache jak również szybkość serwowania treści statycznych zostanie przedstawione w późniejszych rozdziałach.
+\subsection{Opis metody}
+Metoda klastrowania przy pomocy Nginx-a polega na zdefiniowaniu sekcji \texttt{upstream}.
+Pozwala to na skonfigurowanie puli adresów do których będą przekazywane zapytania.
+Aby dodać serwer do puli, należy podać jego adres IP bądź nazwę domenową oraz port.
+
+Zapytania do serwerów wykonujących (\textit{workerów}) rozdzielane są równomiernie pomiędzy wszystkie serwery w puli.\\
+Pozwala to na obsługiwanie zapytań na wielu maszynach, dlatego metoda ta pozwala na tworzenie klastrów \textbf{wysokiej wydajności}.
+
+Ponadto, zaimplementowany jest również mechanizm sprawdzający stan poszczególnych serwerów w puli i w przypadku wykrycia awarii, oznaczany jest on jaki \textit{failure} i zapytanie nie są do niego kierowane.\\
+Jest to zachowanie typowe dla klastrów \textbf{wysokiej dostępności}
+
+Istnieje możliwość modyfikacji domyślnego algorytmu używanego przez Nginx-a.
+\begin{itemize}
+	\item zmiana sposobu dystrybucji zapytań dodając opcjonalny parametr \texttt{weight} mówiący o wadze danego węzła. Dla przykładu, w poniższej konfiguracji:
+	\lstinputlisting{lst/nx_weight.conf}
+	na każde 6 zapytań do \texttt{pula1}, 5 zostanie przekazanych do \texttt{server1} a jedno do \texttt{server2}.
+	Opcja ta wykorzystywana jest głównie tam, gdzie poszczególne serwery różnią się parametrami bądź obciążeniem nie wynikającym z obsługiwania tej puli.
+	\item zmiana sposobu określania serwera jako niedostępnego.
+	Służą do tego parametry \texttt{max_fails}, \texttt{fail_timeout} oraz \texttt{slow_start}.\\
+	\begin{description}
+	\item[\texttt{max_fails}] określa liczbę nieudanych prób komunikacji z serwerem w czasie \texttt{fail_timeout} nim serwer zostanie oznaczony jako niedostępny.
+	Domyślna wartość tego parametru wynosi 1, natomiast wartość 0 wyłącza oznaczanie serwerów jako niedostępne.
+	\item[\texttt{fail_timeout}] określa czas w jakim musi nastąpić \texttt{max_fails} nim serwer zostanie uznany za niedostępny.
+	Określa również interwał czasowy co który będzie sprawdzana dostępność serwera.
+	Wartość domyślna dla tego parametru wynosi 10 sekund.
+	\item[\texttt{slow_start}] określa czas w jakim będzie zwiększana wartość \texttt{weight} od zera do docelowej po przejściu serwera ze stanu niedostępnego do stanu dostępnego.
+	Wartość domyślna wynosi 0, co oznacza wyłączone płynne włączanie serwera do puli.
+	\end{description}
+
+\end{itemize}
+\subsection{Konfiguracja}
+\section{Haproxy}
+\subsection{Czym jest haproxy}
+\subsection{Konfiguracja}
