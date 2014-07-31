@@ -1,0 +1,34 @@
+\chapter{Zarządzanie konfiguracją}
+W rozdziale tym przedstawię różne metody zarządzania konfiguracją serwerów. Postaram się opisać poglądowo różne metody, jak również przedstawić zalety i wady poszczególnych z nim.
+\section{Ręczna konfiguracja każdego serwera}
+\subsection{Opis}
+Ręczna konfiguracja serwerów stososowana jest głównie tam, gdzie administrator ma pod swoją opieką jeden bądź kilka serwerów. W takim przypadku zmiana konfiguracji na serwerze jest prosta i nie zajmuje dużej ilości czasu.\\
+Konfiguracja taka nie wymaga od administratora żadnej wiedzy wykraczającej poza obszar konfigurowanego systemu oraz usług, a wprowadzane zmiany widoczne są od razu po wprowadzeniu.
+Ten sposób konfiguracji spotykany jest czasem w większych systemach informatycznych.
+Dzieje się tak zwykle w jednostkach szybko rozwijających się, gdzie nastąpił szybki wzrost liczby serwerów i nie opracowano jeszcze metoda automatyzacji konfiguracji.
+
+Do konfiguracji ręcznej nie potrzeba żadnego dodatkowego oprogramowania ani po stronie maszyn konfigurowanych, ani maszyny z której następuje konfiguracja.
+Na maszynie z której następuje konfiguracja musi być dostępny klient SSH, który jest instalowany domyślnie we wszystkich dystrybucjach systemów GNU/Linux, a na maszynach konfigurowanych musi być zainstalowany i uruchomiony serwer SSH - jest on domyślnie zainstalowany w większości dystrybucji serwerowych GNU/Linux i w części dystrybucji przeznaczonych na komputery domowe.
+
+Wadą takiej metody jest również sytuacja, w której tylko jedna osoba, bądź mała grupa osób, zna konfigurację poszczególnych serwerów oraz usług.
+W przypadku opuszczenia przez daną osobę zespołu, pozostali członkowie muszą, analizując pliki konfiguracyjne, zrozumieć zamysł osoby to tworzącej.\\
+Kolejną wadą, jest brak możliwości powielenia konfiguracji.
+W przypadku gdy zaistnieje potrzeba skonfigurowania bliźniaczego serwera, jako serwera zapasowego, należy każdą usługę skonfigurować od nowa na wzór serwera pierwotnego. Również wprowadzane zmiany należy uwzględniać na wszystkich serwerach.
+Może to w prosty sposób prowadzić do błędów i rozbierzności konfiguracji.
+\subsection{Zalety i wady}
+Zalety:
+\begin{itemize}
+\item prostota
+\item używanie tylko domyślnych komponentów systemu
+\item szybkość wprowadzanych zmian
+\item informacja zwrotna czy usługa została uruchomiona poprawnie
+\end{itemize}
+Wady:
+\begin{itemize}
+\item \textbf{brak skalowalności}
+\item różnice między poszczególnymi serwerami
+\item trudność powielania
+\item wiedza o konfiguracji zależna od jednego pracownika
+\end{itemize}
+\subsection{Przykład}
+\lstinputlisting{lst/conf_ssh.sh}
