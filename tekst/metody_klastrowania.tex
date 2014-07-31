@@ -92,9 +92,13 @@ Istnieje możliwość modyfikacji domyślnego algorytmu używanego przez Nginx-a
 	\item[\texttt{slow_start}] określa czas w jakim będzie zwiększana wartość \texttt{weight} od zera do docelowej po przejściu serwera ze stanu niedostępnego do stanu dostępnego.
 	Wartość domyślna wynosi 0, co oznacza wyłączone płynne włączanie serwera do puli.
 	\end{description}
-
+	\item oznaczenie konkretnych serwerów, jako serwerwy zapasowe.  
+	Powoduje to nieprzekazywanie zapytań do tych serwerów jeżeli wszystkie serwery podstawowe odpowiadają.
+	W przypadku, gdy któryś z podstawowych serwerów zostanie oznaczony jako niedostępny, zapytania zostają przekazywane do któregoś z serwerów zapasowych.
+	Powoduje to zachowanie \textbf{wysokiej wydajności} oraz \textbf{wyskokiej dostępności}.	
 \end{itemize}
 \subsection{Konfiguracja}
+TODO
 \section{Haproxy}
 \subsection{Czym jest haproxy}
 \subsection{Konfiguracja}
