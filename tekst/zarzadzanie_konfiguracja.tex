@@ -1,6 +1,6 @@
 \chapter{Zarządzanie konfiguracją}
 W rozdziale tym przedstawię różne metody zarządzania konfiguracją serwerów. Postaram się opisać poglądowo różne metody, jak również przedstawić zalety i wady poszczególnych z nim.
-\section{Ręczna konfiguracja każdego serwera}
+\section{Ręczna konfiguracja każdego serwera za pomocą SSH}
 \subsection{Opis}
 Ręczna konfiguracja serwerów stososowana jest głównie tam, gdzie administrator ma pod swoją opieką jeden bądź kilka serwerów. W takim przypadku zmiana konfiguracji na serwerze jest prosta i nie zajmuje dużej ilości czasu.\\
 Konfiguracja taka nie wymaga od administratora żadnej wiedzy wykraczającej poza obszar konfigurowanego systemu oraz usług, a wprowadzane zmiany widoczne są od razu po wprowadzeniu.
@@ -32,3 +32,15 @@ Wady:
 \end{itemize}
 \subsection{Przykład}
 \lstinputlisting{lst/conf_ssh.sh}
+\subsection{CSSH}
+Istnieje narzędzie CSSH (\testit{Cluster SSH}) które wychodzi na przeciw osobą chcącym konfigurować kilka serwerów jednocześnie poprzez SSH.
+Narzędzie to potrafi otworzyć wiele sesji SSH równolegle - każda sesja w osobnym terminalu.
+Głównym iterface-em programu, jest małe okno wejścia, które przechwytując wpisywany do niego tekst, przesyła go do wszystkich otwartych sesji.\\
+Zmniejsza to prawdopodobnieństwo rozbierzności w konfiguracji, jak również przyśpiesza proces, ponieważ tekst jest wpisywany do wszystkich sesji jednocześnie i nie ma potrzeby wielokrotnego wpisywania tej samej konfiguracji na wielu maszynach.\\
+Aplikacja umożliwia również przełączenie się w dowolnej chwili na konkretny terminal i interakcję tylko z jednym serwerem, np: w celu zdiagnozowania problemu występującego tylko na tej jednej maszynie.
+\section{Fabric}
+\subsection{Opis}
+Jest aplikacją napisaną w języku Python, służącą głównie do wykonywania poleceń powłoki na zdalnym serwerze. Aplikacja pozwala na zdefiniowanie kolejności w jakiej mają zostać poszczególne polecenia, jak również udostępnia kilka funkcji sprawdzających, np: czy plik istnieje, bądź kopiowanie plików na lub z serwera.\\
+
+\subsection{Zalety i wady}
+\subsection{Przykład}
