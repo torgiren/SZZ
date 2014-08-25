@@ -63,7 +63,7 @@ Do obsługi języka PHP zostanie wykorzystany php-fpm (\textit{PHP FastCGI Proce
 Jest to alternatywna implementacja PHP FastCGI.
 Pozwala ona na większą kontrolę w zakresie pul procesów - ich liczby oraz sposobu uruchamiania, jak również dowolność w kwestiach sieciowych - adres oraz port do nasłuchiwania.
 
-Porównanie testów wydajności PHP-fpm oraz mod_php do Apache jak również szybkość serwowania treści statycznych zostanie przedstawione w późniejszych rozdziałach.
+Porównanie testów wydajności PHP-fpm oraz mod\_php do Apache jak również szybkość serwowania treści statycznych zostanie przedstawione w późniejszych rozdziałach.
 \subsection{Opis metody}
 Metoda klastrowania przy pomocy Nginx-a polega na zdefiniowaniu sekcji \texttt{upstream}.
 Pozwala to na skonfigurowanie puli adresów do których będą przekazywane zapytania.
@@ -82,14 +82,14 @@ Istnieje możliwość modyfikacji domyślnego algorytmu używanego przez Nginx-a
 	na każde 6 zapytań do \texttt{pula1}, 5 zostanie przekazanych do \texttt{server1} a jedno do \texttt{server2}.
 	Opcja ta wykorzystywana jest głównie tam, gdzie poszczególne serwery różnią się parametrami bądź obciążeniem nie wynikającym z obsługiwania tej puli.
 	\item zmiana sposobu określania serwera jako niedostępnego.
-	Służą do tego parametry \texttt{max_fails}, \texttt{fail_timeout} oraz \texttt{slow_start}.\\
+	Służą do tego parametry \texttt{max\_fails}, \texttt{fail\_timeout} oraz \texttt{slow\_start}.\\
 	\begin{description}
-	\item[\texttt{max_fails}] określa liczbę nieudanych prób komunikacji z serwerem w czasie \texttt{fail_timeout} nim serwer zostanie oznaczony jako niedostępny.
+	\item[\texttt{max\_fails}] określa liczbę nieudanych prób komunikacji z serwerem w czasie \texttt{fail\_timeout} nim serwer zostanie oznaczony jako niedostępny.
 	Domyślna wartość tego parametru wynosi 1, natomiast wartość 0 wyłącza oznaczanie serwerów jako niedostępne.
-	\item[\texttt{fail_timeout}] określa czas w jakim musi nastąpić \texttt{max_fails} nim serwer zostanie uznany za niedostępny.
+	\item[\texttt{fail\_timeout}] określa czas w jakim musi nastąpić \texttt{max\_fails} nim serwer zostanie uznany za niedostępny.
 	Określa również interwał czasowy co który będzie sprawdzana dostępność serwera.
 	Wartość domyślna dla tego parametru wynosi 10 sekund.
-	\item[\texttt{slow_start}] określa czas w jakim będzie zwiększana wartość \texttt{weight} od zera do docelowej po przejściu serwera ze stanu niedostępnego do stanu dostępnego.
+	\item[\texttt{slow\_start}] określa czas w jakim będzie zwiększana wartość \texttt{weight} od zera do docelowej po przejściu serwera ze stanu niedostępnego do stanu dostępnego.
 	Wartość domyślna wynosi 0, co oznacza wyłączone płynne włączanie serwera do puli.
 	\end{description}
 	\item oznaczenie konkretnych serwerów, jako serwerwy zapasowe.  
