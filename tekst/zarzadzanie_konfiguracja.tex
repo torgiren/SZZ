@@ -2,7 +2,7 @@
 W rozdziale tym przedstawię różne metody zarządzania konfiguracją serwerów. Postaram się opisać poglądowo różne metody, jak również przedstawić zalety i wady poszczególnych z nim.
 \section{Ręczna konfiguracja każdego serwera za pomocą SSH}
 \subsection{Opis}
-Ręczna konfiguracja serwerów stososowana jest głównie tam, gdzie administrator ma pod swoją opieką jeden bądź kilka serwerów. W takim przypadku zmiana konfiguracji na serwerze jest prosta i nie zajmuje dużej ilości czasu.\\
+Ręczna konfiguracja serwerów stos osuwana jest głównie tam, gdzie administrator ma pod swoją opieką jeden bądź kilka serwerów. W takim przypadku zmiana konfiguracji na serwerze jest prosta i nie zajmuje dużej ilości czasu.\\
 Konfiguracja taka nie wymaga od administratora żadnej wiedzy wykraczającej poza obszar konfigurowanego systemu oraz usług, a wprowadzane zmiany widoczne są od razu po wprowadzeniu.
 Ten sposób konfiguracji spotykany jest czasem w większych systemach informatycznych.
 Dzieje się tak zwykle w jednostkach szybko rozwijających się, gdzie nastąpił szybki wzrost liczby serwerów i nie opracowano jeszcze metoda automatyzacji konfiguracji.
@@ -14,7 +14,7 @@ Wadą takiej metody jest również sytuacja, w której tylko jedna osoba, bądź
 W przypadku opuszczenia przez daną osobę zespołu, pozostali członkowie muszą, analizując pliki konfiguracyjne, zrozumieć zamysł osoby to tworzącej.\\
 Kolejną wadą, jest brak możliwości powielenia konfiguracji.
 W przypadku gdy zaistnieje potrzeba skonfigurowania bliźniaczego serwera, jako serwera zapasowego, należy każdą usługę skonfigurować od nowa na wzór serwera pierwotnego. Również wprowadzane zmiany należy uwzględniać na wszystkich serwerach.
-Może to w prosty sposób prowadzić do błędów i rozbierzności konfiguracji.
+Może to w prosty sposób prowadzić do błędów i rozbieżności konfiguracji.
 \subsection{Zalety i wady}
 Zalety:
 \begin{itemize}
@@ -35,12 +35,47 @@ Wady:
 \subsection{CSSH}
 Istnieje narzędzie CSSH (\textit{Cluster SSH}) które wychodzi na przeciw osobą chcącym konfigurować kilka serwerów jednocześnie poprzez SSH.
 Narzędzie to potrafi otworzyć wiele sesji SSH równolegle - każda sesja w osobnym terminalu.
-Głównym iterface-em programu, jest małe okno wejścia, które przechwytując wpisywany do niego tekst, przesyła go do wszystkich otwartych sesji.\\
-Zmniejsza to prawdopodobnieństwo rozbierzności w konfiguracji, jak również przyśpiesza proces, ponieważ tekst jest wpisywany do wszystkich sesji jednocześnie i nie ma potrzeby wielokrotnego wpisywania tej samej konfiguracji na wielu maszynach.\\
+Głównym interface-em programu, jest małe okno wejścia, które przechwytując wpisywany do niego tekst, przesyła go do wszystkich otwartych sesji.\\
+Zmniejsza to prawdopodobieństwo rozbieżności w konfiguracji, jak również przyśpiesza proces, ponieważ tekst jest wpisywany do wszystkich sesji jednocześnie i nie ma potrzeby wielokrotnego wpisywania tej samej konfiguracji na wielu maszynach.\\
 Aplikacja umożliwia również przełączenie się w dowolnej chwili na konkretny terminal i interakcję tylko z jednym serwerem, np: w celu zdiagnozowania problemu występującego tylko na tej jednej maszynie.
 \section{Fabric}
 \subsection{Opis}
 Jest aplikacją napisaną w języku Python, służącą głównie do wykonywania poleceń powłoki na zdalnym serwerze. Aplikacja pozwala na zdefiniowanie kolejności w jakiej mają zostać poszczególne polecenia, jak również udostępnia kilka funkcji sprawdzających, np: czy plik istnieje, bądź kopiowanie plików na lub z serwera.\\
-
+Sprawdza się wszędzie tam, gdzie chcemy wykonać konkretne operacje na zdalnym systemie niezależnie od aktualnego stanu tego systemu, bądź z niewielkim wpływem obecnych czynników.
+Zastosowanie fabrica można porównać do CSSH, z tą różnicą, że operacje nie są wpisywane przez administratora podczas sesji, a zdefiniowane wcześniej w pliku, co w znacznym stopniu ułatwia powtarzalność wykonywania zdefiniowanych operacji.
+Pozwala również w prosty sposób rozdzielić zdefiniowane zadania na poszczególne grupy serwerów na których należy je wykonać.\\
+Typowe zastosowania:
+\begin{itemize}
+\item restart nietypowych usług nie posiadających jeszcze odpowiednich skryptów sysvinit
+\item rekonfiguracja projektów na zdalnych serwerach po wysłaniu zmian przez system kontroli wersji
+\item przeszukiwanie logów poszczególnych serwerów
+\end{itemize}
 \subsection{Zalety i wady}
+Zalety:
+\begin{itemize}
+\item łatwość instalacji - repozytoria dystrybucji oraz pythonowe
+\item równoległe wykonywanie operacji
+\item łatwość konfiguracji
+\item powtarzalność wykonywania
+\item skalowalność
+\end{itemize}
+Wady:
+\begin{itemize}
+\item ograniczone możliwości decyzji na podstawie aktualnej konfiguracji
+\item wykonywanie tylko poleceń powłoki
+\end{itemize}
 \subsection{Przykład}
+\lstinputlisting[language=python,caption=fabfile.py]{lst/conf_fabfile.py}
+przykład działania powyższego skryptu:
+\lstinputlisting{lst/conf_fabfile_run.sh}
+Aplikacja została uruchomiona z parametrami:
+\begin{description}
+\item[-P] równolegle wykonywanie zadań
+\item[-z 5] uruchomienie pięciu równoległych połączeń
+\item[-I] zapytanie o hasło do serwerów (używane gdy niedostępne logowanie po kluczach SSH)
+\item[show\_problem] nazwa zadania zdefiniowana w pliku \texttt{fabfile.py}
+\end{description}
+Fabric wykonuje połączenia do hostów zdefiniowanych w zmiennej \texttt{env.hosts} w liczbie pięciu połączeń równoległych.
+W przypadku nie podania parametru \texttt{-z}, aplikacja wykona liczbę równoległych połączeń równą liczbie zdefiniowanych hostów dla danego zadania.\\
+Po połączeniu się do zdalnego hosta, następuje sprawdzenie czy istnieje plik \texttt{/var/problem}. W przypadku wykrycia istnienia takiego pliku, zostaje wywołane polecenie powłoki \texttt{cat}.
+W wyniku wykonywania widzimy, ze plik \texttt{/var/problem} istniał tylko na serwerze o adresie IP \texttt{192.168.0.12} i zawierał tekst \textit{zasob byl podmontowany}.
