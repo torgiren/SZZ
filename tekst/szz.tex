@@ -11,13 +11,20 @@
 \usepackage{verbatim}
 \usepackage{moreverb}
 \usepackage{nameref}
-\usepackage{listings}
 \usepackage{url}
 \usepackage{xcolor}
 \usepackage[font=footnotesize,labelfont=bf]{caption}
 \geometry{hmargin={2cm, 2cm}, height=10.0in}
 \assignpagestyle{\chapter}{empty}
 \newcommand{\param}[1]{\textit{\textless #1\textgreater}}
+
+%konfiguracja listingow
+\usepackage{listings}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{basicstyle=\footnotesize\ttfamily}
+
 \title{System zautomatyzowanego zarządzania konfiguracją farmy serwerów aplikacji WWW}
 \author{Marcin TORGiren Fabrykowski}
 \setcounter{secnumdepth}{4}
@@ -27,7 +34,6 @@
 %\bibliographystyle{plain}
 \bibliographystyle{amsplain}
 \include{title}
-\lstset{basicstyle=\footnotesize\ttfamily}
 \include{wstep_do_klastrowania}
 \include{metody_klastrowania}
 \include{zarzadzanie_konfiguracja}
