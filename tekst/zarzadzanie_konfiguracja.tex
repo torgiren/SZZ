@@ -112,10 +112,26 @@ Metoda ta wymaga jednak aby w systemie zainstalowane były biblioteki Pythonowe:
 \item httplib2
 \end{itemize}
 Wykonanie powyższego kodu powoduje przełączenie się na wirtualne środowisko Pythona przygotowane przez developerów Ansible.\\
-\paragraph*{Wirtualne środowisko Pythonowe}jest narzędziem pozwalającym na stworzenie odizolowanego od bibliotek systemowych środowiska uruchomieniowego dla aplikacji pythonowych.\\
+Wirtualne środowisko zostanie opisane w kolejnym podrozdziale.
+\item przez repozytorium\\
+Ansible jest obecne w repozytorium praktycznie każdej dystrybucji. Instalacja zależna jest od konkretnej dystrybucji.\\
+Ta metoda może powodować problemy z używaniem Ansible w wirtualnym środowisku Pythona ponieważ narzędzie instalowane jest globalnie, natomiast środowisko wirtualne często tworzone jest bez dostępu do globalnych bibliotek.
+\item przez PIP\\
+Jest to zalecana metoda instalacji, ponieważ łączy w sobie prostotę procesu z elastycznością.
+Wykorzystuje on repozytorium bibliotek Pythonowych - \texttt{pip}.\\
+Instalacja Ansible poprzez \texttt{pip} wymaga wykonania polecenia:\\
+\lstinputlisting{lst/ansible_install_pip.sh}
+spowoduje ono ściągnięcie najnowszej wersji Ansible jak również zależnych pakietów.
+Instalacja odbędzie się do katalogów zdefiniowanych w zmiennych środowiskowych. Domyślnie są do główne katalogi \texttt{/usr} jednak mogą one zostać nadpisane przez użycie wirtualnego środowiska.
+\end{itemize}
+\subsubsection{Wirtualne środowisko Pythonowe}
+Wirtualne środowisko jest narzędziem pozwalającym na stworzenie odizolowanego od bibliotek systemowych środowiska uruchomieniowego dla aplikacji pythonowych.\\
 Nowe środowisko tworzone jest przy pomocy polecenia \texttt{virtualenv}.
 Tworzy ono strukturę katalogów potrzebną interpreterowi Pythona do działania. Poniżej znajduje się przykład takiej struktury:
 \lstinputlisting{lst/ansible_install_tree.sh}
-\end{itemize}
+Poleceniem \texttt{source <plik\_aktywacji>} aktywujemy wirtualne środowisko.
+Powoduje to nadpisanie domyślnych ścieżek przeszukiwania z domyślnych systemowych na lokalne w wirtualnym środowisku.
+Następnie należy uruchamiać interpreter Pythona nie podając bezpośredniej ścieżki do niego (np: \texttt{/usr/bin/python2}) lecz poprzez zmodyfikowane środowisko: \texttt{/usr/bin/env python}.
+Pozwala to ...różne wersje pythona i przenoścność...
 \subsubsection{Moduły}
 Ansible wyposażony jest w dużą gamę gotowych
