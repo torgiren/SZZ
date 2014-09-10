@@ -132,6 +132,35 @@ Tworzy ono strukturę katalogów potrzebną interpreterowi Pythona do działania
 Poleceniem \texttt{source <plik\_aktywacji>} aktywujemy wirtualne środowisko.
 Powoduje to nadpisanie domyślnych ścieżek przeszukiwania z domyślnych systemowych na lokalne w wirtualnym środowisku.
 Następnie należy uruchamiać interpreter Pythona nie podając bezpośredniej ścieżki do niego (np: \texttt{/usr/bin/python2}) lecz poprzez zmodyfikowane środowisko: \texttt{/usr/bin/env python}.
-Pozwala to ...różne wersje pythona i przenoścność...
+Całość pozwala na tworzenie wirtualnych środowisk ze specyficznymi wersjami Pythona, różnymi niż domyślny interpreter w systemie jak również instalacja odpowiednich bibliotek dla konkretnego projektu a nie dla całego systemu.
+Używanie wirtualnego środowiska nie wymaga również posiadania konta administratora.  
+Wirtualne środowisko zwiększa również przenośność projektów.
+Istnieje możliwość wyeksportowania do pliku tekstowego przy pomocy \texttt{PIP}-a listy zainstalowanych wraz z ich wersjami.
+Pozwala on również za zaimportowanie na nowym środowisku, dokładnie tych samych bibliotek, to tworzy dokładną kopię środowiska źródłowego oraz ułatwia migrację aplikacji pomiędzy maszynami.
+\subsection{Użytkowanie}
+Obsługa Ansible jest bardzo prosta i skupia się na trzech podstawowych elementach. Są nimi:
+\begin{description}
+\item {inventory}\\jest to plik zawierający listę hostów które mają być zarządzane.
+\item {moduły}\\Ansible używa modułów w celu wykonywania konkretnych operacji. Pozwala na pisanie własnych modułów.
+\item {playbooki}\\pliki zawierające całościowy opis stanu jaki ma zostać osiągnięty na konfigurowanych hostach.
+\end{description}
+\subsubsection{inventory}
+Plik \textit{inventory} zawiera listę wszystkich hostów które mogą znajdować się pod kontrolą Ansible.  
+W każdej linijce pliku znajduje się definicja jednego hosta.
+Format definicji hosta wygląda następująco:
+\begin{lstlisting}
+<hostname> [opcja1=wartosc1]...
+\end{lstlisting}
+\texttt{hostname} jest nazwą wyświetlaną przez Ansible podczas generowania raportów, jak również nazwą po której będzie probował się łączyć do serwera.
+Jeżeli \texttt{hostname} nie jest rozwiązywane przez używany serwer DNS, należy użyć specjalnej opcji, aby powiedzieć Ansible pod jakim adresem znajduje się dany serwer.
+Poniżej znajduje się lista kilku najczęściej wykorzystywanych opcji. Pełna lista znajduje się w dokumentacji projektu Ansible.
+\begin{description}
+\item{ansible\_ssh\_host}\\
+	określa adres IP pod którym znajduje się dany serwer.	
+\item{ansible\_ssh\_port}\\
+	określa port który ma zostać wykorzystany przy połączeniu. Przydatne gdy serwer SSH działa na niestandardowym porcie.
+\item{ansible\_ssh\_private\_key\_file}\\
+	określa położenie klucza prywatnego używanego podczas połączenia. Użyteczne gdy nie chcemy używać domyślnego klucza, bądź jeżeli któryś z serwerów ma inna bazę zaakceptowanych kluczy
+\end{description}
 \subsubsection{Moduły}
 Ansible wyposażony jest w dużą gamę gotowych
