@@ -149,7 +149,7 @@ Plik \textit{inventory} zawiera listę wszystkich hostów które mogą znajdowa�
 W każdej linijce pliku znajduje się definicja jednego hosta.
 Format definicji hosta wygląda następująco:
 \begin{lstlisting}
-<hostname> [opcja1=wartosc1]...
+<hostname> [klucz1=wartosc1]...
 \end{lstlisting}
 \texttt{hostname} jest nazwą wyświetlaną przez Ansible podczas generowania raportów, jak również nazwą po której będzie probował się łączyć do serwera.
 Jeżeli \texttt{hostname} nie jest rozwiązywane przez używany serwer DNS, należy użyć specjalnej opcji, aby powiedzieć Ansible pod jakim adresem znajduje się dany serwer.
@@ -162,5 +162,31 @@ Poniżej znajduje się lista kilku najczęściej wykorzystywanych opcji. Pełna 
 \item{ansible\_ssh\_private\_key\_file}\\
 	określa położenie klucza prywatnego używanego podczas połączenia. Użyteczne gdy nie chcemy używać domyślnego klucza, bądź jeżeli któryś z serwerów ma inna bazę zaakceptowanych kluczy
 \end{description}
+Dodatkowo, można zdefiniować swoje własne zmienne, które można następnie wykorzystać przy ustalaniu parametrów modułów bądź w szablonach.  
+Jak zostanie pokazane w dalszej w kolejnych sekcjach, definiowanie parametrów w pliku \texttt{inventory} nie jest zalecane.
+Zalecanym sposobem definiowania zmiennych jest używanie \texttt{host\_vars} co zostanie przedstawione w dalszej części.
+
+Dopuszczalne jest również definiowanie hostów poprzez użycie zakresów zarówno liczbowych jak i znakowych.
+Dla przykładu, dopuszczalne jest zdefiniowanie dwudziestu serwerów o nazwach \texttt{node01}, \texttt{node02} aż do \texttt{node20} poprzez poniższą definicję:
+\begin{lstlisting}
+node[01:50]
+\end{lstlisting}
+bądź \texttt{hostA} do \texttt{hostE}:
+\begin{lstlisting}
+host[A:F]
+\end{lstlisting}
+
+Istnieje również możliwość łączenia kilku hostów w grupy i późniejsze definiowanie zachowań w odniesieniu do grupy a nie każdego serwera osobo.
+Grupa serwerów tworzona jest poprzez podanie w nawiasach kwadratowych nazwy grupy, po czym pod nią następuje standardowe listowanie serwerów.
+Wszystkie serwery zdefiniowane po nazwie grupy a przed deklaracją następnej, należą do grupy pierwszej.
+Dla przykładu:
+\lstinputlisting[caption=inventory]{lst/ansible_inventory}
+tworzy trzy grupy hostów.
+Pierwsza grupa \texttt{centos} zawiera sześć węzłów i widzimy tutaj definiowanie hostów poprzez zakres.
+Następna grupa \texttt{http} zawiera dwa hosty.
+Oraz ostatnia grupa jest jednoelementowa.\\
+Można zauważyć, że jeden serwer może być członkiem więcej niż jednej grupy.\\
+Została również zdefiniowana grupa \texttt{dc1} której członkami są serwery należące do grup \texttt{http} oraz \texttt{haproxy}.
+Widzimy więc, że można tworzyć również grupy składające się z innych grup.
 \subsubsection{Moduły}
 Ansible wyposażony jest w dużą gamę gotowych
