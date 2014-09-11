@@ -144,7 +144,7 @@ Obsługa Ansible jest bardzo prosta i skupia się na trzech podstawowych element
 \item {moduły}\\Ansible używa modułów w celu wykonywania konkretnych operacji. Pozwala na pisanie własnych modułów.
 \item {playbooki}\\pliki zawierające całościowy opis stanu jaki ma zostać osiągnięty na konfigurowanych hostach.
 \end{description}
-\subsubsection{inventory}
+\subsubsection{Inventory}
 Plik \textit{inventory} zawiera listę wszystkich hostów które mogą znajdować się pod kontrolą Ansible.  
 W każdej linijce pliku znajduje się definicja jednego hosta.
 Format definicji hosta wygląda następująco:
@@ -204,4 +204,42 @@ Jednak, podobnie jak w przypadku zmiennych ustawianych dla hostów, istnieje mec
 Ostatnią interesującą rzeczą dotyczącą pliku \texttt{inventory} jest fakt, że plik ten nie musi być plikiem tekstowym, a może być skryptem wykonywalnym.
 Ansible jest w stanie wykonać taki skrypt i jeśli zwrócona treść jest poprawnym formatem \texttt{inventory} potraktuje to wyjście jako \texttt{inventory}.
 \subsubsection{Moduły}
-Ansible wyposażony jest w dużą gamę gotowych
+Ansible wyposażony jest w dużą gamę gotowych modułów.
+Moduły w Ansible są to skrypty napisane w języku Python oraz zwykle wykonują jedną konkretną rzecz do której zostały stworzone.
+I tak na przykład mamy moduły:
+\begin{description}
+	\item{\textbf{users}}\\
+		służy do zarządzania użytkownikami w systemie. Pozwala on na tworzenie, usuwanie, oraz modyfikowanie wszelkim parametrów użytkowników kont, takich jak np: katalog domowy, hasło czy domyślna powłoka, ale również pozwala na automatyczne wygenerowanie klucza ssh dla użytkownika podczas tworzenia konta.
+	\item{\textbf{git}}\\
+		służy do zarządzania repozytoriami \texttt{git}-a. Pozwala na klonowanie oraz aktualizacje repozytorium \texttt{git}-a. Daje możliwość wyboru gałęzi bądź \textit{commit}-a na który ma być \textit{zdeployowana} aplikacja bądź wybór konkretnego pliku z kluczem ssh który zostanie wykorzystany do połączenia.
+	\item{\textbf{apt/yum/pip/portage/...}}\\
+		zestaw modułów pozwalających na zarządzanie oprogramowaniem na serwerze. Wspólną i najważniejszą opcją dla wszystkich modułów z tego grupy jest opcja \texttt{state}. Może ona przyjmować co najmniej trzy wartości \texttt{present/absent/latest}. Oznaczają one:
+		\begin{description}
+			\item{present}\\
+				jeżeli pakiet nie jest zainstalowany w systemie, to go zainstaluj. Jeżeli nie podano wersji, instalowana jest najnowsza.
+				Natomiast pakiet już jest w systemie to moduł zwraca komunikat "OK".
+			\item{absent}\\
+				zasada odwrotna co przy stanie \textit{present}. Jeżeli pakiet jest zainstalowany, to zostanie on usunięty.
+				A jeżeli nie było danego pakietu zainstalowanego w systemie, to moduł nie zrobi nic.
+			\item{latest}\\
+				Jest to stan bardziej skomplikowany niż dwa poprzednie, ponieważ w przypadku gdy pakiet nie jest zainstalowany, następuje jego instalacja do wersji najnowszej.
+				Natomiast, jeżeli pakiet jest już zainstalowany, sprawdzane jest, czy zainstalowana wersja jest najnowszą dostępną w repozytorium.
+				Jeżeli tak nie jest, to następuje aktualizacja pakietu do wersji najnowszej.\\
+				Są to jedne z niewielu domyślnych modułów których trzeba używać jawnie w zależności od dystrybucji systemu GNU/Linux na serwerze.
+		\end{description}
+	\item{\textbf{service}}\\
+		moduł zarządzający uruchamianiem usługami. Pozwala na zdefiniowanie poprzez parametr \texttt{enable} czy usługa powinna być uruchamiana przy starcie systemu.
+		Drugim ważnym parametrem jest opcja \texttt{state} który może przyjmować następujące wartości:
+		\begin{description}
+			\item{started}\\
+				upewnia się, że usługa jest uruchomiona. Jeżeli tak nie jest, uruchamia usługę.
+			\item{stoped}\\
+				upewnia się, że usługa jest zatrzymana. Jeżeli tak nie jest, zatrzymuje ją.
+			\item{restarted}\\
+				przeprowadza procedurę restartu usługi niezależnie od jej aktualnego stanu.
+			\item{reloaded}\\
+				przeładowuje daną usługę
+		\end{description}
+\end{description}
+powyżej zostało wymienionych tylko kilka z całej bogatej gamy modułów, jak również zostały one opisane tylko w najczęściej używanym zakresie.
+Pełnej listy modułów oraz ich parametrów należy szukać w dokumentacji
