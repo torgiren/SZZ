@@ -188,5 +188,20 @@ Oraz ostatnia grupa jest jednoelementowa.\\
 Można zauważyć, że jeden serwer może być członkiem więcej niż jednej grupy.\\
 Została również zdefiniowana grupa \texttt{dc1} której członkami są serwery należące do grup \texttt{http} oraz \texttt{haproxy}.
 Widzimy więc, że można tworzyć również grupy składające się z innych grup.
+
+Możliwe jest, chociaż również nie zalecane, zdefiniowanie zmiennych dla całej grupy.
+Zmienne takie definiuje się w następujący sposób:
+\begin{lstlisting}
+[grupa1]
+node1
+node2
+[grupa1:vars]
+zmienna1=wartosc1
+zmienna2=wartosc2
+\end{lstlisting}
+Jednak, podobnie jak w przypadku zmiennych ustawianych dla hostów, istnieje mechanizm \texttt{group\_vars} i jest on zalecanym mechanizmem ustawiania zmiennych dla grup.
+
+Ostatnią interesującą rzeczą dotyczącą pliku \texttt{inventory} jest fakt, że plik ten nie musi być plikiem tekstowym, a może być skryptem wykonywalnym.
+Ansible jest w stanie wykonać taki skrypt i jeśli zwrócona treść jest poprawnym formatem \texttt{inventory} potraktuje to wyjście jako \texttt{inventory}.
 \subsubsection{Moduły}
 Ansible wyposażony jest w dużą gamę gotowych
