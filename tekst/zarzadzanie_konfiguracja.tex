@@ -137,8 +137,8 @@ Używanie wirtualnego środowiska nie wymaga również posiadania konta administ
 Wirtualne środowisko zwiększa również przenośność projektów.
 Istnieje możliwość wyeksportowania do pliku tekstowego przy pomocy \texttt{PIP}-a listy zainstalowanych wraz z ich wersjami.
 Pozwala on również za zaimportowanie na nowym środowisku, dokładnie tych samych bibliotek, to tworzy dokładną kopię środowiska źródłowego oraz ułatwia migrację aplikacji pomiędzy maszynami.
-\subsection{Użytkowanie}
-Obsługa Ansible jest bardzo prosta i skupia się na trzech podstawowych elementach. Są nimi:
+\subsection{Struktura}
+Struktura Ansible jest bardzo prosta i skupia się na trzech podstawowych elementach. Są nimi:
 \begin{description}
 \item {inventory}\\jest to plik zawierający listę hostów które mają być zarządzane.
 \item {moduły}\\Ansible używa modułów w celu wykonywania konkretnych operacji. Pozwala na pisanie własnych modułów.
@@ -243,3 +243,7 @@ I tak na przykład mamy moduły:
 \end{description}
 powyżej zostało wymienionych tylko kilka z całej bogatej gamy modułów, jak również zostały one opisane tylko w najczęściej używanym zakresie.
 Pełnej listy modułów oraz ich parametrów należy szukać w dokumentacji
+
+\textit{Playbook}-i zostaną opisane w osobnej sekcji.
+\subsection{Użytkowanie}
+\subsubsection{Tryb pracy AdHoc}
