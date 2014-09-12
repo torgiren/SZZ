@@ -246,4 +246,72 @@ Pełnej listy modułów oraz ich parametrów należy szukać w dokumentacji
 
 \textit{Playbook}-i zostaną opisane w osobnej sekcji.
 \subsection{Użytkowanie}
-\subsubsection{Tryb pracy AdHoc}
+\subsubsection{Tryb pracy Ad-Hoc}
+Ansible pozwala na wywołanie konkretnego modułu z konkretnymi parametrami. W przeciwieństwie do opisywanych w kolejnej sekcji \textit{playbook}-ów, tryb Ad-Hoc przydaje się do szybkich jednorazowych operacji takich jak restart systemu bądź sprawdzenie aktualnych ustawień serwerów DNS na maszynach.
+\lstinputlisting{lst/ansible_ad-hoc_resolve}
+na powyższym przykładzie widzimy wywołanie \textit{ad-hoc} polecenia \texttt{shell} który wywołuje powłokę na zdalnej maszynie.
+Widzimy ze wywoływane jest to dla grupy \texttt{all} która oznacza, ze należy wywołać polecenie dla wszystkich hostów zdefiniowanych w pliku \texttt{inventory}.
+Parametrem podanym do modułu było polecenie \texttt{cat /etc/resolv.conf|grep nameserver} które wypisuje adresy serwerów DNS używanych przez serwer.
+Na wyjściu widzimy, ze dla serwerół \texttt{mgr0-4} otrzymaliśmy linijki pliku \texttt{resolv.conf} zawierające adresy, natomiast dla pozostałych serwerów otrzymaliśmy informację, ze nie udało się połączyć z nimi.
+W tym przypadku było to spowodowane tym, ze nie zostały one włączone.
+
+Inny, bardzo częstym zastosowaniem trybu \textit{ad-hoc} jest wgrywanie pliku na serwer zdalny.
+Należy zaznaczyć, ze z poniższego przykładu, celem zwiększenia czytelności, zostały usunięte komunikaty o błędach połączeń do niewłączonych maszyn, jak również usunięte zostały powtarzające się komunikaty o udanym wykonaniu polecenia na pozostałych hostach.
+Należy również zaznaczyć, ze hosty zostały wcześniej tak przygotowane, aby każdy zwrócił inny komunikat.
+\lstinputlisting{lst/ansible_ad-hoc_copy}
+Na powyższym przykładzie widzimy trzy możliwe stany wywołania polecenia:
+\begin{description}
+	\item{changed=true}\\
+		Oznacza, ze polecenie zakończyło się sukcesem oraz że podmiot operacji uległ zmianie. W tym przypadku oznacza to, ze plik został wgrany na serwer i zmienił on stan.
+		Zmianę stanu należy rozumieć jako utworzenie nowe pliku, zmianę jego treści, bądź któregoś z parametrów takich jak właściciel, prawa dostępu itp.
+	\item{changed=false}\\
+		Oznacza, że przeprowadzona operacja nie wprowadziła żadnych zmian do aktualnego stanu systemu.
+		Jest to pożądany stan przy używaniu \textit{playbook}-ów, co zostanie opisane w następnej sekcji.
+	\item{failed}\\
+		Oznacza, że nie udało się wykonać polecenia.
+		Często komunikat \texttt{failed} niesie ze sobą opis błędu. Bądź zdefiniowany przez autora modułu, bądź odpowiedź systemu operacyjnego.
+\end{description}
+Ostatnim wartym wspomnienia modułem jest moduł \texttt{setup}. Uruchamiany jest poprzez polecenie:
+\begin{lstlisting}
+ansible <host> -m setup
+\end{lstlisting}
+moduł ten służy do tzw. zbierania faktów.
+Czy audytu systemu pod kątem informacji o nim.
+Niestety, wyjście tego polecenia posiada ponad 200 linijek, dlatego nie zostanie ono tutaj załączone.
+Moduł ten dostarcza informacji m.in o:
+\begin{itemize}
+	\item adresach IP maszyny
+	\item architekturze
+	\item wersji jądra
+	\item dokładnych konfiguracji interface-ów sieciowych
+	\item informacji o dyskach twardych: podziale na partycje, sektorach przypadających na partycje, rozmiarze sektora
+	\item dystrybucji systemu
+	\item konfiguracji sprzętowej
+\end{itemize}
+oraz wielu innych nie wspomnianych powyżej.
+\subsubsection{Playbook}
+Głównym celem używania Ansible, nie jest jednokrotne wywoływanie poleceń opisane w poprzednim przykładzie, lecz utrzymywanie stanu serwera w konkretnej konfiguracji.
+Do opisu pożądanego stanu, używane są tzw. \textit{playbook}-i.
+Definiują one stan w jakim ma się znaleźć system po ich wykonaniu.
+I tak na przykład opisem stanu może być zdefiniowanie, że usłucha \texttt{apache2} ma być uruchomiona bądź, że pakiet \texttt{postfix} ma być zainstalowany w wersji $2.10.2-1$.
+Wtedy, przy każdym wywołaniu \textit{playbook}-a, Ansible będzie sprawdzał czy te kryteria są spełnione, i w przypadku gdy któreś nie zostanie, ansible spróbuje doprowadzić system do stanu kiedy kryterium będzie spełnione.\\
+\textit{Playbook}-i wykorzystują do pracy moduły. Te same moduły których możemy używać w trybie \textit{ad-hoc}.
+
+Domyślnie, przed wykonaniem \textit{playbook}-a, następuje zebranie faktów o hostach na których mają zostać wykonane operacje.
+Zbieranie faktów odbywa się przy pomocy modułu \texttt{setup} który został opisany w poprzedniej sekcji.
+Dane które zostaną zebrane mogę posłużyć zarówno do użycia ich w szablonach konfiguracji, jak również do podejmowania decyzji jakie operacje należy wykonać dla hosta. Jedną z najczęstszych decyzji które są podejmowane na podstawie faktów, jest podział systemów na rodziny systemów operacyjnych.
+Dla przykładu, systemy z rodziny \textit{Debian} używają menadżera pakietów \texttt{apt} natomiast rodzina \textit{Red Hat} \texttt{yum}-3.
+
+\textit{Playbook}-i oraz inne pliki wykorzystywane przez Ansible są zapisywane w formacie \textit{Yaml}.
+Po dokładną specyfikację formatu \textit{Yaml} odsyłam do dokumentacji.\\
+
+Poniżej znajduje się przykładowy \textit{playbook}, na podstawie którego zostaną opisane najważniejsze jego elementy.
+\lstinputlisting{lst/ansible_playbook_simple.yml}
+zwyczajowo, pliki \texttt{yaml} zaczynają się się od trzech znaków myślnika.\\
+Następnie następuje określenie grupy hostów na których należy wykonać aktualnego \textit{playbook}-a.
+W tym przypadku, jest to grupa \texttt{wwww}.
+Należy tutaj zaznaczyć, że taka grupa musi zostać zdefiniowana w pliku \texttt{inventory}\\
+W następnej kolejności możemy zdefiniować dodatkowe zmienne.
+Zmienne ustawione w \textit{playbook}-u mają wyższy priorytet niż te zdefiniowane w \texttt{host\_vars}, dlatego istnieje możliwość stworzenia \textit{playbook}-a dla środowiska developerskiego nadpisującego parametry używane na środowisku produkcyjnym.\\
+Kolejną sekcją, jest najważniejsza sekcja, czyli zdefiniowane operacji które ma wykonać \textit{playbook}.
+(...nazwa nieobowizkowa, potem moduł taki jak w ad hoc)
