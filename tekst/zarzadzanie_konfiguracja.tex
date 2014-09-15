@@ -306,12 +306,111 @@ Dla przykładu, systemy z rodziny \textit{Debian} używają menadżera pakietów
 Po dokładną specyfikację formatu \textit{Yaml} odsyłam do dokumentacji.\\
 
 Poniżej znajduje się przykładowy \textit{playbook}, na podstawie którego zostaną opisane najważniejsze jego elementy.
-\lstinputlisting{lst/ansible_playbook_simple.yml}
+\lstinputlisting[caption=example\_playbook.yml]{lst/ansible_playbook_simple.yml}
 zwyczajowo, pliki \texttt{yaml} zaczynają się się od trzech znaków myślnika.\\
 Następnie następuje określenie grupy hostów na których należy wykonać aktualnego \textit{playbook}-a.
 W tym przypadku, jest to grupa \texttt{wwww}.
 Należy tutaj zaznaczyć, że taka grupa musi zostać zdefiniowana w pliku \texttt{inventory}\\
 W następnej kolejności możemy zdefiniować dodatkowe zmienne.
 Zmienne ustawione w \textit{playbook}-u mają wyższy priorytet niż te zdefiniowane w \texttt{host\_vars}, dlatego istnieje możliwość stworzenia \textit{playbook}-a dla środowiska developerskiego nadpisującego parametry używane na środowisku produkcyjnym.\\
-Kolejną sekcją, jest najważniejsza sekcja, czyli zdefiniowane operacji które ma wykonać \textit{playbook}.
-(...nazwa nieobowizkowa, potem moduł taki jak w ad hoc)
+Kolejną, najważniejsza sekcja, jest zdefiniowane operacji które ma wykonać \textit{playbook}.
+Składa się ona z nazwy, która jest nieobowiązkowa i służy jedynie informacji co w danej chwili robi \textit{playbook} oraz z modułu z parametrami.
+Moduły używane w \textit{playbook}-u, są tymi samymi modułami które były używane w trybie \textit{ad-hoc}.\\
+Istnieje możliwość zdefiniowania opcjonalnej sekcji \texttt{notify} w definicji zadania. Jej zadaniem jest wykonanie jakiejś operacji tylko w przypadku gdy efektem wykonania zadania będzie stan \texttt{changed}.
+Na załączonym przykładzie widzimy, że na zdalny serwer jest wgrywany plik konfiguracyjne do dazy MySQL.
+Plik jest tworzony na podstawie szablonu przy użyciu silnika \textit{jinja2}.
+Opcja \textit{notify} sprawia, że jeżeli nowy plik konfiguracyjny różni się od obecnego, następuje ponowne uruchomienie bazy danych.
+Dzięki temu nie ma potrzeby restartować bazy danych przy każdym uruchomieniu \textit{playbook}-a oraz w przypadku zmiany konfiguracji, efekty są zauważalne od razu.
+
+Podczas, gdy w trybie \textit{ad-hoc} wykonanie jakieś modułu miało na celu wykonanie jakiejś operacji oraz zmiana stanu serwera, tak w przypadku \textit{playbook}-ów, dąży się aby wywołanie zwracało jak najwięcej stanów \texttt{ok} oraz jak najmniej \textit{changed}.
+Stan \texttt{ok} oznacza, że stan serwera jest zgodny z naszymi założeniami i nie ma potrzeby podejmować żadnych kroków.
+Stan \texttt{changed} pojawia się w przypadku zmian w konfiguracji jakiś usług, bądź w przypadku ingerencji manualnej administratora lub nieoczekiwanego zachowania aplikacji, np: wystąpienia błędu powodującego wyłączenie się aplikacj.\\
+\Large TODO: uruchamianie playbooka \normalsize
+\subsubsection{Role}
+Jak łatwo zauważyć, w poprzednim przykładzie wykonaliśmy cztery operacje angażujące dwie grupy serwerów a plik zawierał 23 linijki kodu.
+Można w prosty sposób estymować, że rzeczywisty \textit{playbook} będzie tych linii zawierał kilkaset bądź więcej, co sprawi ze jego czytanie i utrzymywanie stanie się bardzo trudne, jeśli nie niemożliwe.
+Dlatego wprowadzono mechanizm ról.
+Jest to zalecana forma definicji stanu poszczególnych typów serwerów.
+Role pozwalają na separacje zadań, zmiennych, plików, szablonów i innych.
+Pozwala to również na migrowanie definicji ról pomiędzy systemami.
+
+Definicje ról znajdują się w katalogu \texttt{roles}, w którym znajdują się podkatalogi z nazwie roli.
+W każdym katalogu z rolą, może znajdować się od jednego do sześciu katalogów odpowiadających za poszczególne elementy roli.
+Poniżej przedstawione jest przykładowe drzewo zawierające dwie role.
+\lstinputlisting{lst/ansible_roles_tree}
+Ansible, podczas ładowania roli, sprawdza po kolei czy istnieją powyższe katalogi.
+Jeżeli katalog istnieje, sprawdzane jest, czy istnieje w nim plik \texttt{main.yml} (nie dotyczy to katalogów \texttt{files} oraz \texttt{templates}) i jeżeli istnieje, jego zawartość zostaje załączona do \textit{playbook}-a.
+Następuje wywołanie dyrektywy \texttt{include}, która pobiera zawartość pliku i wstawia w miejsce w którym została wywołana.\\
+Znaczenie poszczególnych katalogów jest następujące:
+\begin{description}
+	\item{\texttt{files}}\\
+		w katalogu tym powinny znaleźć się wszystkie pliki które dana rola będzie kopiowała na serwer zdalny.
+		Umieszczenie plików w tym katalogu daje możliwość podania do modułu kopiującego jedynie nazwy pliku źródłowego zamiast pełnej ścieżki dostępu. Np:
+		\begin{lstlisting}
+- name: kopiowanie issue.net
+- copy: src=issue.net dest=/etc/issue.net
+		\end{lstlisting}
+		zamiast
+		\begin{lstlisting}
+- name: kopiowanie issue.net
+- copy: src=/home/admin/ansible/all_files/issue.net dest=/etc/issue.net
+		\end{lstlisting}
+		trzeba mieć na uwadze, że niejeden administrator, zamiast zrobić kopię pliku w katalogu z rolą, utworzy katalog zbiorczy ze wszystkimi plikami.
+		W znacznym stopniu może to utrudnić migrację definicji takiej roli, ponieważ, oprócz katalogu z jej definicją, należy przenieść wszystkie pliki jej dotyczące ze wspólnego katalogu.
+		Użycie katalogu \texttt{files} wewnątrz katalogu roli, rozwiązuje ten problem, ponieważ, przekopiowanie katalogu z rolą, zapewnia pełną kompatybilność niezależnie od systemu.
+	\item{\texttt{templates}}\\
+		w katalogu tym, znajdują się wszystkie definicje szablonów których może używać rola.
+		Tego katalogu tyczą się wszystkie zastrzeżenia dotyczące katalogu \texttt{files}
+
+		Ansible korzysta z silnika \textit{jinja2}, który jest wzorowany na silniku szablonów wykorzystywanym we frameworku Django.\\
+		Szablony pozwalają na wykorzystywanie w obie wartości zmiennych.
+		Zmienne te można można podać w pliku \textit{inventory} co zostało opisane wcześniej w sekcji \texttt{vars} w \textit{playbook}-u, bądź w plikach przygotowanych do tego celu.\\
+		Pierwszym miejscem gdzie można umieszczać zmienne są katalogi \texttt{host\_vars} oraz \texttt{group\_vars} które należy utworzyć w katalogu głównym \textit{playbook}-a.
+		Wewnątrz nich tworzy się pliki odpowiednio: z nazwami hostów bądź z nazwami grup.
+w przypadku \texttt{host\_vars} host o nazwie zgodniej z nazwą pliku, będzie zawierał zmienne w nim zdefiniowane, natomiast w przypadku \texttt{group\_vars}, wszystkie hosty należące do grupy zgodnej z nazwą pliku, będą miały zdefiniowane zmienne umieszczone w pliku.\\
+		Przykładowy plik \texttt{host\_vars} definiujący port SSH po którym Ansible powinien łączyć się do hosta:
+		\lstinputlisting[caption=temida.yml]{lst/ansible_host_vars.yml}
+		Natomiast poniższy przykład definiuje nazwę pakietu programu Apache2 oraz lokalizacje konfiguracji \textit{vhost}-ów dla systemu rodziny Debian.
+		\lstinputlisting[caption=debian.yml]{lst/ansible_group_vars.yml}
+		Drugim jest katalog \texttt{vars} który zostanie wyjaśniony poniżej.
+	\item{\texttt{tasks}}\\
+		jest to katalog w którym znajdują się definicje zadań które należy wykonać dla danej roli.
+		Jest to jedyny wymagany katalog w definicji roli.\\
+		W katalogu tym powinien znaleźć się plik \texttt{main.yml}.
+		Po odnalezieniu pliku \texttt{main.yml}, następuje jego załączenie do \textit{playbook}-a.
+		Operacja którą można przestawić w następujący sposób:
+		\begin{lstlisting}
+tasks:
+ - include: tasks/main.yml
+		\end{lstlisting}
+		co jest równoznaczne z wpisaniem zawartości tego pliku do sekcji \textit{tasks} jednak pozwala na zachowanie czytelności kodu.\\
+		Poniżej został przedstawiony przykładowy plik \texttt{tasks/main.yml}
+		\lstinputlisting[caption=tasks/main.yml]{lst/ansible_tasks_main.yml}
+		widzimy, że powyższa rola upewnia się ze w systemie jest zainstalowana najnowsza wersja pakietu \texttt{libselinux-python}. Następnie moduł \texttt{copy} kopiuje konfiguracje dodatkowych repozytoriów na serwer zdalny.
+		Pliki te znajdują się w katalogu \texttt{files}.
+		Następnie widzimy użycie modułu \texttt{ini\_file} który jest w stanie edytować pliki konfiguracyjne.
+		Po wskazaniu mu nazwy pliku oraz sekcji, następuje upewnienie się ze opcji \texttt{enabled} ma ustawioną wrtość $1$.
+		W przypadku gdyby wartość byłą inna, bądź nie istniała, nastąpi jej dopisanie, tak aby stan końcowy był zgodny z założonym.
+	\item{\texttt{handlers}}\\
+		w katalogu tym również umieszcza się plik \texttt{main.yml} w którym umieszcza się funkcje obsługujące wystąpienie statusu \texttt{changed}.\\
+		Stosują się do niego wszystkie zastrzeżenia wymienione w sekcji o katalogu \texttt{tasks}
+		Przykładem takiego pliku jest ten zamieszczony poniżej:
+		\lstinputlisting[caption=handlers/main.yml]{lst/ansible_handlers_main.yml}
+		widzimy tutaj definicję akcji o nazwie \textit{restart\_http}.
+		Używa ona modułu \texttt{service}, który, jak zostało wspomniane wcześniej, obsługuje uruchamianie procesów.
+		Jako nazwę widzimy zmienną o nazwie \texttt{apache}.
+		Jest to zmienna zdefiniowana poprzednio w pliku \texttt{group\_vars} i oznacza nazwę usługi Apache pod systemem Debian.
+	\item{\texttt{vars}}\\
+		znajdują się w nim definicje zmiennych dotyczących roli.
+		Podobnie jak w przypadku poprzednich katalogów, następuje wyszukanie pliku \texttt{main.yml} oraz załadowanie go do sekcji \texttt{vars} w \textit{playbook}-u.
+	\item{\texttt{meta}}\\
+		w tym katalogu znajdują się informacje o zależnościach pomiędzy rolami.
+		Katalog zachowuje się jak \texttt{tasks}.\\
+		Dla przykładu, tworząc role \texttt{apache2}, \texttt{mysql}, \texttt{php} oraz \texttt{lamp}, mamy możliwość w katalogu \texttt{meta} roli \texttt{lamp} zdefiniować zależności:
+		\lstinputlisting[caption=meta/mail.yml]{lst/ansible_meta_main.yml}
+		czego efektem będzie, po przypisaniu do hosta roli \texttt{lamp}, przed wykonaniem zadań z tej roli, zastosowanie ról \texttt{apache2}, \texttt{mysql}, \texttt{php} na tym serwerze.\\
+		Powoduje to zmniejszenie rozmiaru \textit{playbook}-a, jak również tworzenie \textit{playbook}-ów w duchu "co zrobić" a nie "jak zrobić".
+		Definiujemy ze dane hosty mają mieć strukturę \textit{LAMP} bez podawania szczegółów jak należy to zrobić.
+		Jest to niejako stworzenie dodatkowej warstwy abstrakcji pomiędzy wysoko ideowymi \textit{playbook}-ami a nisko ideowymi rolami.\\
+		\LARGE (Jak się pisze wysokoideowy i niskoideowy?) \normalsize
+\end{description}
