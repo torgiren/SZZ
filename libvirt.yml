@@ -9,3 +9,9 @@ mgr[2:4].mgr.fabrykowski.pl
 
 [haproxy]
 mgr1.mgr.fabrykowski.pl
+
+[director]
+mgr5.mgr.fabrykowski.pl
+
+[realserver]
+mgr[2:4].mgr.fabrykowski.pl
