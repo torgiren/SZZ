@@ -1,3 +1,18 @@
+- name: instalacja nfs
+  apt: name=nfs-kernel-server state=installed
+- name: tworzenie katalogu na projekty
+  file: path=/projects state=directory
+- name: konfiguracja nfs
+  copy: src=exports dest=/etc/exports
+  notify:
+    - exportfs
+    - restart_nfs
+- name: autouruchamianie nfs
+  service: name=nfs-kernel-server enabled=yes
+- name: uruchamianie nfs
+  service: name=nfs-kernel-server state=started
+- name: instalacja git
+  apt: name=git state=installed
 - name: deploy aplikacji
   git: repo={{item.value.repo}}
        dest=/projects/{{item.key}}/
