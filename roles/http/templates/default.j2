@@ -23,6 +23,7 @@ server {
                 allow all;
                 include fastcgi_params;
                 fastcgi_pass pula_{{i[5:]}};
+		fastcgi_read_timeout 60s;
         }
 }
 {%	endif %}
