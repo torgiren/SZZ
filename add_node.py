@@ -57,5 +57,5 @@ with open('/etc/hosts', 'w') as plik:
 with open('/etc/dhcp/dhcpd.conf', 'w') as plik:
 	plik.write(dns)
 os.system("/etc/init.d/isc-dhcp-server restart")
-os.system("virt-clone --connect qemu+ssh://torgiren@10.13.0.1/system --auto-clone -m {mac} -o mgr_template -n mgr{num}".format(mac=mac_from_id(n[0]), num=last))
+os.system("virt-clone --connect qemu+ssh://torgiren@10.13.0.1/system --auto-clone -m {mac} -o mgr_template_new -n mgr{num}".format(mac=mac_from_id(n[0]), num=last))
 os.system("virsh --connect qemu+ssh://torgiren@10.13.0.1/system start mgr{num}".format(num=last))
