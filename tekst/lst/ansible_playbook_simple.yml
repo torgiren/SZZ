@@ -1,0 +1,23 @@
+---
+- hosts: www
+  vars:
+    zmienna: wartosc
+  tasks:
+  - name: instalacja serwera HTTP
+    yum: name=httpd state=latest
+  - name: uruchomienie apache
+    service: name=httpd state=started
+  - name: automatyczny start przy uruchomieniu
+    service: name=httpd enabled=true
+
+- host: db
+  tasks:
+  - name: wgranie configuracji
+    template:
+      src=templates/mysql.conf.jinja2
+      dest=/etc/my.conf
+    notify:
+    - restart mysql
+  handlers:
+  - name: restart mysql
+    service: name=mysql state=restarted
