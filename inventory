@@ -14,7 +14,7 @@ mgr7
 mgr7
 
 [datastore]
-mgr0
+mgr11
 
 [workers]
 mgr2
@@ -22,6 +22,8 @@ mgr3
 mgr4
 mgr5
 mgr6
+mgr9
+mgr12
 
 [http]
 mgr1
@@ -32,12 +34,14 @@ mgr1
 mgr2
 mgr3
 mgr7
+mgr9
 
 [pula2]
 mgr4
 mgr5
 mgr6
 mgr8
+mgr12
 
 [proj_test.pl:children]
 pula1
