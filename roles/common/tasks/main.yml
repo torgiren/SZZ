@@ -6,3 +6,5 @@
   mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=present
 - name: montowanie zasobu
   mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=mounted
+- name: ustawianie hostname
+  hostname: name={{inventory_hostname}}
