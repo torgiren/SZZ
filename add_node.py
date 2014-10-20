@@ -21,7 +21,6 @@ last = c.execute('select max(id) from nodes').fetchone()[0]
 if not last:
 	last = 0
 last += 1
-last = str(last).zfill(2)
 print last
 
 
