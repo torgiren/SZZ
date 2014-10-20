@@ -3,6 +3,8 @@
 - name: instalacja konfigu
   template: src=default.j2 dest=/etc/nginx/sites-enabled/default
   notify: restart_nginx
+  tags:
+    - config
 - name: uruchaniamie nginx
   service: name=nginx state=started
 - name: autostart nginxa

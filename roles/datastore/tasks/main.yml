@@ -17,3 +17,5 @@
   git: repo={{item.value.repo}}
        dest=/projects/{{item.key}}/
   with_dict: projects
+  tags:
+    - deploy
