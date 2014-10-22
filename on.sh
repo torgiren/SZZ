@@ -10,7 +10,7 @@ else
 	cmd="brak polecenia"
 	exit
 fi
-for i in `$virsh list --all|egrep 'mgr[1-9][0-9]*'|awk '{print $2}'`;
+for i in `$virsh list --all|egrep 'mgr[0-9][0-9]*'|awk '{print $2}'|grep -v '^mgr0$'`;
 do
 	echo $i
 	$virsh $cmd $i
