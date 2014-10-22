@@ -15,7 +15,16 @@ mgr06
 mgr07
 
 
+[director]
+mgr08
+
+[realserver]
+mgr02
+mgr03
+
 [pula1]
+#lvs
+mgr08
 #nginx
 mgr02
 #php
@@ -37,5 +46,4 @@ pula1
 pula2
 
 [proj_test2.pl:children]
-pula1
 pula2
