@@ -1,5 +1,9 @@
-- include: centos.yml
-  when: ansible_os_family == "RedHat"
-- include: debian.yml
-  when: ansible_os_family == "Debian"
+#- include: centos.yml
+#  when: ansible_os_family == "RedHat"
+#- include: debian.yml
+#  when: ansible_os_family == "Debian"
 
+#- name: zapisywanie aktualnej konfiguracji
+#  command: /etc/init.d/ipvsadm save
+- include: ipvsadm.yml
+- include: ip.yml

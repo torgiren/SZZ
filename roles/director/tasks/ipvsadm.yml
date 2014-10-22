@@ -1,0 +1,7 @@
+- name: konfiguracja ipvsadm
+  template: src=ipvsadm.jinja2 dest=/etc/ipvsadm.rules
+  notify: ipvsadm load
+- name: uruchamianie ipvsdm
+  service: name=ipvsadm state=started
+- name: automatyczne uruchamianie ipvsdm
+  service: name=ipvsadm enabled=true

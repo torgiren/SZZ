@@ -1,0 +1,11 @@
+# ipvsadm.rules
+{% for i in group_names %}
+{% 	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+ipvsadm -A -t {{projects[i[5:]]['address']}}:80 -s rr
+{%	 	for r in groups[i] %}
+{%			if r in groups['http'] and 'ansible_eth0' in hostvars[r] %}
+ipvsadm -a -t {{projects[i[5:]]['address']}}:80 -r {{hostvars[r]['ansible_eth0']['ipv4']['address']}} -g -w 1
+{% 			endif %}
+{% 		endfor %}
+{%	endif%}
+{% endfor %}

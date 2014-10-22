@@ -1,0 +1,8 @@
+auto vip0
+{% for i in group_names %}
+{%	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+iface vip0 inet static
+	address {{projects[i[5:]]['address']}}
+	netmask 255.255.255.0
+{% 	endif %}
+{% endfor %}
