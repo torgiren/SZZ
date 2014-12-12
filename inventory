@@ -1,8 +1,5 @@
-#[haproxy]
-#mgr7
-
 [datastore]
-mgr01
+mgr08
 
 [http]
 mgr02
@@ -13,23 +10,30 @@ mgr04
 mgr05
 mgr06
 mgr07
+mgr12
 
 
 [director]
-mgr08
+mgr11
 
 [realserver]
 mgr02
 mgr03
 
+[haproxy]
+mgr09
+
 [pula1]
 #lvs
-mgr08
+mgr11
 #nginx
 mgr02
 #php
 mgr04
 mgr05
+mgr12
+#haproxy
+mgr09
 
 [pula2]
 #nginx
@@ -37,12 +41,14 @@ mgr03
 #php
 mgr06
 mgr07
+#haproxy
+mgr09
 
 [proj_test.pl:children]
 pula1
+pula2
 
 [proj_test.ru:children]
-pula1
 pula2
 
 [proj_test2.pl:children]

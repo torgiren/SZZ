@@ -39,6 +39,24 @@ backend {{i[5:]}}
 
 {% endfor %}
 
+{% for i in projects %}
+frontend php_{{i}}-in
+	bind 0.0.0.0:{{projects[i]['id']}}
+	default_backend php_{{i}}
+{% endfor %}
+
+{% for i in group_names %}
+{%	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+backend php_{{i[5:]}}
+	balance roundrobin
+{%	for j in groups[i] %}
+{%		if j in groups['workers'] %}
+	server {{j}} {{hostvars[j]['ansible_eth0']['ipv4']['address']}}:{{projects[i[5:]]['id']}} check
+{%		endif %}
+{%	endfor %}
+{%	endif %}
+{% endfor %}
+
 listen stats 0.0.0.0:9000       #Listen on all IP's on port 9000
     mode http
     balance

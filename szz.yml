@@ -1,4 +1,8 @@
 ---
+- hosts: all
+  tasks:
+  - ping:
+    tags: configure
 - hosts: datastore
   roles:
   - datastore

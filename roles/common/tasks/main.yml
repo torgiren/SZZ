@@ -8,5 +8,5 @@
   mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=mounted
 - name: ustawianie hostname
   hostname: name={{inventory_hostname}}
-- name: wyłączanie apt-xapian-index
-  file: path=/etc/cron.weekly/apt-xapian-index mode=0644
+#- name: wyłączanie apt-xapian-index
+#  file: path=/etc/cron.weekly/apt-xapian-index mode=0644

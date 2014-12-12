@@ -1,4 +1,4 @@
 - name: exportfs
-  command: exportfs
+  command: exportfs -a
 - name: restart_nfs
   service: name=nfs-kernel-server state=restarted

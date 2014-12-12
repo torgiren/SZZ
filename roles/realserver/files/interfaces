@@ -1,0 +1,10 @@
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+   up ip link add link eth0 name vip0 type macvlan
+   down ip link del vip0
+
+source-directory /etc/network/interfaces.d/
+
