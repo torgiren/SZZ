@@ -56,13 +56,13 @@ read -a old < /tmp/tmp_cpu.dat
 cat /proc/stat|grep -i "cpu " > /tmp/tmp_cpu.dat
 read -a new < /tmp/tmp_cpu.dat
 user=$((new[1] - old[1]))
-nice=$((new[2] - old[2))
+nice1=$((new[2] - old[2]))
 sys=$((new[3] - old[3]))
 idle=$((new[4] - old[4]))
 iowait=$((new[5] - old[5]))
 irq=$((new[6] - old[6]))
 softirq=$((new[7] - old[7]))
-overall=$((user + nice + sys + iowait + irq + softirq ))
+overall=$((user + nice1 + sys + iowait + irq + softirq ))
 sum=$((overall + idle))
 user=$((100 * user / sum))
 sys=$((100 * sys / sum))
@@ -75,5 +75,5 @@ check_cond $user $USER_CRIT 2 "CPU CRITICAL" "user"
 check_cond $iowait $IO_WARN 1 "CPU WARNING" "iowait"
 check_cond $iowait $IO_CRIT 2 "CPU CRITICAL" "iowait"
 PERF="user=$user%;$USER_WARN;$USER_CRIT;0;100 iowait=$iowait%;$IO_WARN;$IO_CRIT;0;100 overall=$overall%;$OVER_WARN;$OVER_CRIT;0;100 nice=$nice%;100;100;0;100 irc=$irq%;100;100;0;100 softirq=$softirq%;100;100;0;100"
-echo $MSG "|"$PERF
+echo $MSG"|"$PERF
 exit $RESULT
