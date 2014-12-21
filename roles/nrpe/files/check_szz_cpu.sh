@@ -10,7 +10,6 @@ OVER_CRIT=100
 IO_WARN=100
 IO_CRIT=100
 RESULT=0
-MSG="CPU OK"
 function help {
 	echo -e "Usage:\n$0 [-o warn] [-O crit] [-u warn] [-U crit] [-i warn] [-I crit]"
 	echo -e "$0 -h"
@@ -65,6 +64,7 @@ sum=$((overall + idle))
 user=$((100 * user / sum))
 sys=$((100 * sys / sum))
 overall=$((100 * overall / sum))
+MSG="CPU OK - overall $overall%"
 check_cond $overall $OVER_WARN 1 "CPU WARNING" "overall"
 check_cond $overall $OVER_CRIT 2 "CPU CRITICAL" "overall"
 check_cond $user $USER_WARN 1 "CPU WARNING" "user"
