@@ -53,14 +53,18 @@ do
 					
 		esac
 done
-stats=$(iostat -c -y 1 1|grep cpu -A1|tail -n1|tr ',' '.')
-user=$(echo $stats|awk '{print $1}')
-nice=$(echo $stats|awk '{print $2}')
-sys=$(echo $stats|awk '{print $3}')
-iowait=$(echo $stats|awk '{print $4}')
-steal=$(echo $stats|awk '{print $5}')
-idle=$(echo $stats|awk '{print $6}')
-overall=$(echo $stats|awk '{print $1+$2+$3+$4+$5}')
+read -a old < /tmp/tmp_cpu.dat
+cat /proc/stat|grep -i "cpu " > /tmp/tmp_cpu.dat
+read -a new < /tmp/tmp_cpu.dat
+user=$((new[1] - old[1]))
+sys=$((new[3] - old[3]))
+idle=$((new[4] - old[4]))
+iowait=$((new[5] - old[5]))
+overall=$((user + sys + iowait))
+sum=$((overall + idle))
+user=$((100 * user / sum))
+sys=$((100 * sys / sum))
+overall=$((100 * overall / sum))
 check_cond $overall $OVER_WARN 1 "CPU WARNING" "overall"
 check_cond $overall $OVER_CRIT 2 "CPU CRITICAL" "overall"
 check_cond $user $USER_WARN 1 "CPU WARNING" "user"
