@@ -74,6 +74,6 @@ check_cond $user $USER_WARN 1 "CPU WARNING" "user"
 check_cond $user $USER_CRIT 2 "CPU CRITICAL" "user"
 check_cond $iowait $IO_WARN 1 "CPU WARNING" "iowait"
 check_cond $iowait $IO_CRIT 2 "CPU CRITICAL" "iowait"
-PERF="'user'=$user%;$USER_WARN;$USER_CRIT;0; 'iowait'=$iowait%;$IO_WARN;$IO_CRIT;0; 'overall'=$overall%;$OVER_WARN;$OVER_CRIT;0; 'nice'=$nice%;100;100;0; 'irc'=$irq%;100;100;0; 'softirq'=$softirq%;100;100;0;"
+PERF="user=$user%;$USER_WARN;$USER_CRIT;0 iowait=$iowait%;$IO_WARN;$IO_CRIT;0 overall=$overall%;$OVER_WARN;$OVER_CRIT;0 nice=$nice%;100;100;0 irc=$irq%;100;100;0 softirq=$softirq%;100;100;0"
 echo $MSG "|"$PERF
 exit $RESULT
