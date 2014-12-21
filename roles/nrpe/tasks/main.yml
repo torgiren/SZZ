@@ -1,0 +1,12 @@
+- name: instalacja nagios-nrpe-server
+  apt: name=nagios-nrpe-server state=installed
+- name: instalacja sysstat
+  apt: name=sysstat state=installed
+- name: instalacja bc
+  apt: name=bc state=installed
+- include: checks.yml
+- include: config.yml
+- name: uruchamianie nagios-nrpe-server
+  service: name=nagios-nrpe-server enabled=True
+- name: uruchamianie nrpe
+  service: name=nagios-nrpe-server state=running
