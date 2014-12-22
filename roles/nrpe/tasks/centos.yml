@@ -1,0 +1,14 @@
+- name: instalacja nagios-nrpe-server
+  yum: name=nrpe state=latest
+- name: instalacja sysstat
+  yum: name=sysstat state=latest
+- name: instalacja bc
+  yum: name=bc state=installed
+- name: instalacja pluginów
+  yum: name=nagios-plugins-all state=latest
+- name: uruchamianie nagios-nrpe-server
+  service: name=nrpe enabled=True
+- name: uruchamianie nrpe
+  service: name=nrpe state=running
+
+

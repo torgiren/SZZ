@@ -1,10 +1,19 @@
 - name: wgrywanie commandsów
-  copy: src=szz_commands.cfg dest=/etc/nagios/nrpe.d/
+  template: src=szz_commands.cfg.jinja2 dest=/etc/nagios/nrpe.d/szz_commands.cfg
   notify: restart-nrpe
+  tags:
+  - config
 - name: zezwalanie na odpytywanie przez monitoring
-  lineinfile: dest=/etc/nagios/nrpe.cfg regexp=^allowed_hosts= line=allowed_hosts=127.0.0.1,10.13.0.0/24
+  lineinfile: dest=/etc/nagios/nrpe.cfg regexp=^allowed_hosts= line=allowed_hosts=127.0.0.1,10.13.0.0/24,2602:ffa0:200:7aa::7eb5,198.52.151.135,198.52.151.136,198.52.151.137,1.1.1.2
   notify: restart-nrpe
-- name: dont_blame_nrpe=1
-  lineinfile: dest=/etc/nagios/nrpe.cfg regexp=^dont_blame_nrpe line=dont_blame_nrpe=1
+  tags:
+  - config
+- name: includowanie checków
+  lineinfile: dest=/etc/nagios/nrpe.cfg line="include_dir=/etc/nagios/nrpe.d/" state=present
   notify: restart-nrpe
+  tags:
+  - config
+#- name: dont_blame_nrpe=1
+#  lineinfile: dest=/etc/nagios/nrpe.cfg regexp=^dont_blame_nrpe line=dont_blame_nrpe=1
+#  notify: restart-nrpe
 

@@ -1,0 +1,3 @@
+command[check_szz_cpu]=/usr/lib/nagios/plugins/check_szz_cpu.sh -u 80 -U 90 -i 80 -I 90 -o 80 -O 90
+#command[check_szz_cpu]=/usr/lib/nagios/plugins/check_szz_cpu.sh -u $ARG1$ -U $ARG2$ -i $ARG3$ -I $ARG4$ -o $ARG5$ -O $ARG6$
+command[check_szz_load]=/usr/lib/nagios/plugins/check_load -w {{ansible_processor_count * 0.8}},{{ansible_processor_count * 0.8}},{{ansible_processor_count * 0.8}} -c {{ansible_processor_count}},{{ansible_processor_count}},{{ansible_processor_count}} 

@@ -1,0 +1,14 @@
+- name: instalacja nagios-nrpe-server
+  apt: name=nagios-nrpe-server state=latest
+- name: instalacja sysstat
+  apt: name=sysstat state=latest
+- name: instalacja bc
+  apt: name=bc state=installed
+- name: dodanie repo testing
+  copy: src=test.list dest=/etc/apt/sources.list.d/test.list
+  notify: apt_update
+- name: uruchamianie nagios-nrpe-server
+  service: name=nagios-nrpe-server enabled=True
+- name: uruchamianie nrpe
+  service: name=nagios-nrpe-server state=running
+
