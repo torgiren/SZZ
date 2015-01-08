@@ -1,3 +1,15 @@
+- name: tworzenie katalogu commandsów
+  file: dest=/etc/nagios/nrpe.d state=directory
+  tags:
+  - config
+- name: tworzenie katalogu dla handlerow
+  file: dest=/usr/lib/nagios/handlers state=directory
+  tags:
+  - config
+- name: tworzenie katalogu dla sudoers
+  file: dest=/etc/sudoers.d state=directory
+- name: wgrywanie sudoers
+  copy: src=sudoers_nrpe dest=/etc/sudoers.d/nrpe
 - name: wgrywanie commandsów
   template: src=szz_commands.cfg.jinja2 dest=/etc/nagios/nrpe.d/szz_commands.cfg
   notify: restart-nrpe

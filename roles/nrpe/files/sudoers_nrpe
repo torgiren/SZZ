@@ -1,0 +1,4 @@
+Defaults:nrpe !requiretty
+Defaults:nagios !requiretty
+nrpe    ALL=NOPASSWD: /etc/init.d/nginx restart
+nagios    ALL=NOPASSWD: /etc/init.d/postgresql restart
