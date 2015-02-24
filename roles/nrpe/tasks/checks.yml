@@ -1,7 +1,12 @@
-- name: wgrywanie check_szz_cpu.sh
-  copy: src=check_szz_cpu.sh dest=/usr/lib/nagios/plugins/ mode=755
+- name: wgrywanie skryptow checkujacych
+  #copy: src=check_szz_cpu.sh dest=/usr/lib/nagios/plugins/ mode=755
+  copy: src={{item}} dest=/usr/lib/nagios/plugins/ mode=755
+  with_items:
+  - check_cpu.sh
+  - check_mem.pl
   tags:
   - files
+  - config
 #- name: wgrywanie restart_nginx.sh
 #  copy: src=restart_nginx.sh dest=/usr/lib/nagios/handlers/ mode=755
 #  tags:
