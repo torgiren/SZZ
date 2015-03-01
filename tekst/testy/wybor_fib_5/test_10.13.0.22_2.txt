@@ -1,0 +1,42 @@
+This is ApacheBench, Version 2.3 <$Revision: 1638069 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 10.13.0.22 (be patient)
+
+
+Server Software:        nginx/1.4.6
+Server Hostname:        10.13.0.22
+Server Port:            80
+
+Document Path:          /fib.php
+Document Length:        1 bytes
+
+Concurrency Level:      2
+Time taken for tests:   30.054 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      1670000 bytes
+HTML transferred:       10000 bytes
+Requests per second:    332.73 [#/sec] (mean)
+Time per request:       6.011 [ms] (mean)
+Time per request:       3.005 [ms] (mean, across all concurrent requests)
+Transfer rate:          54.26 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.5      0      14
+Processing:     0    6  17.1      1      99
+Waiting:        0    6  17.0      1      99
+Total:          1    6  17.1      1      99
+
+Percentage of the requests served within a certain time (ms)
+  50%      1
+  66%      2
+  75%      2
+  80%      2
+  90%      4
+  95%     69
+  98%     75
+  99%     77
+ 100%     99 (longest request)

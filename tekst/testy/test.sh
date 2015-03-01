@@ -11,7 +11,7 @@ do
     do
 	conc=$(echo "2^$i"|bc)
 	echo $s $conc
-	/tmp/httpd-2.4.12/support/ab  -n10000 -c $conc -e ./$1/test_${s}_${conc}.csv http://$s/fib.php > ./$1/test_${s}_${conc}.txt
+	/tmp/httpd-2.4.12/support/ab  -n10000 -c $conc -e ./$1/test_${s}_${conc}.csv http://$s/index.html > ./$1/test_${s}_${conc}.txt
 #	ab  -n10000 -c $conc -e ./$1/test_${s}_${conc}.csv http://$s/index.html > ./$1/test_${s}_${conc}.txt
     done
 
