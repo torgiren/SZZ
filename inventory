@@ -1,55 +1,29 @@
-[datastore]
-mgr08
+[backend]
+#kojos	
+#japet	
+#temida	
+#rea	
+#hyperion
 
-[http]
-mgr02
-mgr03
+[fronend]
+helios.fabrykowski.pl ansible_ssh_port=2223
+merkury
 
-[workers]
-mgr04
-mgr05
-mgr06
-mgr07
-mgr12
+[nrpe]
+venus
+kronos	ansible_ssh_port=1	ansible_ssh_host=95.85.57.200
 
+[centos]
+kronos
+merkury
+helios.fabrykowski.pl ansible_ssh_port=2223
+venus
+teja
+krios ansible_ssh_host=104.206.199.244
+#okeanos
 
-[director]
-mgr11
-
-[realserver]
-mgr02
-mgr03
-
-[haproxy]
-mgr09
-
-[pula1]
-#lvs
-mgr11
-#nginx
-mgr02
-#php
-mgr04
-mgr05
-mgr12
-#haproxy
-mgr09
-
-[pula2]
-#nginx
-mgr03
-#php
-mgr06
-mgr07
-#haproxy
-mgr09
-
-[proj_test.pl:children]
-pula1
-pula2
-
-[proj_test.ru:children]
-pula2
-
-[proj_test2.pl:children]
-pula2
+[debian]
+#fojbe
+ajgajon
+gyges
+krottos
