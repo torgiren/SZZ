@@ -17,3 +17,11 @@ projects:
 nrpe_service:
   Debian: nagios-nrpe-server
   RedHat: nrpe
+
+warn_users: 0
+crit_users: 1
+
+warn_mem: 80
+crit_mem: 90
+
+smtp_ehlo: 220 fabrykowski.pl ESMTP Postfix
