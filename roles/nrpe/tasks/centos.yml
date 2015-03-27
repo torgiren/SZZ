@@ -1,14 +1,16 @@
-- name: instalacja nagios-nrpe-server
-  yum: name=nrpe state=latest
-- name: instalacja sysstat
-  yum: name=sysstat state=latest
-- name: instalacja bc
-  yum: name=bc state=installed
-- name: instalacja pluginów
-  yum: name=nagios-plugins-all state=latest
-- name: uruchamianie nagios-nrpe-server
-  service: name=nrpe enabled=True
-- name: uruchamianie nrpe
-  service: name=nrpe state=running
-
-
+- name: instalacja orogramowania
+  yum: name={{item}} state=latest
+  with_items:
+  - nrpe
+  - sysstat
+  - bc
+  - nagios-plugins-all
+  - sudo
+  - rsyslog
+- name: uruchamianie aplikacji 
+  service: name={{item}} enabled=True state=running
+  with_items:
+  - nrpe
+  - sysstat
+  - rsyslog
+  - crond

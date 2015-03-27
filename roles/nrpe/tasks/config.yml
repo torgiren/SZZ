@@ -1,7 +1,7 @@
 - name: tworzenie katalogu commandsów
   file: dest=/etc/nagios/nrpe.d state=directory
 - name: tworzenie katalogu dla handlerow
-  file: dest=/usr/lib/nagios/handlers state=directory
+  file: dest=/usr/lib64/nagios/handlers state=directory
 - name: tworzenie katalogu dla sudoers
   file: dest=/etc/sudoers.d state=directory
 - name: wgrywanie sudoers

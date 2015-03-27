@@ -1,9 +1,11 @@
 - name: wgrywanie skryptow checkujacych
   #copy: src=check_szz_cpu.sh dest=/usr/lib/nagios/plugins/ mode=755
-  copy: src={{item}} dest=/usr/lib/nagios/plugins/ mode=755
+  copy: src={{item}} dest=/usr/lib64/nagios/plugins/ mode=755
   with_items:
   - check_cpu.sh
   - check_mem.pl
+  - check_postfix
+  - check_postfix_queue
   tags:
   - files
   - config

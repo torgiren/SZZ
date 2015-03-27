@@ -1,16 +1,37 @@
-command[check_szz_cpu]=/usr/lib/nagios/plugins/check_cpu.sh -w 80 -c 90
-#command[check_szz_cpu]=/usr/lib/nagios/plugins/check_szz_cpu.sh -u $ARG1$ -U $ARG2$ -i $ARG3$ -I $ARG4$ -o $ARG5$ -O $ARG6$
-command[check_szz_load]=/usr/lib/nagios/plugins/check_load -w {{ansible_processor_count * 0.8}},{{ansible_processor_count * 0.8}},{{ansible_processor_count * 0.8}} -c {{ansible_processor_count}},{{ansible_processor_count}},{{ansible_processor_count}} 
-command[check_szz_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -w 100 -X devtmpfs -A -I /dev/shm -I /sys/fs/cgroup -I /run -I /run/shm -I /run/lock
-command[check_szz_postgresql]=/usr/lib/nagios/plugins/check_pgsql -l nagios -H 127.0.0.1
-command[check_szz_users]=/usr/lib/nagios/plugins/check_users -w {{warn_users}} -c {{crit_users}}
-command[check_szz_named]=/usr/lib/nagios/plugins/check_procs -c 1:1  -C named
-command[check_szz_httpd]=/usr/lib/nagios/plugins/check_procs -c 1: -C httpd
-command[check_szz_nginx]=/usr/lib/nagios/plugins/check_procs -c 1: -C nginx
-command[check_szz_uwsgi]=/usr/lib/nagios/plugins/check_procs -c 1: -C uwsgi
-command[check_szz_redis]=/usr/lib/nagios/plugins/check_procs -c 1: -C redis-server
-command[check_szz_ruby]=/usr/lib/nagios/plugins/check_procs -c 1: -C ruby
-command[check_szz_mem]=/usr/lib/nagios/plugins/check_mem.pl -u -w 80 -c 90 -C
+command[check_szz_cpu]=/usr/lib64/nagios/plugins/check_cpu.sh -w 80 -c 90
+#command[check_szz_cpu]=/usr/lib64/nagios/plugins/check_szz_cpu.sh -u $ARG1$ -U $ARG2$ -i $ARG3$ -I $ARG4$ -o $ARG5$ -O $ARG6$
+command[check_szz_load]=/usr/lib64/nagios/plugins/check_load -w {{ansible_processor_count * 1.6}},{{ansible_processor_count * 0.8}},{{ansible_processor_count * 0.8}} -c {{ansible_processor_count * 2}},{{ansible_processor_count}},{{ansible_processor_count}} 
+command[check_szz_disk]=/usr/lib64/nagios/plugins/check_disk -w 10% -c 5% -w 100 -X devtmpfs -A -I /dev/shm -I /sys/fs/cgroup -I /run -I /run/shm -I /run/lock
+command[check_szz_postgresql]=/usr/lib64/nagios/plugins/check_pgsql -l nagios -H 127.0.0.1
+command[check_szz_users]=/usr/lib64/nagios/plugins/check_users -w {{warn_users}} -c {{crit_users}}
+command[check_szz_named]=/usr/lib64/nagios/plugins/check_procs -c 1:1  -C named
+command[check_szz_httpd]=/usr/lib64/nagios/plugins/check_procs -c 1: -C httpd
+command[check_szz_nginx]=/usr/lib64/nagios/plugins/check_procs -c 1: -C nginx
+command[check_szz_uwsgi]=/usr/lib64/nagios/plugins/check_procs -c 1: -C uwsgi
+command[check_szz_redis]=/usr/lib64/nagios/plugins/check_procs -c 1: -C redis-server
+command[check_szz_ssh]=/usr/lib64/nagios/plugins/check_procs -c 1: -C sshd
+command[check_szz_sslh]=/usr/lib64/nagios/plugins/check_procs -c 1: -C sslh
+command[check_szz_postgrey]=/usr/lib64/nagios/plugins/check_procs -c 1: -C postgrey
+command[check_szz_dovecot]=/usr/lib64/nagios/plugins/check_procs -c 1: -C dovecot
+command[check_szz_cron]=/usr/lib64/nagios/plugins/check_procs -c 1: -C {{cron}}
+command[check_szz_spamd]=/usr/bin/sa-check_spamd
+command[check_szz_ruby]=/usr/lib64/nagios/plugins/check_procs -c 1: -C ruby
+command[check_szz_rsyslogd]=/usr/lib64/nagios/plugins/check_procs -c 1: -C rsyslogd
+command[check_szz_prosody]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 5222 -s "test\n" -e "jabber" -j
+command[check_szz_saslauthd]=/usr/lib64/nagios/plugins/check_procs -c 1: -C saslauthd
+command[check_szz_mem]=/usr/lib64/nagios/plugins/check_mem.pl -u -w {{warn_mem}} -c {{crit_mem}} -C
+command[check_szz_postfix]=/usr/lib64/nagios/plugins/check_postfix
+command[check_szz_postfix_queue]=/usr/lib64/nagios/plugins/check_postfix_queue -w 5 -c 10
+
+command[check_szz_smtp]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 25 -s "ehlo ja" -e {{smtp_ehlo}}
+command[check_szz_smtps]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 465 -S -s "ehlo ja" -e {{smtp_ehlo}}
+command[check_szz_pop3]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 110 -e "+OK Dovecot ready"
+command[check_szz_pop3s]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 995 -S -e "+OK Dovecot ready"
+command[check_szz_imap]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 143 -e "* OK"
+command[check_szz_imaps]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 993 -S -e "* OK"
+
+command[check_szz_redmine]=/usr/lib64/nagios/plugins/check_http localhost -p 3000
+
 
 #adasd
 
