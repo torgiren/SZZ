@@ -1,3 +1,2 @@
 ---
-ansible_ssh_port: 24101
 ip_for_haproxy: 192.168.100.241

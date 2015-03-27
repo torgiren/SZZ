@@ -1,0 +1,6 @@
+---
+warn_users: 20
+crit_users: 30
+
+warn_mem: 93
+crit_mem: 96
