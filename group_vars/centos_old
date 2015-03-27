@@ -2,3 +2,4 @@
 apache: httpd
 apache_vhosts: /etc/httpd/conf.d
 haproxy_conf: /etc/haproxy/haproxy.cfg
+cron: crond

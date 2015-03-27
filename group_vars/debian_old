@@ -2,3 +2,4 @@
 apache: apache2
 apache_vhosts: /etc/apache2/sites-enabled
 haproxy_conf: /etc/haproxy/haproxy.cfg
+cron: cron
