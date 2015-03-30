@@ -325,6 +325,7 @@ Tam komunikacja następuje poprzez wirtualne interface-y na jeden maszynie, dlat
 W przypadku testowania zachowania rozwiązania na wysycenie łącza, prędkość interface-u na maszynie z \textit{directorem} zostanie ustawiona na 10Mb/s.
 Pozwoli to zasymulować sytuacje w której żądany ruch będzie większy niż możliwości łącza serwera.
 \subsection{Narzut własny LVS}
+\label{sec:lvs_narzut}
 Aby sprawdzić jakie opóźnienie generuje mechanizm LVS, skonfigurowany zostanie jeden serwer \textit{director} oraz jeden \textit{real server}.
 Porównując czasy odpowiedzi serwera WWW odpytywanego bezpośrednio oraz poprzez LVS, otrzymamy jaki wpływ na działanie ma LVS\@.
 Żądany będzie mały plik statyczny.
@@ -332,3 +333,20 @@ Porównując czasy odpowiedzi serwera WWW odpytywanego bezpośrednio oraz poprze
 
 Jak widać na rysunku~\ref{fig:one_lvs_maly}, czasy odpowiedzi serwera bezpośrednio oraz poprzez LVS nie odbiegają zbytnio od siebie.
 Różnica na wykresie jest widoczna jedynie dla jednego konkurencyjnego zapytania, jednak wartość tych czasów (0.2ms i 0.4ms) są na tyle małe, ze ta różnica może zostać pominięta.
+\subsection{Wiele real serverów}
+Rozważmy teraz przypadek, w którym mamy cztery takie same serwery WWW\@.
+Zostały skonfigurowane 3 usługi LVS\@. Tą konfiguracje przedstawia listing~\ref{lst:four_lvs_maly}.
+\footnotesize
+\lstinputlisting[caption=LVS z wieloma serwerami,label=lst:four_lvs_maly]{lst/four_lvs_maly}
+\normalsize
+Widzimy, ze każda z usług posiada inną liczę serwerów oraz posiada taki sam algorytm balansowania.
+Każdy z serwerów ma wagę 1 oraz każdy jest wykorzystywany w trybie \textit{direct routing}.
+
+\wykresy{four_lvs_maly}{Czasy odpowiedzi w zależności od ilości serverów}{four_lvs_maly}
+Wykresy~\ref{fig:four_lvs_maly} przedstawiają czasy odpowiedzi w zależności o ilości \textit{real server}-ów.
+Wymaga on trochę dokładniejszej analizy niż poprzednie wykresy.
+Dla jednego równoległego zapytania, widzimy ze czasy każdej z usług LVS są gorsze niż bezpośrednie zapytania do server WWW\@.
+Dzieje się tak dlatego, ze mając jedno równoczesne zapytanie, wykorzystywany jest tylko jeden serwer na raz, czyli jest to sytuacja tożsama z rozdziałem~\ref{sec:lvs_narzut}.\\
+W przypadku 2 połączeń, wykresy zaczynają się zbiegać, ponieważ narzut LVS zaczyna być kompensowany poprzez dystrybucję zapytań.\\
+Począwszy od czterech zapytań, zauważamy że połączenia kierowane do LVS są obsługiwane szybciej.
+Najbardziej jest to widoczne przy dużym obciążeniu serwera, tj. 128 i 256 równoległych zapytań.
