@@ -93,15 +93,84 @@ Istnieje możliwość modyfikacji domyślnego algorytmu używanego przez Nginx-a
 	\item[\texttt{slow\_start}] określa czas w jakim będzie zwiększana wartość \texttt{weight} od zera do docelowej po przejściu serwera ze stanu niedostępnego do stanu dostępnego.
 	Wartość domyślna wynosi 0, co oznacza wyłączone płynne włączanie serwera do puli.
 	\end{description}
-	\item oznaczenie konkretnych serwerów, jako serwerwy zapasowe.  
+	\item oznaczenie konkretnych serwerów, jako serwery zapasowe.  
 	Powoduje to nieprzekazywanie zapytań do tych serwerów jeżeli wszystkie serwery podstawowe odpowiadają.
 	W przypadku, gdy któryś z podstawowych serwerów zostanie oznaczony jako niedostępny, zapytania zostają przekazywane do któregoś z serwerów zapasowych.
-	Powoduje to zachowanie \textbf{wysokiej wydajności} oraz \textbf{wyskokiej dostępności}.	
+	Powoduje to zachowanie \textbf{wysokiej wydajności} oraz \textbf{wysokiej dostępności}.	
 \end{itemize}
 \subsection{Konfiguracja}
 TODO
 \section{Haproxy}
 \subsection{Czym jest haproxy}
+Haproxy jest serwerem proxy wysokiej dostępności (ang. High Availability Proxy).\\
+Posiada on dwie główne funkcjonalności, które czynią go powszechnie używanym narzędziem.
+Są nimi:\\
+\begin{itemize}
+	\item możliwość dystrybuowania ruchu na kilka maszyn, dając tym samym zwiększone możliwości obliczeniowe
+	\item wykrywanie awarii serwerów \textit{backendowych} i nieprzekazywaniem do nich zapytań aż do czasu naprawy
+\end{itemize}
+\subsubsection{Funkcjonalność wysokiej wydajności}
+Haproxy pozwala na zdefiniowanie tzw. \textit{backendu}, czyli grupy serwerów pełniących tą samą funkcje.
+Decyzja o wyborze serwera dla danego zapytania może być podjęta na podstawie jednego z kilku algorytmów.
+Poniżej znajduje się lista kilku najpopularniejszych. Pełną listę można znaleźć w dokumentacji\\
+\LARGE TODO - bibliografia\normalsize
+\begin{description}
+	\item{Round robin}\\
+		najpopularniejszy algorytm. Polega na rozdzielaniu zapytam do poszczególnych serwerów "po kolei".
+		Kryterium modulującym działanie tego algorytmu jest parametr \texttt{weight}, który jak bardzo dany serwer ma być preferowany.
+		Domyślna wartość \texttt{weight} wynosi 1. W przypadku, gdy wszystkie serwery mają takie same wartości, połączenia przekazywane są równo do każdego z nich.
+	\item{Leastconn}\\
+		wybór serwera podejmowany jest na podstawie ilości aktywnych połączeń do każdej maszyny.
+		Wybierany jest serwer z najmniejszą ilością połączeń
+	\item{Source}\\
+		serwer docelowy wybierany jest na podstawie adresu nadawcy.
+		Powoduje to, że jeden klient będzie zawsze obsługiwany przez tą samą maszynę. Pozwala to na uproszczenie obsługi sesji pomiędzy maszynami.
+\end{description}
+Ponieważ Haproxy działa w warstwie siódmej modelu OSI - czyli w warstwie aplikacji, możliwe jest również decydowanie o wyborze serwera na podstawie nagłówków zapytać HTTP.
+Na podstawie np: wartości \texttt{host} w nagłówku HTTP, haproxy jest w stanie nasłuchując na jednym porcie dystrybuować ruch na odpowiednie \textit{backendy} odpowiedzialne za różne strony.
+Przykłady takiego zastosowania zostaną przedstawione w podrozdziale "Konfiguracj"\LARGE TODO - Reflink\normalsize
+\subsubsection{Funkcjonalność wysokiej dostępności}
+Możliwości wykrywania niedostępności usługi oraz zapewnienia wysokiej dostępności były głównym celem twórców.
+Świadczyć może o tym nazwa - \textit{HAProxy}, pochodzącą od \textit{High Availability} czyli wysoka dostępność.\\
+Domyślnie haproxy nie sprawdza dostępności serwerów. Aby włączać tą funkcjonalność należy użyć parametru \texttt{check}.\\
+\texttt{Check} sprawdza pod adresem i portem zdefiniowanymi dla danego serwera udaje się ustanowić połączenie TCP.
+Jeśli tak jest, usługa jest uznawana za działającą i połączenia są kierowane na daną maszynę.\\
+Istnieją również inne predefiniowane funkcje sprawdzające, np: \texttt{httpcheck} służący do sprawdzania odpowiedzi serwera WWW pod zadanym \texttt{uri}, \texttt{smtpcheck} - sprawdza usługę \texttt{smtp}, \texttt{mysql-check} oraz \texttt{pgsql-check} do baz danych.
+Istnieje również możliwość stworzenia własnych mechanizmów sprawdzających działanie usługi, bazujące na technologii \texttt{expect}.
 \subsection{Konfiguracja}
+Na listingu  \ref{lst:haproxy_config} przedstawiono przykładową konfigurację HAProxy obsługującą zarówno wiele adresów url jak również stanowi \textit{frontend} dla \texttt{php-fpm}.
+\lstinputlisting[caption=haproxy.cfg,label=lst:haproxy_config]{lst/haproxy_config.cfg}
+W konfiguracji \textit{haproxy} wyróżniamy następujące ważne sekcje:
+\begin{description}
+	\item{\texttt{global}}\\
+		zawiera konfigurację ustawień dla procesu haproxy.
+		Umieszczane są tutaj informacje o ilości maksymalnych połączeń do procesu, \texttt{uid}-dzie bądź nazwie użytkownika i grupy z jakim należy uruchomić aplikacje, ścieżka do pliku z numerami \texttt{PID} procesów haproxy.
+	\item{\texttt{defaults}}\\
+		sekcja ta zawiera wartości domyślne dla innych sekcji.
+		Pozwala to na umieszczenie dużej części konfiguracji w jednym miejscu, co ułatwia zarządzanie nią.
+		Wartości zdefiniowane w sekcji \texttt{defaults} mogą być nadpisane w konkretnej sekcji wartością specyficzną dla danej sekcji.\\
+		Dla przykładu, można zdefiniować domyślną wartość \texttt{timeout} na 10 sekund, natomiast dla pewnego serwisu, który wykonuje długotrwałe obliczenia, można tą wartość nadpisać wartości większa.
+		Podejście takie pozwala na zachowanie zabezpieczenia przed nieodpowiadającymi procesami dla wszystkich serwisów, jednocześnie zezwalając aby serwis wykonujący długotrwałe obliczenia nie był anulowany przed uzyskaniem wyniku.
+	\item{\texttt{listen}}\\
+		definiuje usługę wysokiej dostępności. Po słowie kluczowym \texttt{listen} następuje nazwa danej usługi a następnie adres IP oraz port na którym będzie nasłuchiwać dana usługa.\\
+		Słowo kluczowe \texttt{mode} definiuje w jakim trybie ma działać dana usługa.
+		Wyróżniamy dwa tryby:
+		\begin{itemize}
+			\item \texttt{http}\\
+				tryb ten działa w warstwie siódmej i pozwala na operowanie na zmiennych zawartych w nagłówkach HTTP
+			\item \texttt{tcp}\\
+				tryb ten działa w warstwie czwartej i powinien być stosowany do wszystkich połączeń nie będących połączeniami HTTP, tj. SSH, SSL i inne.
+		\end{itemize}
+		Historycznie istniał jeszcze tryb \texttt{health}, jednak jest już przestarzały i nie zalecane jest jego używanie.\\
+		W przykładzie na listingu \ref{lst:haproxy_config} w usłudze \texttt{stats} znajdują się polecenia dające dostęp administratorowi do statystyk haproxy.
+		W ich skład wchodzi m.in:
+		\begin{itemize}
+			\item ilość wszystkich połączeń przyjętych na dany \textit{frontend}
+			\item ilość aktywnych połączeń na \textit{frontendach}
+			\item stan serwerów obsługujących \textit{backendy}
+			\item ilości połączeń na każdy serwer w \textit{backendach}
+		\end{itemize}
+		W przypadku większych instalacji, bądź potrzeby posiadania większej kontroli nad sposobem \textit{load balncingu} stosuje się strukturę rozbijającą prosty \texttt{listen} na dwie sekcje: \texttt{frontend} oraz \texttt{backend}.
+\end{description}
 \section{LVS}
 TODO
