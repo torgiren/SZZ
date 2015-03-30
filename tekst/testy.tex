@@ -4,7 +4,7 @@ Wszystkie rozwiązania testowane będą przy użyciu następującego środowiska
 \begin{description}
 \item{Maszyna fizyczna:}
     \begin{itemize}
-	\item CPU: \texttt{Intel(R) Core(TM)2 Quad CPU    Q9400  @ 2.66GHz} posiadający wsparcie dla wirtualizacji (\textit{VT-x})
+	\item CPU: \texttt{Intel(R) Core(TM)2 Quad CPU    Q9400 @ 2.66GHz} posiadający wsparcie dla wirtualizacji (\textit{VT-x})
 	\item Pamięć RAM: \texttt{8G DDR2}
 %%	\item OS: \texttt{Linux redraptor 3.18.1-gentoo \#7 SMP Wed Dec 31 02:04:37 CET 2014 x86\_64}
 	\item OS: \texttt{Gentoo Linux 64bit, kernel 3.18.1}
@@ -34,7 +34,8 @@ Wszystkie rozwiązania testowane będą przy użyciu następującego środowiska
 Aplikacje działające w \texttt{userspace}, tj. \texttt{apache, nginx, haproxy, php-fpm}, zostają uruchamiane w dedykowanych kontenerach \texttt{LXC}.
 Usługi działające w warstwie jądra, tj. \texttt{LVS} zostają uruchomione na dedykowanej maszynie wirtualnej przy użyciu \texttt{KVM}.
 \section{Wybór serwera WWW}
-W rozdziale tym zostanie przedstawione zestawienie kilku testów wydajnościowych dwóch serwerów WWW.
+\label{sec:wybor}
+W rozdziale tym zostanie przedstawione zestawienie kilku testów wydajnościowych dwóch serwerów WWW\@.
 \begin{itemize}
 \item Apache2
 \item Nginx
@@ -231,3 +232,103 @@ Na wykresach~\ref{fig:wyb_fib_5} oraz~\ref{fig:wyb_fib_15} obrazujących czasy o
 Wynika to z faktu, ze obsługą zapytań w obu przypadkach zajmuje się PHP-fpm, natomiast serwer WWW odpowiedzialny jest jedynie za przekazywanie zapytań do \textit{backendu}.
 \subsection{Podsumowanie}
 Jak wykazały testy, Nginx daje krótsze czasy odpowiedzi we wszystkich testowanych sytuacjach, dlatego został wybrany jako podstawowy serwer wykorzystywany w przedstawionym projekcie.
+\clearpage
+\section{DNS round robin}
+\subsection{Uwagi wstępne}
+Jak zostało wspomniane w rozdziale~\ref{sec:dns}, DNS round robin nie jest metodą \textit{load balancingu} a jedynie wstępną metodą dystrybucji ruchu.
+Pociąga to za sobą pewne konsekwencje.
+Przeciętna aplikacja sieciowa, np: Chrome bądź links, dokonuje rozwiązania nazwy przy pierwszym odwołaniu się do danego adresu a następnie w celu zwiększenia wydajności, \textit{cachuje} jej adres.
+Efektem tego takiego zachowania jest nawiązywanie późniejszych połączeń do tego samego adresu IP\@.
+Aplikacja \textit{Apache Benchmark} która jest wykorzystywana do testowania rozwiązań w poniższej pracy również dokonywała jednorazowego rozwiązania nazwy i łączenia się do jednego adresu, co uniemożliwiało przeprowadzenie testów wydajnościowych \textit{DNS round robin} przy użyciu tego narzędzia.
+Została zgłoszona poprawka\cite{ab_dnsrr} poprawiająca tą niedogodność.
+Testy z wykorzystaniem tej poprawki symulują łączenie się dużej liczby niezależnych użytkowników.
+
+Przy testowanie \textit{DNS round robin} nie zostanie przeprowadzona tak dokładna analiza jak przy wyborze serwera WWW, ponieważ metoda ta nie wpływa na działanie serwera WWW a jedynie na dystrybucję ruchu.
+
+W testach tych, w przeciwieństwie do wyboru serwera WWW, użyto opcji \texttt{Keep Alive} powodującej utrzymywanie połączenia i wykonywanie kolejnych bez ponownego nawiązywania połączeń TCP\@.
+W przypadku użycia poprawki~\cite{ab_dnsrr} każde połączenie jest tworzone do serwera wynikającego z technologi \textit{DNS round robin} a następnie jest ono utrzymywane aż do zakończenia programu. Liczba połączeń zależy od parametru \texttt{concurrent}
+\subsection{Testy wydajnościowe}
+Testowanie rozwiązania \textit{DNS round robin} zostanie przedstawione na odpytywaniu jedynie pliku statycznego ponieważ testy dla pozostałych treści będą analogiczne do tych przedstawionych w rozdziale~\ref{sec:wybor}.\\
+Do testów został wykorzystany \textit{DNS round robin} przedstawiony na listingu~\ref{lst:test_dnsrr}.
+\lstinputlisting[caption=DNS round robin, label=lst:test_dnsrr]{lst/test_dnsrr.bash}
+Zawiera on cztery serwery z identyczną konfiguracją.\\
+Wykresy~\ref{fig:test_dnsrr} przedstawiają czasy obsługi zapytań w przypadku pojedynczego serwera WWW oraz grupy serwerów z dystrybucją ruchu poprzez \textit{DNS round robin}.
+Na wykresach został pominięty czas najdłuższego połączenia z powodu małego wkładu informacyjnego oraz dużego stopnia zaciemniania obrazu.
+\wykresy{dnsrr}{Dystrybuja ruchu w oparciu o DNS RR}{test_dnsrr}
+Tabela~\ref{tab:test_dnsrr} przedstawia liczbę obsłużonych zapytań na sekundę.
+\begin{table}[h]
+\centering
+\begin{tabular}{cccc}
+	\toprule
+	Liczba połączeń & Nginx & DNS RR & Przyrost\\
+	\midrule
+	\midrule
+	1&2571&4301& +67\%\\
+	\midrule
+	2&2001&5458& +172\%\\
+	\midrule
+	4&1353&6264& +362\%\\
+	\midrule
+	8&1704&7582& +344\%\\
+	\midrule
+	16&2097&8720& +315\%\\
+	\midrule
+	32&2133&7484& +250\%\\
+	\midrule
+	64&1968&10617& +439\%\\
+	\midrule
+	128&1945&10194& +424\%\\
+	\midrule
+	256&2190&9821& +348\%\\
+	\bottomrule
+\end{tabular}
+\caption{Obsłużonych zapytań na sekundę}
+\label{tab:test_dnsrr}
+\end{table}
+\subsection{Podsumowanie}
+Jak można zaobserwować na wykresach, użycie dystrybucji ruchy zmniejsza czasy oczekiwania na przetworzenie zapytań.\\
+Dane przedstawione w tabeli~\ref{tab:test_dnsrr} pokazują, iż użycie czterech serwerów zamiast jednego daje w większości przypadków przyrost ok 300\%, co jest wartością oczekiwaną, ponieważ przy użyciu trzech dodatkowych serwerów oczekujemy trzykrotnego przyrostu wydajności.\\
+W przypadku jednego równoległego połączenia oczekiwanym przyrostem były przyrost 0\% ponieważ wykonywane jest jedno połączenie, jednak specyfika serwera Nginx jest taka, że po przyjęciu stu połączeń w trybie \texttt{Keep-Alive} zamyka on połączenie.
+Następuje wtedy nawiązanie kolejnego, które zostaje przekierowane do kolejnego serwera z puli \textit{DNS round robin}.
+Jest to przyczyną zwiększonego przyrostu dla jednego i dwóch równoległych połączeń.\\
+Przy liczbie połączeń cztery i więcej powyższy efekt nie ma znaczenia, ponieważ w obsłudze zapytań biorą udział wszystkie serwery.
+\section{LVS}
+W tej sekcji przetestowany zostanie LVS w trybie \textit{direct routing}, ponieważ jest on najrozsądniejszym trybem.
+Testom poddany zostanie narzut wynikający z użycia LVS, jak również przetestowane zostaną rozwiązanie bliższe rzeczywistości, czyli zawierające kilka \textit{real server}-ów.
+Ponadto, sprawdzone zostanie zachowanie LVS w warunkach nieidealnych, tj.\ w przypadku awarii jednego z \textit{real server}-ów oraz w przypadku wysycenia łącza.
+\subsection{Uwagi dotyczące urządzeń sieciowych}
+\label{sub:uwagi_sieciowe}
+Ponieważ w omawianym rozwiązaniu występuje jeden węzeł do którego nawiązywane są połączenia, parametry łącza są w tym przypadku (w przeciwieństwie do DNS round robin gdzie klient łączy się do różnych serwerów) istotne.
+\begin{description}
+	\item{Maszyna z \textit{directorem}}
+		\begin{itemize}
+			\item Wirtualizowany sterownik karty sieciowej: rtl8139
+			\item Szybkość karty podawana przez ethtool: 100Mb/s
+		\end{itemize}
+	\item{Maszyna z LXC}
+		\begin{itemize}
+			\item Wirtualizowany sterownik karty sieciowej: virtio
+			\item Szybkość karty podawana przez ethtool: Brak
+		\end{itemize}
+	\item{Maszyna z Nginx}
+		\begin{itemize}
+			\item Wirtualizowany sterownik karty sieciowej: wirtualny interface hosta
+			\item Szybkość karty podawana przez ethtool: 10000Mb/s
+		\end{itemize}
+\end{description}
+Na uwagę zasługują tutaj parametry maszyny będącej hostem dla LXC\@.
+Użycie sterownika \texttt{virtio} pozwala maszynie wirtualizowanej komunikować się z maszyną hostującą bez emulacji konkretnych sterowników sieciowych, lecz już na poziomie jądra.
+Dlatego nie jest możliwe określenie prędkości takiego interface-u, ponieważ zasada jego działania jest inna niż rzeczywistych kart sieciowych.\\
+Podobnie sytuacja wygląda dla kontenerów LXC\@.
+Tam komunikacja następuje poprzez wirtualne interface-y na jeden maszynie, dlatego prędkość podana przez \texttt{ethtool} wynosi 10Gb/s.
+
+W przypadku testowania zachowania rozwiązania na wysycenie łącza, prędkość interface-u na maszynie z \textit{directorem} zostanie ustawiona na 10Mb/s.
+Pozwoli to zasymulować sytuacje w której żądany ruch będzie większy niż możliwości łącza serwera.
+\subsection{Narzut własny LVS}
+Aby sprawdzić jakie opóźnienie generuje mechanizm LVS, skonfigurowany zostanie jeden serwer \textit{director} oraz jeden \textit{real server}.
+Porównując czasy odpowiedzi serwera WWW odpytywanego bezpośrednio oraz poprzez LVS, otrzymamy jaki wpływ na działanie ma LVS\@.
+Żądany będzie mały plik statyczny.
+\wykresy{one_lvs_maly}{Narzut własny LVS}{one_lvs_maly}
+
+Jak widać na rysunku~\ref{fig:one_lvs_maly}, czasy odpowiedzi serwera bezpośrednio oraz poprzez LVS nie odbiegają zbytnio od siebie.
+Różnica na wykresie jest widoczna jedynie dla jednego konkurencyjnego zapytania, jednak wartość tych czasów (0.2ms i 0.4ms) są na tyle małe, ze ta różnica może zostać pominięta.
