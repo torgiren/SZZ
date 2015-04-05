@@ -226,3 +226,19 @@ Jest to metoda zapewniająca wyłącznie wysoką wydajność.
 Istnieją rozwiązania współpracujące z LVS dodające funkcjonalność wykrywania niedostępności usługi na \textit{real server}-ach i wypinające je z konfiguracji LVS.\\
 Te rozwiązania są jednak poza zakresem niniejszej pracy.
 \subsection{Konfiguracja}
+Konfiguracja LVS obejmuje stworzenie tablicy określającej adres oraz port działania usługi.\\
+Następnie należy dodać \textit{real server}-y należące do tego LVS.
+Przykładową konfigurację LVS przedstawia listing \ref{lst:lvs_config}.
+\lstinputlisting[caption=LVS,label=lst:lvs_config]{lst/lvs_director_config}
+Konfiguracja \ref{lst:lvs_config} przedstawia utworzenie usługi nasłuchującej na adresie \texttt{10.13.0.101} oraz porcie \texttt{80}.
+Oraz wykorzystujący algorytm \textit{round robin} do rozdzielania połączeń.\\
+Następnie do nowo utworzonej usługi dodane zostają cztery \textit{real erver}-y.
+Domyślnym trybem dodawania \textit{real server}-ów jest \textit{direct routing}.
+
+Należy jeszcze pamiętać o dodaniu odpowiednich adresów do interfejsów sieciowych.\\
+Dla \textit{director}-a listing \ref{lst:lvs_addr_dir}
+\lstinputlisting[caption=konfiguracja adresacji dla directora,label=lst:lvs_addr_dir]{lst/lvs_addr_dir}
+Dla \textit{real server}-a należy jeszcze pamiętać o problemie z ARP.
+Jednym ze sposobów jest użycie \texttt{ARPtables}, listing \ref{lst_lvs_addr_real}
+\lstinputlisting[caption=konfiguracja adresacji dla real servera,label=lst:lvs_addr_root]{lst/lvs_addr_real}
+Zapis konfiguracji adresacji \textit{na stałe} jest zależny od systemu operacyjnego.

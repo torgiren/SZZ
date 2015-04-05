@@ -1,0 +1,2 @@
+ip addr add 10.13.0.101 dev lo
+arptables -A OUTPUT -s 10.13.0.101 -j DROP
