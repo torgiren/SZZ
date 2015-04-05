@@ -127,7 +127,7 @@ Poniżej znajduje się lista kilku najpopularniejszych. Pełną listę można zn
 \end{description}
 Ponieważ Haproxy działa w warstwie siódmej modelu OSI - czyli w warstwie aplikacji, możliwe jest również decydowanie o wyborze serwera na podstawie nagłówków zapytać HTTP.
 Na podstawie np: wartości \texttt{host} w nagłówku HTTP, haproxy jest w stanie nasłuchując na jednym porcie dystrybuować ruch na odpowiednie \textit{backendy} odpowiedzialne za różne strony.
-Przykłady takiego zastosowania zostaną przedstawione w podrozdziale "Konfiguracj"\LARGE TODO - Reflink\normalsize
+Przykłady takiego zastosowania zostaną przedstawione w podrozdziale "\ref{sec:haproxy_config} Konfiguracja"
 \subsubsection{Funkcjonalność wysokiej dostępności}
 Możliwości wykrywania niedostępności usługi oraz zapewnienia wysokiej dostępności były głównym celem twórców.
 Świadczyć może o tym nazwa - \textit{HAProxy}, pochodzącą od \textit{High Availability} czyli wysoka dostępność.\\
@@ -137,6 +137,7 @@ Jeśli tak jest, usługa jest uznawana za działającą i połączenia są kiero
 Istnieją również inne predefiniowane funkcje sprawdzające, np: \texttt{httpcheck} służący do sprawdzania odpowiedzi serwera WWW pod zadanym \texttt{uri}, \texttt{smtpcheck} - sprawdza usługę \texttt{smtp}, \texttt{mysql-check} oraz \texttt{pgsql-check} do baz danych.
 Istnieje również możliwość stworzenia własnych mechanizmów sprawdzających działanie usługi, bazujące na technologii \texttt{expect}.
 \subsection{Konfiguracja}
+\label{sec:haproxy_config}
 Na listingu  \ref{lst:haproxy_config} przedstawiono przykładową konfigurację HAProxy obsługującą zarówno wiele adresów url jak również stanowi \textit{frontend} dla \texttt{php-fpm}.
 \lstinputlisting[caption=haproxy.cfg,label=lst:haproxy_config]{lst/haproxy_config.cfg}
 W konfiguracji \textit{haproxy} wyróżniamy następujące ważne sekcje:
