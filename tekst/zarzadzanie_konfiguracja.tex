@@ -325,7 +325,8 @@ Dzięki temu nie ma potrzeby restartować bazy danych przy każdym uruchomieniu 
 Podczas, gdy w trybie \textit{ad-hoc} wykonanie jakieś modułu miało na celu wykonanie jakiejś operacji oraz zmiana stanu serwera, tak w przypadku \textit{playbook}-ów, dąży się aby wywołanie zwracało jak najwięcej stanów \texttt{ok} oraz jak najmniej \textit{changed}.
 Stan \texttt{ok} oznacza, że stan serwera jest zgodny z naszymi założeniami i nie ma potrzeby podejmować żadnych kroków.
 Stan \texttt{changed} pojawia się w przypadku zmian w konfiguracji jakiś usług, bądź w przypadku ingerencji manualnej administratora lub nieoczekiwanego zachowania aplikacji, np: wystąpienia błędu powodującego wyłączenie się aplikacj.\\
-\Large TODO: uruchamianie playbooka \normalsize
+Uruchomienie \textit{playbook}-a następuje poprzez polecenie \texttt{ansible-playbook} oraz podanie jako parametru nazwy pliku zawierającego konfigurację żądanego \textit{playbook}-a.
+Dodatkowo, do wywołania można dodać parametry sterujące wykonywaniem \textit{playbook}-a. M.in. liczbę równoległych połączeń, wskazać plik \texttt{inventory} bądź ograniczenie wykonywanych \textit{task}-ów tylko do tych oznaczonym określonymi \textit{tag}-ami.
 \subsubsection{Role}
 Jak łatwo zauważyć, w poprzednim przykładzie wykonaliśmy cztery operacje angażujące dwie grupy serwerów a plik zawierał 23 linijki kodu.
 Można w prosty sposób estymować, że rzeczywisty \textit{playbook} będzie tych linii zawierał kilkaset bądź więcej, co sprawi ze jego czytanie i utrzymywanie stanie się bardzo trudne, jeśli nie niemożliwe.
