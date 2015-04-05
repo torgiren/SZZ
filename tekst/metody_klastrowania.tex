@@ -170,6 +170,58 @@ W konfiguracji \textit{haproxy} wyróżniamy następujące ważne sekcje:
 			\item ilości połączeń na każdy serwer w \textit{backendach}
 		\end{itemize}
 		W przypadku większych instalacji, bądź potrzeby posiadania większej kontroli nad sposobem \textit{load balncingu} stosuje się strukturę rozbijającą prosty \texttt{listen} na dwie sekcje: \texttt{frontend} oraz \texttt{backend}.
+	\item{\texttt{frontend}}\\
+		\texttt{Frontend} odpowiedzialny jest za przyjmowanie i analizę połączeń od użytkownika.
+		W sekcji tej znajduje znajduje się podzbiór poleceń z sekcji \texttt{listen} dotyczących opcji nasłuchiwania, takich jak adres oraz port, sposobu traktowania ruchu (http, tcp) jak również polecenia mogące analizować ruch w celu odpowiedniego jego obsłużenia.
+		Noszą one nazwę \textit{ACL (and. Access Control List)}.
+		Reguły ACL potrafią analizować ruch począwszy od warstwy czwartej do warstwy siódmej.\\
+		Dla ruchu HTTP istnieje możliwość analizy nagłówków oraz rozdział połączań na różne serwery w zależności od pola \texttt{Host}, adresu \texttt{url} bądź metody żądania.
+		Dla ruchu HTTPS istnieje możliwość konfiguracji ACL dla żądanego hosta dzięki technologi SNI \textit{ang. Server Name Indication} - technologia pozwalająca na odczytywanie wartości żądanego hosta w połączeniach HTTPS.
+		Wykorzystywana w celu uruchamiania wielu adresów WWW na jednym porcie przy szyfrowaniu SSL.\\
+		Po zdefiniowaniu ACL, istnieje możliwość zdefiniowania użycia konkretnego \texttt{backend}-u w zależności od przypisania do ACL.\\
+		Dodatkowo, oprócz wyboru odpowiedniego \texttt{backend}-u istnieje możliwość odrzucania połączeń spełniających warunki ACL - np: zbyt duża ilość połączeń.
+	\item{\texttt{backend}}\\
+		Sekcja ta definiuje zaplecze serwerowe, tj. listę serwerów do których ma być kierowany ruch.
+		Są tutaj w mocy wszystkie polecenia które mogą znaleźć się w sekcji \texttt{listen} które tyczą się serwerów obsługujących, czyli m.in. algorytm rozdziału połączeń czy specyficzne metody sprawdzania dostępności serwera.
 \end{description}
 \section{LVS}
-TODO
+\subsection{Czym jest LVS}
+LVS (\textit{ang. Linux Virtual Server}) jest technologią pozwalającą na tworzenie klastrów bazujących na systemach GNU/Linux.
+Metoda ta jest bardzo wysoko skalowalna przy małym obciążeniu procesora.\\
+Trzeba mieć na uwadze, że LVS nie możliwości współbieżnego przetwarzania operacji, a jedynie dystrybucję połączeń pomiędzy wiele serwerów.
+\subsection{Opis metody}
+LVS jest technologią działającą w czwartej warstwie modelu OSI, tj. w warstwie transportowej.
+Zakłada ona istnienie dwóch typów serwerów w klastrze:
+\begin{description}
+	\item{\textit{Director}}\\
+		Jest to serwer zarządzający. Występuje jeden w klastrze.
+		To do niego kierowane są połączenia klienckie.
+	\item{\textit{Real Server}}\\
+		Jest to serwer z właściwą usługą. W klastrze może występować ich wiele.
+		Odpowiedzialne są za przetwarzanie zapytań od klienta.
+\end{description}
+LVS może działać w jednym z trzech trybów:
+\begin{description}
+	\item{\textit{NAT}}\\
+		W tym trybie zapytania przychodzące od klienta do \textit{Directora} zostają znatowane na adres jednego z \textit{Real server}-ów.
+		Po obsłużeniu zapytania, \textit{real server} przekazuje odpowiedź do \textit{director}-a który następnie przekazuje odpowiedź do klienta.\\
+		Tłumaczenie pakietów wymaga pewnej mocy obliczeniowej, ponadto \textit{director} uczestniczy w przesyłaniu zapytania oraz odpowiedzi, co sprawia, że tryb NAT ma ograniczoną skalowalność ograniczoną mocą procesora oraz łącza internetowego.
+	\item{\textit{Direct Routing}}\\
+		Tryb ten jest wolny od problemów z mocą obliczeniową oraz utylizacją łącza występujących w przypadku trybu NAT.\\
+		W przypadku \textit{direct routing}-u \textit{real server}-y posiadają dodatkowe adresy IP, takie same jak adresy IP używane do \textit{load balancingu} na \textit{directorze} jednak \textit{real server} musi być tak skonfigurowany aby nie odpowiadał na zapytania ARP o te adresy.\\
+		Gdy pakiet dochodzi do \textit{directora}, zostaje on przekazany w niezmienionej formie (od trzeciej warstwy wzwyż) do jednego z \textit{real server}-ów. \textit{Director} musi mieć możliwość bezpośredniego połączenia z \textit{real server}-em aby móc opakować pakiet w odnowienie nagłówki warstwy drugiej.
+		Ponieważ \textit{real server} posiada dodatkowy adres IP, pakiet przekazany przez \textit{director}-a jest akceptowany ponieważ adres docelowy w pakiecie zgadza się z adresem posiadanym przez \textit{real server}.
+		Po przyjęciu pakiety, \textit{real server} odpowiada na niego na adres źródłowy zawarty w pakiecie, czyli bezpośrednio do klienta - omijając \textit{director}-a.
+		Następnie, klient wysyłając kolejne kieruje je do \textit{director}-a, który śledząc połączenia, przekazuje je zawsze do odpowiedniego \textit{real server}-a.
+
+		Powyższa procedura powoduje, iż \textit{director} nie jest obciążany obliczaniem adresacji dla NAT, gdyż przekazuje pakiety w niezmienionej formie, oraz zmniejsza utylizacje łącza, ponieważ na łączy \textit{director}-a przesyłane są jedynie pakiety z żądaniami (na wejściu - od klienta, i na wyjściu - do \textit{real server}-a), natomiast pakiety z odpowiedzią, np: HTTP, które są zwykle znacznie większe niż zapytania, są przesyłane łączami używanymi przez \textit{real server}-y.
+		W efekcie, metoda ta jest wysoko skalowalna.
+	\item{\textit{IP tunneling}}\\
+		Tryb ten działa identycznie jak \textit{direct routing}, z tą różnicą, ze \textit{director} oraz \textit{real server}-y nie znajdują się w jednej fizycznej sieci, lecz są spięte jakimś tunelem.
+\end{description}
+
+Należy zwrócić uwagę, że LVS nie posiada żadnego wbudowanego systemu zapewniającego wysoką dostępność.
+Jest to metoda zapewniająca wyłącznie wysoką wydajność.
+Istnieją rozwiązania współpracujące z LVS dodające funkcjonalność wykrywania niedostępności usługi na \textit{real server}-ach i wypinające je z konfiguracji LVS.\\
+Te rozwiązania są jednak poza zakresem niniejszej pracy.
+\subsection{Konfiguracja}
