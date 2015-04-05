@@ -220,8 +220,17 @@ LVS może działać w jednym z trzech trybów:
 	\item{\textit{IP tunneling}}\\
 		Tryb ten działa identycznie jak \textit{direct routing}, z tą różnicą, ze \textit{director} oraz \textit{real server}-y nie znajdują się w jednej fizycznej sieci, lecz są spięte jakimś tunelem.
 \end{description}
+LVS wpiera kilka algorytmów rozdzielających zapytania. Najważniejsze z nich to:
+\begin{description}
+	\item{\textit{round robin}}\\
+		Połączenia rozdzielane są po równo do każdego serwera.
+	\item{\textit{weighted round robin}}\\
+		Połączenia rozdzielane są do każdego serwera w proporcji określonej wagami każdego z węzłów.
+	\item{\textit{least-connection}}\\
+		Połączenia są przekazywane do serwera z najmniejszą liczbą aktywnych połączeń
+\end{description}
 
-Należy zwrócić uwagę, że LVS nie posiada żadnego wbudowanego systemu zapewniającego wysoką dostępność.
+LVS nie posiada żadnego wbudowanego systemu zapewniającego wysoką dostępność.
 Jest to metoda zapewniająca wyłącznie wysoką wydajność.
 Istnieją rozwiązania współpracujące z LVS dodające funkcjonalność wykrywania niedostępności usługi na \textit{real server}-ach i wypinające je z konfiguracji LVS.\\
 Te rozwiązania są jednak poza zakresem niniejszej pracy.
@@ -239,6 +248,6 @@ Należy jeszcze pamiętać o dodaniu odpowiednich adresów do interfejsów sieci
 Dla \textit{director}-a listing \ref{lst:lvs_addr_dir}
 \lstinputlisting[caption=konfiguracja adresacji dla directora,label=lst:lvs_addr_dir]{lst/lvs_addr_dir}
 Dla \textit{real server}-a należy jeszcze pamiętać o problemie z ARP.
-Jednym ze sposobów jest użycie \texttt{ARPtables}, listing \ref{lst_lvs_addr_real}
-\lstinputlisting[caption=konfiguracja adresacji dla real servera,label=lst:lvs_addr_root]{lst/lvs_addr_real}
+Jednym ze sposobów jest użycie \texttt{ARPtables}, listing \ref{lst:lvs_addr_real}
+\lstinputlisting[caption=konfiguracja adresacji dla real servera,label=lst:lvs_addr_real]{lst/lvs_addr_real}
 Zapis konfiguracji adresacji \textit{na stałe} jest zależny od systemu operacyjnego.
