@@ -82,6 +82,7 @@ Po połączeniu się do zdalnego hosta, następuje sprawdzenie czy istnieje plik
 W wyniku wykonywania widzimy, ze plik \texttt{/var/problem} istniał tylko na serwerze o adresie IP \texttt{192.168.0.12} i zawierał tekst \textit{zasob byl podmontowany}.
 \section{Puppet}
 \subsection{Opis}
+\label{sec:puppet_opis}
 Puppet jest jednym z najbardziej rozpowszechnionych systemów do zarządzania konfiguracją.
 U podstaw ideologii działania puppeta stoi definicja oczekiwanego stanu serwera.
 Administrator definiuje oczekiwany stan systemu, np: istnienie użytkownika o podanych parametrach, bądź istnienie pliku o zadanej zawartości, a puppet dąży do uzyskania takiego stanu - stworzy użytkownika lub plik taki aby spełniał zadane wymagania.\\
@@ -116,8 +117,32 @@ Wady:
 	\item skomplikowana instalacja
 \end{itemize}
 
-\section{CFEngine3}
-O tym może coś napiszę jak doczytam
+\section{CFEngine}
+\subsection{Opis}
+CFEngine jest jednym z najstarszych systemów do zarządzania konfiguracją.
+Powstał z myślą o systemach w których nie jest zapewniona dostateczna jakoś łącza, np: łodzie podwodne.
+
+Z racji swojego wieku, architektura CFEngine, w odpowiedzi na zmieniające się potrzeby systemów, ulegała zmianom.
+Aktualnie rozwijana jest trzecia generacja CFEngine.
+Kolejne generacje starały się upraszczać składnie konfiguracji oraz zwiększać możliwości oferowane przez oprogramowanie.
+
+CFEngine opiera się na "Teorii obietnic".
+Jest to teoria stojąca u podstaw wszystkich systemów zarządzania konfiguracją. W celu opisu teorii obietnic por. z \ref{sec:puppet_opis}.
+
+CFEngine, podobnie jak Puppet działa w trybie \textit{pull}, czyli agent pobiera dane z centralnego serwera.
+W przeciwieństwie do Puppeta, CFEngine zapisuje pobrane \textit{polityki} na lokalnej maszynie, dzięki czemu w przypadku braku łącza do maszyny centralnej, jest w stanie kontrolować i ewentualnie korygować konfigurację maszyny w stanie offline.
+\subsection{Zalety i Wady}
+Zalety:
+\begin{itemize}
+	\item dojrzałość projektu
+	\item odporność na przerwy w działaniu łącza
+	\item bardzo duża skalowalność
+\end{itemize}
+Wady:
+\begin{itemize}
+	\item trudna konfiguracja
+	\item trudna instalacja
+\end{itemize}
 \section{Ansible}
 \subsection{Opis}
 Ansible jest również narzędziem do zarządzania konfiguracja serwerów. Został napisany w języku Python i w przeciwieństwie do poprzedników nie wymaga instalacji żadnego oprogramowania na maszynach klienckich.
