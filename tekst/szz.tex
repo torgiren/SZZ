@@ -1,0 +1,97 @@
+\documentclass[a4paper,12pt,oneside]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{polski}
+\usepackage{polski}
+\usepackage{color}
+\usepackage{helvet}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{indentfirst}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{nameref}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+\usepackage{multirow}
+\usepackage{booktabs}
+\geometry{hmargin={2cm, 2cm}, height=10.0in}
+\assignpagestyle{\chapter}{empty}
+\newcommand{\param}[1]{\textit{\textless #1\textgreater}}
+
+%konfiguracja listingow
+\usepackage{listings}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{basicstyle=\footnotesize\ttfamily}
+\newcommand{\wykresy}[3] {
+	\begin{figure}
+		\centering
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_1.png}
+			\caption{1 równoległe zapytanie}
+		\end{subfigure}
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_2.png}
+			\caption{2 równoległe zapytania}
+		\end{subfigure}
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_4.png}
+			\caption{4 równoległe zapytania}
+		\end{subfigure}
+
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_8.png}
+			\caption{8 równoległych zapytań}
+		\end{subfigure}
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_16.png}
+			\caption{16 równoległych zapytań}
+		\end{subfigure}
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_32.png}
+			\caption{32 równoległe zapytania}
+		\end{subfigure}
+
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_64.png}
+			\caption{64 równoległe zapytania}
+		\end{subfigure}
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_128.png}
+			\caption{128 równoległe zapytania}
+		\end{subfigure}
+		\begin{subfigure}[h]{0.3\textwidth}
+			\includegraphics[width=\textwidth]{testy/#1_256.png}
+			\caption{256 równoległych zapytań}
+		\end{subfigure}
+		\caption{#2}\label{fig:#3}
+	\end{figure}
+}
+
+
+\title{System zautomatyzowanego zarządzania konfiguracją farmy serwerów aplikacji WWW}
+\author{Marcin TORGiren Fabrykowski}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\begin{document}
+\nocite{*}
+%\bibliographystyle{plain}
+\bibliographystyle{amsplain}
+\include{title}
+\include{wstep}
+\include{wstep_do_klastrowania}
+\include{metody_klastrowania}
+\include{zarzadzanie_konfiguracja}
+\include{testy}
+\include{podsumowanie}
+\addcontentsline{toc}{chapter}{Bibliografia}
+\bibliography{szz}
+\newpage
+\addcontentsline{toc}{chapter}{Spis rysunków}
+\listoffigures 
+\end{document}

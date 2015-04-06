@@ -1,0 +1,31 @@
+(env)mgr@mgr0:~/SZZ$ ansible all -m shell -a "cat /etc/resolv.conf|grep nameserver"
+mgr7 | FAILED => SSH encountered an unknown error during the connection. We recommend
+	you re-run the command using -vvvv, which will enable SSH debugging output
+	to help diagnose the issue
+mgr9 | FAILED => SSH encountered an unknown error during the connection. We recommend
+	you re-run the command using -vvvv, which will enable SSH debugging output
+	to help diagnose the issue
+mgr6 | FAILED => SSH encountered an unknown error during the connection. We recommend
+	you re-run the command using -vvvv, which will enable SSH debugging output
+	to help diagnose the issue
+mgr5 | FAILED => SSH encountered an unknown error during the connection. We recommend
+	you re-run the command using -vvvv, which will enable SSH debugging output
+	to help diagnose the issue
+mgr8 | FAILED => SSH encountered an unknown error during the connection. We recommend
+	you re-run the command using -vvvv, which will enable SSH debugging output
+	to help diagnose the issue
+mgr4 | success | rc=0 >>
+nameserver 10.13.0.1
+
+mgr2 | success | rc=0 >>
+nameserver 10.13.0.1
+
+mgr3 | success | rc=0 >>
+nameserver 10.13.0.1
+
+mgr1 | success | rc=0 >>
+nameserver 10.13.0.1
+
+mgr0 | success | rc=0 >>
+nameserver 8.8.8.8
+

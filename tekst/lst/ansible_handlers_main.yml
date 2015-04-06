@@ -1,0 +1,2 @@
+- name: restart_http
+  service: name={{apache}} state=restarted

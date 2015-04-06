@@ -1,0 +1,17 @@
+$TTL 3600
+;
+@       IN SOA  mgr.fabrykowski.pl.     root.mgr.fabrykowski.pl. (
+                2014071700      ;serial
+                2H              ;refresh
+                30M             ;retry
+                2w1d            ;expiry
+                1h )            ;minimum
+;
+        IN NS   fabrykowski.pl.
+
+;
+@       IN A    95.85.57.200
+rr      IN A 10.13.0.100
+        IN A 10.13.0.101
+        IN A 10.13.0.102
+

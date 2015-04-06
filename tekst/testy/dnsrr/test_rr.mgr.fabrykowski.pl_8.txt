@@ -1,0 +1,43 @@
+This is ApacheBench, Version 2.3 <$Revision: 1638069 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking rr.mgr.fabrykowski.pl (be patient)
+
+
+Server Software:        nginx/1.4.6
+Server Hostname:        rr.mgr.fabrykowski.pl
+Server Port:            80
+
+Document Path:          /index.html
+Document Length:        Variable
+
+Concurrency Level:      8
+Time taken for tests:   1.319 seconds
+Complete requests:      10000
+Failed requests:        0
+Keep-Alive requests:    9904
+Total transferred:      2709520 bytes
+HTML transferred:       270000 bytes
+Requests per second:    7582.46 [#/sec] (mean)
+Time per request:       1.055 [ms] (mean)
+Time per request:       0.132 [ms] (mean, across all concurrent requests)
+Transfer rate:          2006.33 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.1      0       7
+Processing:     0    1   3.7      0      66
+Waiting:        0    1   3.7      0      66
+Total:          0    1   3.7      0      66
+
+Percentage of the requests served within a certain time (ms)
+  50%      0
+  66%      1
+  75%      1
+  80%      1
+  90%      2
+  95%      3
+  98%      6
+  99%     12
+ 100%     66 (longest request)

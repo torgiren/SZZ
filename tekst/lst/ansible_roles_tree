@@ -1,0 +1,12 @@
+roles
+|- role1
+|  |- files
+|  |- templates
+|  |- tasks
+|  |- handlers
+|  |- vars
+|  |- meta
+|- role2
+|  |- templates
+|  |- tasks
+|  |- handlers
