@@ -13,15 +13,3 @@ projects:
     id: 9007
     repo: 'https://github.com/torgiren/mgr_test1.git'
     address: 10.13.0.103
-
-nrpe_service:
-  Debian: nagios-nrpe-server
-  RedHat: nrpe
-
-warn_users: 0
-crit_users: 1
-
-warn_mem: 80
-crit_mem: 90
-
-smtp_ehlo: 220 fabrykowski.pl ESMTP Postfix

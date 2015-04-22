@@ -10,16 +10,16 @@ helios.fabrykowski.pl ansible_ssh_port=2223
 merkury
 
 [nrpe]
-venus
+#venus
 kronos	ansible_ssh_port=1	ansible_ssh_host=95.85.57.200
 
 [centos]
 kronos
 merkury
 helios.fabrykowski.pl ansible_ssh_port=2223
-venus
 teja
 krios ansible_ssh_host=104.206.199.244
+hyperion
 #okeanos
 
 [debian]
