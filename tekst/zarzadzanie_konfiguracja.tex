@@ -81,11 +81,68 @@ W przypadku nie podania parametru \texttt{-z}, aplikacja wykona liczbę równole
 Po połączeniu się do zdalnego hosta, następuje sprawdzenie czy istnieje plik \texttt{/var/problem}. W przypadku wykrycia istnienia takiego pliku, zostaje wywołane polecenie powłoki \texttt{cat}.
 W wyniku wykonywania widzimy, ze plik \texttt{/var/problem} istniał tylko na serwerze o adresie IP \texttt{192.168.0.12} i zawierał tekst \textit{zasob byl podmontowany}.
 \section{Puppet}
-Aż się nie chce tego tykać
-\section{Chef}
-Tego też
-\section{CFEngine3}
-O tym może coś napiszę jak doczytam
+\subsection{Opis}
+\label{sec:puppet_opis}
+Puppet jest jednym z najbardziej rozpowszechnionych systemów do zarządzania konfiguracją.
+U podstaw ideologii działania puppeta stoi definicja oczekiwanego stanu serwera.
+Administrator definiuje oczekiwany stan systemu, np: istnienie użytkownika o podanych parametrach, bądź istnienie pliku o zadanej zawartości, a puppet dąży do uzyskania takiego stanu - stworzy użytkownika lub plik taki aby spełniał zadane wymagania.\\
+Puppet został napisany w języku Ruby, co wpływa na składnię manifestów przez niego wykorzystywanych.
+Manifest jest opisem żądanego stanu danego obiektu (użytkownik, plik, zamontowany zasób).
+Manifesty są zapisywane w plikach \texttt{*.pp}.\\
+Puppet działa w trybie klient-serwer.
+Serwer posiada zapisane manifesty dla wszystkich maszyn, dlatego w celu rekonfiguracji wielu maszyn, wystarczy zmiana jedynie w centralnym punkcie - serwerze \textit{master}.\\
+Istnieją trzy możliwości wykonywania manifestów.
+\begin{description}
+	\item{bezpośrednio na maszynie}
+		poprzez jawne wywołanie manifestu na danej maszynie, następuje jego sparsowanie oraz zastosowanie zawartych w nim deklaracji do lokalnej maszyny
+	\item{cykliczne pobieranie danych przez agenta}
+		ponieważ puppet w zamyśle ma działać w trybie \textit{pull}, dlatego jest to jego domyślny tryb pracy.
+		Agent, działający na maszynach klienckich - maszynach których stan ma być kontrolowany przez puppeta - w cyklicznych odstępach czasu pobiera z serwera \textit{master} żądaną konfiguracje.
+		Nie pobiera on bezpośrednio manifestów zapisanych przed administratora, lecz skompilowaną ich wersję specjalne dla tej maszyny.\\
+		Połączenia do \textit{master}-a są szyfrowane poprzez SSL co zwiększa bezpieczeństwo przesyłanych danych wrażliwych zawartych w manifestach.
+	\item{wymuszone uruchomienie agenta}
+		tryb ten działa podobnie do cyklicznego pobierania danych, z tą różnicą, ze użytkownik jawnie zmusza agenta do poprania danych z serwera \textit{master} natychmiast, zamiast czekać aż agent pobierze te dane samoistnie.
+\end{description}
+\subsection{Zalety i wady}
+Zalety:
+\begin{itemize}
+	\item popularność
+	\item duże zaplecze \textit{community}
+	\item dojrzałość projektu
+\end{itemize}
+Wady:
+\begin{itemize}
+	\item potrzeba instalacji oprogramowania na maszynach klienckich
+	\item działanie w trybie \textit{pull}
+	\item skomplikowana instalacja
+\end{itemize}
+
+\section{CFEngine}
+\subsection{Opis}
+CFEngine jest jednym z najstarszych systemów do zarządzania konfiguracją.
+Powstał z myślą o systemach w których nie jest zapewniona dostateczna jakoś łącza, np: łodzie podwodne.
+
+Z racji swojego wieku, architektura CFEngine, w odpowiedzi na zmieniające się potrzeby systemów, ulegała zmianom.
+Aktualnie rozwijana jest trzecia generacja CFEngine.
+Kolejne generacje starały się upraszczać składnie konfiguracji oraz zwiększać możliwości oferowane przez oprogramowanie.
+
+CFEngine opiera się na "Teorii obietnic".
+Jest to teoria stojąca u podstaw wszystkich systemów zarządzania konfiguracją. W celu opisu teorii obietnic por. z \ref{sec:puppet_opis}.
+
+CFEngine, podobnie jak Puppet działa w trybie \textit{pull}, czyli agent pobiera dane z centralnego serwera.
+W przeciwieństwie do Puppeta, CFEngine zapisuje pobrane \textit{polityki} na lokalnej maszynie, dzięki czemu w przypadku braku łącza do maszyny centralnej, jest w stanie kontrolować i ewentualnie korygować konfigurację maszyny w stanie offline.
+\subsection{Zalety i Wady}
+Zalety:
+\begin{itemize}
+	\item dojrzałość projektu
+	\item odporność na przerwy w działaniu łącza
+	\item bardzo duża skalowalność
+\end{itemize}
+Wady:
+\begin{itemize}
+	\item trudna konfiguracja
+	\item trudna instalacja
+\end{itemize}
 \section{Ansible}
 \subsection{Opis}
 Ansible jest również narzędziem do zarządzania konfiguracja serwerów. Został napisany w języku Python i w przeciwieństwie do poprzedników nie wymaga instalacji żadnego oprogramowania na maszynach klienckich.
@@ -325,7 +382,8 @@ Dzięki temu nie ma potrzeby restartować bazy danych przy każdym uruchomieniu 
 Podczas, gdy w trybie \textit{ad-hoc} wykonanie jakieś modułu miało na celu wykonanie jakiejś operacji oraz zmiana stanu serwera, tak w przypadku \textit{playbook}-ów, dąży się aby wywołanie zwracało jak najwięcej stanów \texttt{ok} oraz jak najmniej \textit{changed}.
 Stan \texttt{ok} oznacza, że stan serwera jest zgodny z naszymi założeniami i nie ma potrzeby podejmować żadnych kroków.
 Stan \texttt{changed} pojawia się w przypadku zmian w konfiguracji jakiś usług, bądź w przypadku ingerencji manualnej administratora lub nieoczekiwanego zachowania aplikacji, np: wystąpienia błędu powodującego wyłączenie się aplikacj.\\
-\Large TODO: uruchamianie playbooka \normalsize
+Uruchomienie \textit{playbook}-a następuje poprzez polecenie \texttt{ansible-playbook} oraz podanie jako parametru nazwy pliku zawierającego konfigurację żądanego \textit{playbook}-a.
+Dodatkowo, do wywołania można dodać parametry sterujące wykonywaniem \textit{playbook}-a. M.in. liczbę równoległych połączeń, wskazać plik \texttt{inventory} bądź ograniczenie wykonywanych \textit{task}-ów tylko do tych oznaczonym określonymi \textit{tag}-ami.
 \subsubsection{Role}
 Jak łatwo zauważyć, w poprzednim przykładzie wykonaliśmy cztery operacje angażujące dwie grupy serwerów a plik zawierał 23 linijki kodu.
 Można w prosty sposób estymować, że rzeczywisty \textit{playbook} będzie tych linii zawierał kilkaset bądź więcej, co sprawi ze jego czytanie i utrzymywanie stanie się bardzo trudne, jeśli nie niemożliwe.

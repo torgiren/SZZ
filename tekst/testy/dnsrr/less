@@ -1,0 +1,10 @@
+==15710== Memcheck, a memory error detector
+==15710== Memcheck, a memory error detector
+==15710== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
+==15710== Using Valgrind-3.9.0 and LibVEX; rerun with -h for copyright info
+==15710== Command: /tmp/httpd-2.4.12/support/ab -k -r -c 1 -n1000 -c 256 -k http://rr.mgr.fabrykowski.pl/index.php
+==15710== 
+==15710== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
+==15710== Using Valgrind-3.9.0 and LibVEX; rerun with -h for copyright info
+==15710== Command: /tmp/httpd-2.4.12/support/ab -k -r -c 1 -n1000 -c 256 -k http://rr.mgr.fabrykowski.pl/index.php
+==15710== 
