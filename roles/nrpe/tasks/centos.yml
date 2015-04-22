@@ -1,16 +1,3 @@
 - name: instalacja orogramowania
   yum: name={{item}} state=latest
-  with_items:
-  - nrpe
-  - sysstat
-  - bc
-  - nagios-plugins-all
-  - sudo
-  - rsyslog
-- name: uruchamianie aplikacji 
-  service: name={{item}} enabled=True state=running
-  with_items:
-  - nrpe
-  - sysstat
-  - rsyslog
-  - crond
+  with_items: install_apps

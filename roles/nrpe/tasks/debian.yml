@@ -3,16 +3,4 @@
   notify: apt_update
 - name: instalacja oprogramowania
   apt: name={{item}} state=latest
-  with_items:
-  - nagios-nrpe-server
-  - sysstat
-  - bc
-  - sudo
-  - rsyslog
-- name: uruchamianie aplikacji
-  service: name=nagios-nrpe-server enabled=True state=running
-  with_items:
-  - nagios-nrpe-server
-  - sysstat
-  - rsyslog
-  - crond
+  with_items: install_apps

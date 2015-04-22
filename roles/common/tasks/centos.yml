@@ -1,0 +1,4 @@
+- name: instalacja oprogramowania
+  yum: name={{item}} state=latest
+  with_items:
+  - logrotate

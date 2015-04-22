@@ -1,0 +1,4 @@
+- name: instalacja oprogramowania
+  apt: name={{item}} state=latest
+  with_items:
+  - logrotate

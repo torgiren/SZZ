@@ -3,3 +3,16 @@ apache: httpd
 apache_vhosts: /etc/httpd/conf.d
 haproxy_conf: /etc/haproxy/haproxy.cfg
 cron: crond
+nrpe_service: nrpe
+run_apps:
+  - nrpe
+  - rsyslog
+  - crond
+install_apps:
+  - nrpe
+  - sysstat
+  - bc
+  - nagios-plugins-all
+  - sudo
+  - rsyslog
+secure_log: /var/log/secure

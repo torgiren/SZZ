@@ -3,3 +3,15 @@ apache: apache2
 apache_vhosts: /etc/apache2/sites-enabled
 haproxy_conf: /etc/haproxy/haproxy.cfg
 cron: cron
+nrpe_service: nagios-nrpe-server
+run_apps:
+  - nagios-nrpe-server
+  - rsyslog
+  - cron
+install_apps:
+  - nagios-nrpe-server
+  - sysstat
+  - bc
+  - sudo
+  - rsyslog
+secure_log: /var/log/auth.log

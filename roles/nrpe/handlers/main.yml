@@ -1,5 +1,5 @@
 - name: restart-nrpe
-  service: name={{nrpe_service[ansible_os_family]}} state=restarted
+  service: name={{nrpe_service}} state=restarted
 #  service: name=nagios-nrpe-server state=restarted
 #  when: ansible_os_family == "Debina"
 #  service: name=nrpe state=restarted

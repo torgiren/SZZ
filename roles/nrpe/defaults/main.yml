@@ -1,0 +1,8 @@
+warn_users: 0
+crit_users: 1
+
+warn_mem: 80
+crit_mem: 90
+
+smtp_ehlo: 220 fabrykowski.pl ESMTP Postfix
+

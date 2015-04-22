@@ -6,6 +6,7 @@
   - check_mem.pl
   - check_postfix
   - check_postfix_queue
+  - check_iftraffic_nrpe.sh
   tags:
   - files
   - config

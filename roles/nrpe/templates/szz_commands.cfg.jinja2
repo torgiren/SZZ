@@ -32,8 +32,16 @@ command[check_szz_imaps]=/usr/lib64/nagios/plugins/check_tcp -H 127.0.0.1 -p 993
 
 command[check_szz_redmine]=/usr/lib64/nagios/plugins/check_http localhost -p 3000
 
+command[check_szz_traffic]=/usr/lib64/nagios/plugins/check_iftraffic_nrpe.sh -D lo -p
+
+
+command[check_szz_secure_log]=/usr/lib64/nagios/plugins/check_log -F {{secure_log}} -O /home/nrpe/private/secure -q Failed
 
 #adasd
 
 command[restart_nginx]=/usr/bin/sudo /etc/init.d/nginx restart
 command[restart_postgresql]=/usr/bin/sudo /etc/init.d/postgresql restart
+command[restart_rsyslog]=/usr/bin/sudo /etc/init.d/rsyslog restart
+command[restart_cron]=/usr/bin/sudo {{cron}} restart
+
+
