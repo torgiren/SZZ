@@ -1,4 +1,4 @@
-\chapter{Testowanie rozwiązania}
+\chapter{Testowanie metod klastrowania}
 \section{Środowisko testowe}
 Wszystkie rozwiązania testowane będą przy użyciu następującego środowiska testowego:
 \begin{description}
@@ -350,3 +350,75 @@ Dzieje się tak dlatego, ze mając jedno równoczesne zapytanie, wykorzystywany 
 W przypadku 2 połączeń, wykresy zaczynają się zbiegać, ponieważ narzut LVS zaczyna być kompensowany poprzez dystrybucję zapytań.\\
 Począwszy od czterech zapytań, zauważamy że połączenia kierowane do LVS są obsługiwane szybciej.
 Najbardziej jest to widoczne przy dużym obciążeniu serwera, tj. 128 i 256 równoległych zapytań.
+\subsection{Odporność na błędy}
+W rozdziale tym, omówione zostanie obsługiwanie błędów przez LVS.
+\subsubsection*{Obsługa wysokiej wydajności}
+Niestety narzędzie wykorzystywane w tej pracy do testowania wydajności rozwiązań, posiada bardzo ubogą obsługę błędów, dlatego nie zostaną zamieszczone żadne wykresy.\\
+Ponieważ LVS jest narzędziem nastawionym na wydajność i mały rozmiar, nie wspiera natywnie sprawdzania dostępności usług na \textit{real server}-ach.
+W przypadku niedostępności usługi, pakiet zostaje przekazany do \textit{real server}-a, który natomiast odpowiada błędem.
+Mogą to być błędy \texttt{connection refused, timeout, file not found} bądź wiele innych.
+Taki też błąd zostaje przekazany do klienta.\\
+Sytuacja taka wynika z kilku czynników.
+Jednym z nich jest tryb działania LVS:
+\begin{description}
+	\item{LVS DR/TUN}\\
+		W tym trybie odpowiedź jest kierowana bezpośrednio do klienta.
+		W związku z tym, \textit{director} nie jest świadomy błędnej odpowiedzi \textit{real server}-a, dlatego nie może ponowić zapytania do innego, działającego.
+	\item{LVS NAT}\\
+		W tym przypadku, ruch powracający przechodzi ponownie przez \textit{directora} i istnieje techniczna możliwość wykrywania błędów w odpowiedzi.
+		Jednak, aby zachować homogeniczność zachowania w każdym trybie, nie jest to wykonywane.
+\end{description}
+Kolejną przyczyną takiego zachowania LVS jest warstwa w której on pracuje.
+Jego głównym zadaniem jest przekazywanie pakietów i ingerencja w nie jedynie na warstwie drugiej a inspekcja jedynie do warstwy czwartej.
+Tak niskie działanie usługi w znacznym stopniu ograniczyło by możliwości monitorowania usług na \textit{real server}-ach do sprawdzania możliwości połączenia na dany port (co w wielu przypadkach wystarcza).\\
+Ponadto, LVS nastawiony jest na wydajność i dążenie, aby jego kod był jak najmniejszy i najszybszy.
+Dodanie do niego kodu obsługującego różne scenariusze sprawdzania dostępności usługi obniżyłyby tą wydajność.
+
+Wszystkie powyższe powody sprawiają, że aby dodać do LVS wsparcie dla wysokiej dostępności, należy użyć dodatkowych narzędzi.
+Bądź po stronie LVS, które sprawdzają dostępność usług (na dowolnym poziomie) i ewentualnie \textit{wypinają} z LVS niedostępne serwery, bądź rzadziej, po stronie \textit{real server}-ów zastosowanie \texttt{floating IP}, nadające innej, działającej maszynie adres IP maszyny która uległa awarii.
+\subsubsection{Zachowanie w przypadku awarii}
+Jak zostało wspomniane w poprzednim paragrafie, \textit{real server} odpowiada bezpośrednio do klienta, dlatego w przypadku awarii jednego z serwerów, zapytania kierowane na niego zostaną odrzucone.
+Spowoduje to zwrócenie błędu do klienta. Ten może to odczuć na kilka sposobów, np w przypadku stron WWW, jeżeli zapytanie o plik \texttt{index.html} zostanie przekazane do niedziałającego serwera, klient otrzyma w przeglądarce informację \texttt{connection refused}.
+Po odświeżeniu strony, zapytanie powinno trafić na inną maszynę, która zwróci treść strony.\\
+To prowadzi do kolejnej sytuacji, w której zapytanie o \texttt{index.html} zakończyło się sukcesem, natomiast zapytania o kolejne pliki statyczne będą trafiać na niedziałającą maszynę.
+Spowoduje to niewczytanie się obrazów, arkuszy stylów bądź skryptów \texttt{java script}.
+Jest to sytuacja bardziej irytująca dla użytkownika, ponieważ zostaje mu przedstawiona część treści na stronie, lecz zwykle w sposób niepozwalający na jej komfortowe przeglądanie.\\
+Trzecią sytuacją która może wystąpić - będącą chyba najgroźniejszą pod kątem logistycznym - jest poprawne załadowanie się całej treści strony, jednak zapytania dynamicznie generowane przez np: \texttt{Ajax}-a trafiają na niedziałający serwer i nie są przetwarzane.
+Zwykle klient nie jest informowany o niepowodzeniu przy takim zapytaniu, bądź jest informowany o niepowodzeniu bez podawania przyczyny.
+Jest to szczególnie niebezpieczne przy wykonywaniu ważnych operacji typu składanie wniosków bądź robienie przelewów w banku.
+\subsection{Podsumowanie}
+Wykonane testy pokazują, iż \textit{Linux Virtual Server} jest technologią bardzo wydajną.
+Jej narzut własny jest bliski zeru, natomiast przy większej ilości serwerów następuje bardzo efektywny rozdział zapytań.\\
+Niestety LVS nie posiada żadnych metod wykrywania awarii \textit{real server}-ów, dlatego w tym celu należy użyć dodatkowych narzędzi.
+\begin{table}[h]
+\centering
+\begin{tabular}{cccc}
+	\toprule
+	Liczba połączeń & Nginx & LVS 4xRS & Przyrost\\
+	\midrule
+	\midrule
+	1&2697.30&2722.17&0\%\\
+	\midrule
+	2&2148.13&4610.76&114\%\\
+	\midrule
+	4&2182.04&5619.42&157\%\\
+	\midrule
+	8&1934.86&8103.03&318\%\\
+	\midrule
+	16&2182.62&8940.06&309\%\\
+	\midrule
+	32&2333.41&10542.87&351\%\\
+	\midrule
+	64&2278.52&9411.09&313\%\\
+	\midrule
+	128&2390.89&10907.20&356\%\\
+	\midrule
+	256&2648.01&9499.84&258\%\\
+	\bottomrule
+\end{tabular}
+\caption{Obsłużonych zapytań na sekundę}
+\label{tab:test_lvs}
+\end{table}
+Tabela~\ref{tab:test_lvs} potwierdza przedstawione wnioski.
+W przypadku jednego połączenia przyrost wynosi 0, natomiast dla połączeń 8 i więcej, przyrost oscyluje około wartości 300, co jest wartością oczekiwaną.
+\section{Haproxy}
