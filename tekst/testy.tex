@@ -322,7 +322,7 @@ Dlatego nie jest możliwe określenie prędkości takiego interface-u, ponieważ
 Podobnie sytuacja wygląda dla kontenerów LXC\@.
 Tam komunikacja następuje poprzez wirtualne interface-y na jeden maszynie, dlatego prędkość podana przez \texttt{ethtool} wynosi 10Gb/s.
 
-W przypadku testowania zachowania rozwiązania na wysycenie łącza, prędkość interface-u na maszynie z \textit{directorem} zostanie ustawiona na 10Mb/s.
+W przypadku testowania zachowania rozwiązania na wysycenie łącza, zastosowany zostanie duży plik HTML o rozmiarze ok 1MB.
 Pozwoli to zasymulować sytuacje w której żądany ruch będzie większy niż możliwości łącza serwera.
 \subsection{Narzut własny LVS}
 \label{sec:lvs_narzut}
@@ -342,7 +342,7 @@ Zostały skonfigurowane 3 usługi LVS\@. Tą konfiguracje przedstawia listing~\r
 Widzimy, ze każda z usług posiada inną liczę serwerów oraz posiada taki sam algorytm balansowania.
 Każdy z serwerów ma wagę 1 oraz każdy jest wykorzystywany w trybie \textit{direct routing}.
 
-\wykresy{four_lvs_maly}{Czasy odpowiedzi w zależności od ilości serverów}{four_lvs_maly}
+\wykresy{four_lvs_maly}{Czasy odpowiedzi LVS w zależności od ilości serverów}{four_lvs_maly}
 Wykresy~\ref{fig:four_lvs_maly} przedstawiają czasy odpowiedzi w zależności o ilości \textit{real server}-ów.
 Wymaga on trochę dokładniejszej analizy niż poprzednie wykresy.
 Dla jednego równoległego zapytania, widzimy ze czasy każdej z usług LVS są gorsze niż bezpośrednie zapytania do server WWW\@.
@@ -376,7 +376,7 @@ Dodanie do niego kodu obsługującego różne scenariusze sprawdzania dostępno�
 
 Wszystkie powyższe powody sprawiają, że aby dodać do LVS wsparcie dla wysokiej dostępności, należy użyć dodatkowych narzędzi.
 Bądź po stronie LVS, które sprawdzają dostępność usług (na dowolnym poziomie) i ewentualnie \textit{wypinają} z LVS niedostępne serwery, bądź rzadziej, po stronie \textit{real server}-ów zastosowanie \texttt{floating IP}, nadające innej, działającej maszynie adres IP maszyny która uległa awarii.
-\subsubsection{Zachowanie w przypadku awarii}
+\subsubsection*{Zachowanie w przypadku awarii}
 Jak zostało wspomniane w poprzednim paragrafie, \textit{real server} odpowiada bezpośrednio do klienta, dlatego w przypadku awarii jednego z serwerów, zapytania kierowane na niego zostaną odrzucone.
 Spowoduje to zwrócenie błędu do klienta. Ten może to odczuć na kilka sposobów, np w przypadku stron WWW, jeżeli zapytanie o plik \texttt{index.html} zostanie przekazane do niedziałającego serwera, klient otrzyma w przeglądarce informację \texttt{connection refused}.
 Po odświeżeniu strony, zapytanie powinno trafić na inną maszynę, która zwróci treść strony.\\
@@ -386,6 +386,15 @@ Jest to sytuacja bardziej irytująca dla użytkownika, ponieważ zostaje mu prze
 Trzecią sytuacją która może wystąpić - będącą chyba najgroźniejszą pod kątem logistycznym - jest poprawne załadowanie się całej treści strony, jednak zapytania dynamicznie generowane przez np: \texttt{Ajax}-a trafiają na niedziałający serwer i nie są przetwarzane.
 Zwykle klient nie jest informowany o niepowodzeniu przy takim zapytaniu, bądź jest informowany o niepowodzeniu bez podawania przyczyny.
 Jest to szczególnie niebezpieczne przy wykonywaniu ważnych operacji typu składanie wniosków bądź robienie przelewów w banku.
+\subsubsection*{Wysycenie łącza}
+\label{sub:lvs_wysycenie_lacza}
+Do testowanie wysycenia łącza, został wybrany plik o rozmiarze 1MB.
+Niestety przy badanych maszynach nie udało się osiągnąć pełniej mocy łącza, a jedynie ruch na poziomie 900KB/s.
+Sytuacja taka spowodowana jest utylizacją pracy procesora na poziomie 95\%.\\
+Tak wysokie zużycie CPU wynika z potrzeby przekazania wszystkich pakietów \texttt{ACK} wracających od klienta.
+
+Powyższy test pokazuje, iż LVS jest odporny na problem wysycenia łącza i jego wydajność ograniczają inne parametry maszyny.\\
+W przeprowadzanym teście, przybliżona wartość wydajności wynosi ok 320 zapytań na sekundę.
 \subsection{Podsumowanie}
 Wykonane testy pokazują, iż \textit{Linux Virtual Server} jest technologią bardzo wydajną.
 Jej narzut własny jest bliski zeru, natomiast przy większej ilości serwerów następuje bardzo efektywny rozdział zapytań.\\
@@ -422,3 +431,97 @@ Niestety LVS nie posiada żadnych metod wykrywania awarii \textit{real server}-�
 Tabela~\ref{tab:test_lvs} potwierdza przedstawione wnioski.
 W przypadku jednego połączenia przyrost wynosi 0, natomiast dla połączeń 8 i więcej, przyrost oscyluje około wartości 300, co jest wartością oczekiwaną.
 \section{Haproxy}
+Rozdział ten skupi się na przetestowaniu wydajności aplikacji Haproxy, oraz jej odporności na awarie serwerów \textit{backend}-owych.
+\subsection{Uwagi dotyczące urządzeń sieciowych}
+W celu zachowania porównywalnego środowiska co LVS, zostaną zastosowane wytyczne z rozdziału~\ref{sub:uwagi_sieciowe}.
+\subsubsection{Wydajność}
+Rozdział ten skupi się na przetestowaniu wydajności Haproxy.
+Testowane zostanie bezpośrednie połączenie do Nginx-a oraz połączenia czterech usług Haproxy, zawierające odpowiednia, jeden, dwa, trzy i cztery serwery \textit{backend}-owe.\\
+Zapytania, podobnie jak w LVS będą kierowane o mały plik statyczny.
+\wykresy{four_haproxy_maly}{Czasy odpowiedzi Haproxy w zależności od ilości serwerów}{four_haproxy_maly}
+Wykres~\ref{fig:fout_haproxy_maly} przedstawia czasy odpowiedzi Haproxy oraz Nginxa w zależności od ilości równoległych zapytań.\\
+Jak można zauważyć, dla niewielkiej liczby równoległych zapytać, czasy odpowiedzi Haproxy są zbliżone do natywnego Nginx-a.
+Wzrost wydajności widać dopiero przy większej ilości zapytań, tj. od około 64 równoległych zapytań.
+\subsection{Odporność na awarie}
+\subsubsection{Awaria serwerów \textit{backendowych}}
+Ponieważ Haproxy został zaprojektowany z myślą o wysokiej dostępności, posiada on natywną obsługę wykrywania awarii serwerów.
+W przypadku wykrycia awarii, dany serwer zostaje oznaczony jako \texttt{DOWN} i nie zostają do niego przekazywane zapytania.
+Zmniejsza to wydajność całego klastra, jednak zapytania użytkownika zostają przekazane do działających maszyn, dzięki czemu, klient zawsze otrzymuje odpowiedź.\\
+Aby zobrazować zachowanie Haproxy na awarie maszyn, zostaną przeprowadzone testy wydajnościowe z wszystkimi czterema serwerami działającymi, a następnie te same testy zostaną powtórzone dla wyłączonych usług Nginx na jednym, dwóch oraz na trzech maszynach.\\
+Testy dla wyłączonych czterech maszyn nie zostaną przeprowadzone, ponieważ z powodu braku jakiekolwiek serwera \textit{backend}-owego, klient nigdy nie otrzyma odpowiedzi.
+\wykresy{haproxy_awaria_wezlow}{Czasy odpowiedzi Haproxy w zależności od ilości serwerów i awarii węzłów}{haproxy_awaria_wezlow}
+Wykresy przedstawione na rysunku~\ref{fig:haproxy_awaria_wezlow} pokazują, że awaria węzłów nie powoduje błędnych odpowiedzi do klienta.
+Poprzednie spostrzeżenie jest prawdziwe pomijając drobną anomalię dla 32 i 64 połączeń, gdzie Haproxy z trzeba niedziałającymi serwerami daje trochę gorsze odpowiedzi.
+
+Powyższe testy zapytań były przeprowadzane dopiero po ustaleniu przez Haproxy, niedostępności usługi po jej wyłączeniu.
+\subsubsection*{Awaria węzła w trakcie obsługi zapytań}
+Poprzedni rozdział wykazał, iż po ustaleniu się stanu \texttt{DOWN} dla serwerów \textit{backend}-owych, Haproxy nie powoduje żadnych błędów w odpowiedziach do klienta.\\
+Kolejnym testem dla wysokiej dostępności jest zachowanie się Haproxy w przypadku awarii serwera dla połączeń obsługiwanych po awarii serwera a przed wykryciem tego faktu przez system.\\
+Haproxy sprawdza dostępność usługi co jedną sekundę, natomiast po trzeciej nieudanej próbie połączenia, uznaje usługę za niedostępną.
+W efekcie, powstaje trzy sekundowe \textit{okno} w którym klient może uzyskać odpowiedź o niedostępności usługi.\\
+Test polegał na ciągłym wysyłaniu 128 równoległych zapytań do serwera.
+W tym samym czasie nastąpiło wyłączenie usługi Nginx na jednym z serwerów.
+W trakcie trzy sekundowego \textit{okienka}, zostało zwróconych od 50 do 150 błędów (w zależności od uruchomienia testu).\\
+Cały test trwał 14 sekund. W jego trakcie zostało wykonanych 30000 zapytań z czego ok 100 zakończyło się niepowodzeniem.
+W mojej opinii jest to bardzo wysoki poziom dostępności usługi.
+\subsubsection*{Wysycenie łącza}
+Warunki testowanie wysycenia łącza dla Haproxy są analogiczne do tych stosowanych w LVS (rozdział~\ref{sub:lvs_wysycenie_lacza}).\\
+W tym przypadku procesor podobnie został obciążony na 100\%.
+Wykorzystanie łącza utrzymywało się na poziomie 10MB/s, natomiast liczba obłużonych zapytań na sekundę wynosiła około 20.
+\subsection{Podsumowanie}
+Jak wykazały testy, Haproxy daje bardzo duży poziom wysokiej dostępności.
+Można zauważyć bardzo krótki czas wykrywania niedostępności usługi, oraz bardzo dobrą reakcje minimalizującą ilość błędów zwracanych do klienta.\\
+\begin{table}[h]
+  \centering
+  \begin{tabular}{cccc}
+      \toprule
+      Liczba połączeń & Nginx & Haproxy 4xRS & Przyrost\\
+      \midrule
+      \midrule
+	  1&2741.46&1521.45&-44\%\\
+      \midrule
+	  2&2142.82&2207.01&2\%\\
+      \midrule
+	  4&2006.00&2940.17&46\%\\
+      \midrule
+	  8&2133.27&3563.32&67\%\\
+      \midrule
+	  16&2139.60&3532.11&65\%\\
+      \midrule
+	  32&2226.88&4067.57&82\%\\
+      \midrule
+	  64&2335.50&3930.86&68\%\\
+      \midrule
+	  128&2183.21&4189.07&91\%\\
+      \midrule
+	  256&2394.04&2875.26&20\%\\
+      \bottomrule
+  \end{tabular}
+  \caption{Przyrost obsłużonych zapytań przez Haproxy}
+  \label{tab:test_haproxy}
+  \end{table}
+Tabela~\ref{tab:test_haproxy} przedstawia przyrost wydajności względem pojedynczego serwera WWW~.
+Można zauważyć, że dla jednego połączenia mamy przyrost ujemny.
+Wartości przyrostów dla większej liczby połączeń również nie są zbyt wysokie.
+Sytuacja ta wynika z faktu zapotrzebowania na dużą moc obliczeniową związaną z \textit{Nat}-owaniem pakietów oraz przeliczaniem adresów.
+\section{Porównanie LVS oraz Haproxy}
+Jak wykazały testy, oba omawiane systemy służą do balansowania połączeń pomiędzy realne serwery obsługujące zapytania.
+Zadaniem administratora jest ocena i wybór odpowiedniego narzędzia do odpowiedniej sytuacji.\\
+Dla dużego ruchu odpowiedniejszy wydaje się LVS, gdyż jest dużo bardziej wydajny, jednak nie wspiera natywnie wysokiej dostępności.
+Administrator jest odpowiedzialny za dobranie innego narzędzia dodającego obsługę awarii serwerów, aby klient nie otrzymywał błędnych komunikatów zwrotnych.\\
+Natomiast przy obsłudze mniejszego ruchu, Haproxy zyskuje dzięki dobremu systemowi wykrywania awarii, co zapewnia ciągłą dostępność usługi dla klienta.
+
+Warto zwrócić uwagę, ze dla jednego i dwóch równoległych połączeń, zarówno Haproxy jak i LVS mają bardzo dobre czasy odpowiedzi.
+Różnice zaczynają się dopiero dla większego obciążenia, co zostało wyjaśnione w poprzednim paragrafie.
+
+Dodatkowo, można zauważyć różnicę w wykorzystaniu łącza.
+W testowanym środowisku, ani Haproxy ani LVS nie wysyciły łącza, gdyż procesor był elementem limitującym możliwości obu metod, jednak różnica wykorzystania łącza przy obecnych parametrach, pozwala wysnuć teorię, że przy wykorzystaniu mocniejszych maszyn w środowisku produkcyjnym, różnica ta może mieć znaczenie, gdy ich możliwości zaczną być limitowane przez łącze.
+\section{Nietestowane rozwiązania}
+\begin{itemize}
+	\item W rozdziale tym nie zostały przetestowane możliwości Nginx-a do rozdzielania połączeń, ponieważ możliwość wykrywania niedostępności usług jest dostępna jedynie w płatnej subskrypcji.\\
+		Z powodu mnogości darmowych rozwiązań open source-owych, płatne moduły nie były testowane.
+	\item Heartbeat/keepalied/ldirector/\ldots - szereg narzędzi dodających funkcjonalność wysokiej dostępności do LVS.
+	\item corosync/\ldots - narzędzia do zapewniania wysokiej dostępności dla urządzeń brzegowych.\\
+		Pozwalają ustawić tzw. \textit{floating IP}.
+		W przypadku awarii jednej maszyny (np: \textit{director}-a LVS), druga, zapasowa, wykrywa ten fakt i ustawia odpowiednie adresy na swoim interface-ie oraz konfiguruje odpowiednie usługi, tak, aby móc przejąć funkcje maszyny która uległa awarii.
+\end{itemize}
