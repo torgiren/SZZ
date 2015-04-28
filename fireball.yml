@@ -1,15 +1,16 @@
 ---
-- hosts: all
+- hosts: http
   gather_facts: false
   user: root
   tasks:
-  - yum: name=python-pip state=latest
-  - yum: name=gcc state=latest
-  - yum: name=gcc-c++ state=latest
-  - yum: name=python-devel state=latest
-  - action: pip name=pyzmq state=present
-  - action: pip name=pyasn1
-  - action: pip name=PyCrypto 
-  - action: pip name=python-keyczar
-  - yum: name=zeromq state=latest
+#  - apt: name=python-pip state=latest
+#  - apt: name=gcc state=latest
+#  - apt: name=g++ state=latest
+#  - apt: name=python-dev state=latest
+#  - action: pip name=pyzmq state=present
+ # - action: pip name=pyasn1
+ # - action: pip name=PyCrypto 
+ # - action: pip name=python-keyczar
+ # - apt: name=zeromq state=latest
+  - apt: name=ansible-node-fireball state=latest
   - action: fireball

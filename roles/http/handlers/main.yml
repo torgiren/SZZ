@@ -1,2 +1,2 @@
-- name: restart_http
-  service: name={{apache}} state=restarted
+- name: restart_nginx
+  service: name=nginx state=restarted

@@ -1,0 +1,30 @@
+{% for i in group_names %}
+{%	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+upstream pula_{{i[5:]}} {
+{% 		for j in groups[i] %}
+{% 			if j in groups['workers'] %}
+server {{hostvars[j]['ansible_eth0']['ipv4']['address']}}:{{projects[i[5:]]['id']}}; # {{j}}
+{%			endif %}
+{%		endfor %}
+}
+server {
+        listen 80;
+        root /datastore/{{i[5:]}}/;
+        index index.php;
+        access_log /var/log/nginx/{{i[5:]}}.log;
+        server_name {{i[5:]}};
+        
+#        location ~ ^/(status|ping)$ {
+#                allow all;
+#                include fastcgi_params;
+#                fastcgi_pass pula_{{i[:5]}};
+#        }
+        location ~ \.php$ {
+                allow all;
+                include fastcgi_params;
+                fastcgi_pass pula_{{i[5:]}};
+        }
+}
+{%	endif %}
+{% endfor %}
+

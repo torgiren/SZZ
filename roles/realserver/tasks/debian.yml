@@ -1,0 +1,2 @@
+- name: Instalacja arptables
+  apt: name=arptables state=latest

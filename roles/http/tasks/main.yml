@@ -1,17 +1,9 @@
-- include: centos.yml
-  when: ansible_os_family == "RedHat"
-- include: debian.yml
-  when: ansible_os_family == "Debian"
-- name: autostart http
-  service: name={{apache}} enabled=yes
-- name: uruchamianie http
-  service: name={{apache}} state=started
-- name: Tworzenie konfiguracji aplikacji
-  template: src=php_app.jinja2 dest={{ apache_vhosts}}/vhosts.conf
-  notify: restart_http
-  tags: deploy
-- name: Deploy aplikacji
-  git: repo={{ item.value.repo }}
-       dest={{ item.value.dest }}
-  with_dict: php_apps
-  tags: deploy
+- name: instalacja nginxa
+  apt: name=nginx state=latest
+- name: instalacja konfigu
+  template: src=default.j2 dest=/etc/nginx/sites-enabled/default
+  notify: restart_nginx
+- name: uruchaniamie nginx
+  service: name=nginx state=started
+- name: autostart nginxa
+  service: name=nginx enabled=yes
