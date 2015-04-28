@@ -1,0 +1,474 @@
+\chapter{Zarządzanie konfiguracją}
+W rozdziale tym przedstawię różne metody zarządzania konfiguracją serwerów. Postaram się opisać poglądowo różne metody, jak również przedstawić zalety i wady poszczególnych z nim.
+\section{Ręczna konfiguracja każdego serwera za pomocą SSH}
+\subsection{Opis}
+Ręczna konfiguracja serwerów stos osuwana jest głównie tam, gdzie administrator ma pod swoją opieką jeden bądź kilka serwerów. W takim przypadku zmiana konfiguracji na serwerze jest prosta i nie zajmuje dużej ilości czasu.\\
+Konfiguracja taka nie wymaga od administratora żadnej wiedzy wykraczającej poza obszar konfigurowanego systemu oraz usług, a wprowadzane zmiany widoczne są od razu po wprowadzeniu.
+Ten sposób konfiguracji spotykany jest czasem w większych systemach informatycznych.
+Dzieje się tak zwykle w jednostkach szybko rozwijających się, gdzie nastąpił szybki wzrost liczby serwerów i nie opracowano jeszcze metoda automatyzacji konfiguracji.
+
+Do konfiguracji ręcznej nie potrzeba żadnego dodatkowego oprogramowania ani po stronie maszyn konfigurowanych, ani maszyny z której następuje konfiguracja.
+Na maszynie z której następuje konfiguracja musi być dostępny klient SSH, który jest instalowany domyślnie we wszystkich dystrybucjach systemów GNU/Linux, a na maszynach konfigurowanych musi być zainstalowany i uruchomiony serwer SSH - jest on domyślnie zainstalowany w większości dystrybucji serwerowych GNU/Linux i w części dystrybucji przeznaczonych na komputery domowe.
+
+Wadą takiej metody jest również sytuacja, w której tylko jedna osoba, bądź mała grupa osób, zna konfigurację poszczególnych serwerów oraz usług.
+W przypadku opuszczenia przez daną osobę zespołu, pozostali członkowie muszą, analizując pliki konfiguracyjne, zrozumieć zamysł osoby to tworzącej.\\
+Kolejną wadą, jest brak możliwości powielenia konfiguracji.
+W przypadku gdy zaistnieje potrzeba skonfigurowania bliźniaczego serwera, jako serwera zapasowego, należy każdą usługę skonfigurować od nowa na wzór serwera pierwotnego. Również wprowadzane zmiany należy uwzględniać na wszystkich serwerach.
+Może to w prosty sposób prowadzić do błędów i rozbieżności konfiguracji.
+\subsection{Zalety i wady}
+Zalety:
+\begin{itemize}
+\item prostota
+\item używanie tylko domyślnych komponentów systemu
+\item szybkość wprowadzanych zmian
+\item informacja zwrotna czy usługa została uruchomiona poprawnie
+\end{itemize}
+Wady:
+\begin{itemize}
+\item \textbf{brak skalowalności}
+\item różnice między poszczególnymi serwerami
+\item trudność powielania
+\item wiedza o konfiguracji zależna od jednego pracownika
+\end{itemize}
+\subsection{Przykład}
+\lstinputlisting{lst/conf_ssh.sh}
+\subsection{CSSH}
+Istnieje narzędzie CSSH (\textit{Cluster SSH}) które wychodzi na przeciw osobą chcącym konfigurować kilka serwerów jednocześnie poprzez SSH.
+Narzędzie to potrafi otworzyć wiele sesji SSH równolegle - każda sesja w osobnym terminalu.
+Głównym interface-em programu, jest małe okno wejścia, które przechwytując wpisywany do niego tekst, przesyła go do wszystkich otwartych sesji.\\
+Zmniejsza to prawdopodobieństwo rozbieżności w konfiguracji, jak również przyśpiesza proces, ponieważ tekst jest wpisywany do wszystkich sesji jednocześnie i nie ma potrzeby wielokrotnego wpisywania tej samej konfiguracji na wielu maszynach.\\
+Aplikacja umożliwia również przełączenie się w dowolnej chwili na konkretny terminal i interakcję tylko z jednym serwerem, np: w celu zdiagnozowania problemu występującego tylko na tej jednej maszynie.
+\section{Fabric}
+\subsection{Opis}
+Jest aplikacją napisaną w języku Python, służącą głównie do wykonywania poleceń powłoki na zdalnym serwerze. Aplikacja pozwala na zdefiniowanie kolejności w jakiej mają zostać poszczególne polecenia, jak również udostępnia kilka funkcji sprawdzających, np: czy plik istnieje, bądź kopiowanie plików na lub z serwera.\\
+Sprawdza się wszędzie tam, gdzie chcemy wykonać konkretne operacje na zdalnym systemie niezależnie od aktualnego stanu tego systemu, bądź z niewielkim wpływem obecnych czynników.
+Zastosowanie fabrica można porównać do CSSH, z tą różnicą, że operacje nie są wpisywane przez administratora podczas sesji, a zdefiniowane wcześniej w pliku, co w znacznym stopniu ułatwia powtarzalność wykonywania zdefiniowanych operacji.
+Pozwala również w prosty sposób rozdzielić zdefiniowane zadania na poszczególne grupy serwerów na których należy je wykonać.\\
+Typowe zastosowania:
+\begin{itemize}
+\item restart nietypowych usług nie posiadających jeszcze odpowiednich skryptów sysvinit
+\item rekonfiguracja projektów na zdalnych serwerach po wysłaniu zmian przez system kontroli wersji
+\item przeszukiwanie logów poszczególnych serwerów
+\end{itemize}
+\subsection{Zalety i wady}
+Zalety:
+\begin{itemize}
+\item łatwość instalacji - repozytoria dystrybucji oraz pythonowe
+\item równoległe wykonywanie operacji
+\item łatwość konfiguracji
+\item powtarzalność wykonywania
+\item skalowalność
+\item niewymagana instalacja oprogramowania na zdalnych maszynach
+\end{itemize}
+Wady:
+\begin{itemize}
+\item ograniczone możliwości decyzji na podstawie aktualnej konfiguracji
+\item wykonywanie tylko poleceń powłoki
+\end{itemize}
+\subsection{Przykład}
+\lstinputlisting[language=python,caption=fabfile.py]{lst/conf_fabfile.py}
+przykład działania powyższego skryptu:
+\lstinputlisting{lst/conf_fabfile_run.sh}
+Aplikacja została uruchomiona z parametrami:
+\begin{description}
+\item[-P] równolegle wykonywanie zadań
+\item[-z 5] uruchomienie pięciu równoległych połączeń
+\item[-I] zapytanie o hasło do serwerów (używane gdy niedostępne logowanie po kluczach SSH)
+\item[show\_problem] nazwa zadania zdefiniowana w pliku \texttt{fabfile.py}
+\end{description}
+Fabric wykonuje połączenia do hostów zdefiniowanych w zmiennej \texttt{env.hosts} w liczbie pięciu połączeń równoległych.
+W przypadku nie podania parametru \texttt{-z}, aplikacja wykona liczbę równoległych połączeń równą liczbie zdefiniowanych hostów dla danego zadania.\\
+Po połączeniu się do zdalnego hosta, następuje sprawdzenie czy istnieje plik \texttt{/var/problem}. W przypadku wykrycia istnienia takiego pliku, zostaje wywołane polecenie powłoki \texttt{cat}.
+W wyniku wykonywania widzimy, ze plik \texttt{/var/problem} istniał tylko na serwerze o adresie IP \texttt{192.168.0.12} i zawierał tekst \textit{zasob byl podmontowany}.
+\section{Puppet}
+\subsection{Opis}
+\label{sec:puppet_opis}
+Puppet jest jednym z najbardziej rozpowszechnionych systemów do zarządzania konfiguracją.
+U podstaw ideologii działania puppeta stoi definicja oczekiwanego stanu serwera.
+Administrator definiuje oczekiwany stan systemu, np: istnienie użytkownika o podanych parametrach, bądź istnienie pliku o zadanej zawartości, a puppet dąży do uzyskania takiego stanu - stworzy użytkownika lub plik taki aby spełniał zadane wymagania.\\
+Puppet został napisany w języku Ruby, co wpływa na składnię manifestów przez niego wykorzystywanych.
+Manifest jest opisem żądanego stanu danego obiektu (użytkownik, plik, zamontowany zasób).
+Manifesty są zapisywane w plikach \texttt{*.pp}.\\
+Puppet działa w trybie klient-serwer.
+Serwer posiada zapisane manifesty dla wszystkich maszyn, dlatego w celu rekonfiguracji wielu maszyn, wystarczy zmiana jedynie w centralnym punkcie - serwerze \textit{master}.\\
+Istnieją trzy możliwości wykonywania manifestów.
+\begin{description}
+	\item{bezpośrednio na maszynie}
+		poprzez jawne wywołanie manifestu na danej maszynie, następuje jego sparsowanie oraz zastosowanie zawartych w nim deklaracji do lokalnej maszyny
+	\item{cykliczne pobieranie danych przez agenta}
+		ponieważ puppet w zamyśle ma działać w trybie \textit{pull}, dlatego jest to jego domyślny tryb pracy.
+		Agent, działający na maszynach klienckich - maszynach których stan ma być kontrolowany przez puppeta - w cyklicznych odstępach czasu pobiera z serwera \textit{master} żądaną konfiguracje.
+		Nie pobiera on bezpośrednio manifestów zapisanych przed administratora, lecz skompilowaną ich wersję specjalne dla tej maszyny.\\
+		Połączenia do \textit{master}-a są szyfrowane poprzez SSL co zwiększa bezpieczeństwo przesyłanych danych wrażliwych zawartych w manifestach.
+	\item{wymuszone uruchomienie agenta}
+		tryb ten działa podobnie do cyklicznego pobierania danych, z tą różnicą, ze użytkownik jawnie zmusza agenta do poprania danych z serwera \textit{master} natychmiast, zamiast czekać aż agent pobierze te dane samoistnie.
+\end{description}
+\subsection{Zalety i wady}
+Zalety:
+\begin{itemize}
+	\item popularność
+	\item duże zaplecze \textit{community}
+	\item dojrzałość projektu
+\end{itemize}
+Wady:
+\begin{itemize}
+	\item potrzeba instalacji oprogramowania na maszynach klienckich
+	\item działanie w trybie \textit{pull}
+	\item skomplikowana instalacja
+\end{itemize}
+
+\section{CFEngine}
+\subsection{Opis}
+CFEngine jest jednym z najstarszych systemów do zarządzania konfiguracją.
+Powstał z myślą o systemach w których nie jest zapewniona dostateczna jakoś łącza, np: łodzie podwodne.
+
+Z racji swojego wieku, architektura CFEngine, w odpowiedzi na zmieniające się potrzeby systemów, ulegała zmianom.
+Aktualnie rozwijana jest trzecia generacja CFEngine.
+Kolejne generacje starały się upraszczać składnie konfiguracji oraz zwiększać możliwości oferowane przez oprogramowanie.
+
+CFEngine opiera się na "Teorii obietnic".
+Jest to teoria stojąca u podstaw wszystkich systemów zarządzania konfiguracją. W celu opisu teorii obietnic por. z \ref{sec:puppet_opis}.
+
+CFEngine, podobnie jak Puppet działa w trybie \textit{pull}, czyli agent pobiera dane z centralnego serwera.
+W przeciwieństwie do Puppeta, CFEngine zapisuje pobrane \textit{polityki} na lokalnej maszynie, dzięki czemu w przypadku braku łącza do maszyny centralnej, jest w stanie kontrolować i ewentualnie korygować konfigurację maszyny w stanie offline.
+\subsection{Zalety i Wady}
+Zalety:
+\begin{itemize}
+	\item dojrzałość projektu
+	\item odporność na przerwy w działaniu łącza
+	\item bardzo duża skalowalność
+\end{itemize}
+Wady:
+\begin{itemize}
+	\item trudna konfiguracja
+	\item trudna instalacja
+\end{itemize}
+\section{Ansible}
+\subsection{Opis}
+Ansible jest również narzędziem do zarządzania konfiguracja serwerów. Został napisany w języku Python i w przeciwieństwie do poprzedników nie wymaga instalacji żadnego oprogramowania na maszynach klienckich.
+Wymaga jedynie, aby na maszynach które będą miały być obsługiwane przez Ansible, był zainstalowany serwer SSH oraz interpreter języka Python. Obie te rzeczy są instalowany domyślnie przez znaczna większość dystrybucji.
+Zalecane jest również skonfigurowanie logowania przy użyciu kluczy SSH, jednak wpływa to tylko na bezpieczeństwo i wygodę użytkowania.\\
+\subsubsection{Tryb aktywny i pasywny}
+Inną cechą odróżniającą Ansible od jego alternatyw jest kierunek działania.
+Ansible jest system działającym w trybie aktywnym, natomiast Puppet, Chef bądź CFEngine działają pasywnie.
+Znaczy to, że działanie Ansible jest wymuszane przez administratora poprzez wywołanie odpowiedniego \textit{playbooka}, w przeciwieństwie do pozostałych, gdzie demon działający na serwerze klienckim odpytuje serwer z konfiguracją w celu pobrania aktualnych polityk.
+Ansible tutaj daje administratorowi większe pole do działania, ponieważ, po wykonaniu \textit{playbook}-a dostaje on raport, jakie kroki zostały podjęte, które polityki były spełnione a które nie, oraz czy jakieś akcje się nie powiodły.\\
+Pozwala on również w prosty sposób na konfigurację działania w trybie quasi-pasywnym poprzez zastosowanie np: \textit{cron}-a do cyklicznego wykonywania \textit{playbook}-a.
+W efekcie Ansible daje możliwość pracy w trybie aktywnym jak i pasywnym.
+\subsubsection{Instalacja}
+Istnieje kilka metod instalacji Ansible
+\begin{itemize}
+\item ze źródeł\\
+Jest to najprostsza metoda instalacji. Ponieważ Ansible jest napisane w języku Python, nie wymaga on kompilacji ani ingerencji w system.
+\lstinputlisting{lst/ansible_install_git.sh}
+Metoda ta wymaga jednak aby w systemie zainstalowane były biblioteki Pythonowe:
+\begin{itemize}
+\item paramiko
+\item PyYAML
+\item jinja2
+\item httplib2
+\end{itemize}
+Wykonanie powyższego kodu powoduje przełączenie się na wirtualne środowisko Pythona przygotowane przez developerów Ansible.\\
+Wirtualne środowisko zostanie opisane w kolejnym podrozdziale.
+\item przez repozytorium\\
+Ansible jest obecne w repozytorium praktycznie każdej dystrybucji. Instalacja zależna jest od konkretnej dystrybucji.\\
+Ta metoda może powodować problemy z używaniem Ansible w wirtualnym środowisku Pythona ponieważ narzędzie instalowane jest globalnie, natomiast środowisko wirtualne często tworzone jest bez dostępu do globalnych bibliotek.
+\item przez PIP\\
+Jest to zalecana metoda instalacji, ponieważ łączy w sobie prostotę procesu z elastycznością.
+Wykorzystuje on repozytorium bibliotek Pythonowych - \texttt{pip}.\\
+Instalacja Ansible poprzez \texttt{pip} wymaga wykonania polecenia:\\
+\lstinputlisting{lst/ansible_install_pip.sh}
+spowoduje ono ściągnięcie najnowszej wersji Ansible jak również zależnych pakietów.
+Instalacja odbędzie się do katalogów zdefiniowanych w zmiennych środowiskowych. Domyślnie są do główne katalogi \texttt{/usr} jednak mogą one zostać nadpisane przez użycie wirtualnego środowiska.
+\end{itemize}
+\subsubsection{Wirtualne środowisko Pythonowe}
+Wirtualne środowisko jest narzędziem pozwalającym na stworzenie odizolowanego od bibliotek systemowych środowiska uruchomieniowego dla aplikacji pythonowych.\\
+Nowe środowisko tworzone jest przy pomocy polecenia \texttt{virtualenv}.
+Tworzy ono strukturę katalogów potrzebną interpreterowi Pythona do działania. Poniżej znajduje się przykład takiej struktury:
+\lstinputlisting{lst/ansible_install_tree.sh}
+Poleceniem \texttt{source <plik\_aktywacji>} aktywujemy wirtualne środowisko.
+Powoduje to nadpisanie domyślnych ścieżek przeszukiwania z domyślnych systemowych na lokalne w wirtualnym środowisku.
+Następnie należy uruchamiać interpreter Pythona nie podając bezpośredniej ścieżki do niego (np: \texttt{/usr/bin/python2}) lecz poprzez zmodyfikowane środowisko: \texttt{/usr/bin/env python}.
+Całość pozwala na tworzenie wirtualnych środowisk ze specyficznymi wersjami Pythona, różnymi niż domyślny interpreter w systemie jak również instalacja odpowiednich bibliotek dla konkretnego projektu a nie dla całego systemu.
+Używanie wirtualnego środowiska nie wymaga również posiadania konta administratora.  
+Wirtualne środowisko zwiększa również przenośność projektów.
+Istnieje możliwość wyeksportowania do pliku tekstowego przy pomocy \texttt{PIP}-a listy zainstalowanych wraz z ich wersjami.
+Pozwala on również za zaimportowanie na nowym środowisku, dokładnie tych samych bibliotek, to tworzy dokładną kopię środowiska źródłowego oraz ułatwia migrację aplikacji pomiędzy maszynami.
+\subsection{Struktura}
+Struktura Ansible jest bardzo prosta i skupia się na trzech podstawowych elementach. Są nimi:
+\begin{description}
+\item {inventory}\\jest to plik zawierający listę hostów które mają być zarządzane.
+\item {moduły}\\Ansible używa modułów w celu wykonywania konkretnych operacji. Pozwala na pisanie własnych modułów.
+\item {playbooki}\\pliki zawierające całościowy opis stanu jaki ma zostać osiągnięty na konfigurowanych hostach.
+\end{description}
+\subsubsection{Inventory}
+Plik \textit{inventory} zawiera listę wszystkich hostów które mogą znajdować się pod kontrolą Ansible.  
+W każdej linijce pliku znajduje się definicja jednego hosta.
+Format definicji hosta wygląda następująco:
+\begin{lstlisting}
+<hostname> [klucz1=wartosc1]...
+\end{lstlisting}
+\texttt{hostname} jest nazwą wyświetlaną przez Ansible podczas generowania raportów, jak również nazwą po której będzie probował się łączyć do serwera.
+Jeżeli \texttt{hostname} nie jest rozwiązywane przez używany serwer DNS, należy użyć specjalnej opcji, aby powiedzieć Ansible pod jakim adresem znajduje się dany serwer.
+Poniżej znajduje się lista kilku najczęściej wykorzystywanych opcji. Pełna lista znajduje się w dokumentacji projektu Ansible.
+\begin{description}
+\item{ansible\_ssh\_host}\\
+	określa adres IP pod którym znajduje się dany serwer.	
+\item{ansible\_ssh\_port}\\
+	określa port który ma zostać wykorzystany przy połączeniu. Przydatne gdy serwer SSH działa na niestandardowym porcie.
+\item{ansible\_ssh\_private\_key\_file}\\
+	określa położenie klucza prywatnego używanego podczas połączenia. Użyteczne gdy nie chcemy używać domyślnego klucza, bądź jeżeli któryś z serwerów ma inna bazę zaakceptowanych kluczy
+\end{description}
+Dodatkowo, można zdefiniować swoje własne zmienne, które można następnie wykorzystać przy ustalaniu parametrów modułów bądź w szablonach.  
+Jak zostanie pokazane w dalszej w kolejnych sekcjach, definiowanie parametrów w pliku \texttt{inventory} nie jest zalecane.
+Zalecanym sposobem definiowania zmiennych jest używanie \texttt{host\_vars} co zostanie przedstawione w dalszej części.
+
+Dopuszczalne jest również definiowanie hostów poprzez użycie zakresów zarówno liczbowych jak i znakowych.
+Dla przykładu, dopuszczalne jest zdefiniowanie dwudziestu serwerów o nazwach \texttt{node01}, \texttt{node02} aż do \texttt{node20} poprzez poniższą definicję:
+\begin{lstlisting}
+node[01:50]
+\end{lstlisting}
+bądź \texttt{hostA} do \texttt{hostE}:
+\begin{lstlisting}
+host[A:F]
+\end{lstlisting}
+
+Istnieje również możliwość łączenia kilku hostów w grupy i późniejsze definiowanie zachowań w odniesieniu do grupy a nie każdego serwera osobo.
+Grupa serwerów tworzona jest poprzez podanie w nawiasach kwadratowych nazwy grupy, po czym pod nią następuje standardowe listowanie serwerów.
+Wszystkie serwery zdefiniowane po nazwie grupy a przed deklaracją następnej, należą do grupy pierwszej.
+Dla przykładu:
+\lstinputlisting[caption=inventory]{lst/ansible_inventory}
+tworzy trzy grupy hostów.
+Pierwsza grupa \texttt{centos} zawiera sześć węzłów i widzimy tutaj definiowanie hostów poprzez zakres.
+Następna grupa \texttt{http} zawiera dwa hosty.
+Oraz ostatnia grupa jest jednoelementowa.\\
+Można zauważyć, że jeden serwer może być członkiem więcej niż jednej grupy.\\
+Została również zdefiniowana grupa \texttt{dc1} której członkami są serwery należące do grup \texttt{http} oraz \texttt{haproxy}.
+Widzimy więc, że można tworzyć również grupy składające się z innych grup.
+
+Możliwe jest, chociaż również nie zalecane, zdefiniowanie zmiennych dla całej grupy.
+Zmienne takie definiuje się w następujący sposób:
+\begin{lstlisting}
+[grupa1]
+node1
+node2
+[grupa1:vars]
+zmienna1=wartosc1
+zmienna2=wartosc2
+\end{lstlisting}
+Jednak, podobnie jak w przypadku zmiennych ustawianych dla hostów, istnieje mechanizm \texttt{group\_vars} i jest on zalecanym mechanizmem ustawiania zmiennych dla grup.
+
+Ostatnią interesującą rzeczą dotyczącą pliku \texttt{inventory} jest fakt, że plik ten nie musi być plikiem tekstowym, a może być skryptem wykonywalnym.
+Ansible jest w stanie wykonać taki skrypt i jeśli zwrócona treść jest poprawnym formatem \texttt{inventory} potraktuje to wyjście jako \texttt{inventory}.
+\subsubsection{Moduły}
+Ansible wyposażony jest w dużą gamę gotowych modułów.
+Moduły w Ansible są to skrypty napisane w języku Python oraz zwykle wykonują jedną konkretną rzecz do której zostały stworzone.
+I tak na przykład mamy moduły:
+\begin{description}
+	\item{\textbf{users}}\\
+		służy do zarządzania użytkownikami w systemie. Pozwala on na tworzenie, usuwanie, oraz modyfikowanie wszelkim parametrów użytkowników kont, takich jak np: katalog domowy, hasło czy domyślna powłoka, ale również pozwala na automatyczne wygenerowanie klucza ssh dla użytkownika podczas tworzenia konta.
+	\item{\textbf{git}}\\
+		służy do zarządzania repozytoriami \texttt{git}-a. Pozwala na klonowanie oraz aktualizacje repozytorium \texttt{git}-a. Daje możliwość wyboru gałęzi bądź \textit{commit}-a na który ma być \textit{zdeployowana} aplikacja bądź wybór konkretnego pliku z kluczem ssh który zostanie wykorzystany do połączenia.
+	\item{\textbf{apt/yum/pip/portage/...}}\\
+		zestaw modułów pozwalających na zarządzanie oprogramowaniem na serwerze. Wspólną i najważniejszą opcją dla wszystkich modułów z tego grupy jest opcja \texttt{state}. Może ona przyjmować co najmniej trzy wartości \texttt{present/absent/latest}. Oznaczają one:
+		\begin{description}
+			\item{present}\\
+				jeżeli pakiet nie jest zainstalowany w systemie, to go zainstaluj. Jeżeli nie podano wersji, instalowana jest najnowsza.
+				Natomiast pakiet już jest w systemie to moduł zwraca komunikat "OK".
+			\item{absent}\\
+				zasada odwrotna co przy stanie \textit{present}. Jeżeli pakiet jest zainstalowany, to zostanie on usunięty.
+				A jeżeli nie było danego pakietu zainstalowanego w systemie, to moduł nie zrobi nic.
+			\item{latest}\\
+				Jest to stan bardziej skomplikowany niż dwa poprzednie, ponieważ w przypadku gdy pakiet nie jest zainstalowany, następuje jego instalacja do wersji najnowszej.
+				Natomiast, jeżeli pakiet jest już zainstalowany, sprawdzane jest, czy zainstalowana wersja jest najnowszą dostępną w repozytorium.
+				Jeżeli tak nie jest, to następuje aktualizacja pakietu do wersji najnowszej.\\
+				Są to jedne z niewielu domyślnych modułów których trzeba używać jawnie w zależności od dystrybucji systemu GNU/Linux na serwerze.
+		\end{description}
+	\item{\textbf{service}}\\
+		moduł zarządzający uruchamianiem usługami. Pozwala na zdefiniowanie poprzez parametr \texttt{enable} czy usługa powinna być uruchamiana przy starcie systemu.
+		Drugim ważnym parametrem jest opcja \texttt{state} który może przyjmować następujące wartości:
+		\begin{description}
+			\item{started}\\
+				upewnia się, że usługa jest uruchomiona. Jeżeli tak nie jest, uruchamia usługę.
+			\item{stoped}\\
+				upewnia się, że usługa jest zatrzymana. Jeżeli tak nie jest, zatrzymuje ją.
+			\item{restarted}\\
+				przeprowadza procedurę restartu usługi niezależnie od jej aktualnego stanu.
+			\item{reloaded}\\
+				przeładowuje daną usługę
+		\end{description}
+\end{description}
+powyżej zostało wymienionych tylko kilka z całej bogatej gamy modułów, jak również zostały one opisane tylko w najczęściej używanym zakresie.
+Pełnej listy modułów oraz ich parametrów należy szukać w dokumentacji
+
+\textit{Playbook}-i zostaną opisane w osobnej sekcji.
+\subsection{Użytkowanie}
+\subsubsection{Tryb pracy Ad-Hoc}
+Ansible pozwala na wywołanie konkretnego modułu z konkretnymi parametrami. W przeciwieństwie do opisywanych w kolejnej sekcji \textit{playbook}-ów, tryb Ad-Hoc przydaje się do szybkich jednorazowych operacji takich jak restart systemu bądź sprawdzenie aktualnych ustawień serwerów DNS na maszynach.
+\lstinputlisting{lst/ansible_ad-hoc_resolve}
+na powyższym przykładzie widzimy wywołanie \textit{ad-hoc} polecenia \texttt{shell} który wywołuje powłokę na zdalnej maszynie.
+Widzimy ze wywoływane jest to dla grupy \texttt{all} która oznacza, ze należy wywołać polecenie dla wszystkich hostów zdefiniowanych w pliku \texttt{inventory}.
+Parametrem podanym do modułu było polecenie \texttt{cat /etc/resolv.conf|grep nameserver} które wypisuje adresy serwerów DNS używanych przez serwer.
+Na wyjściu widzimy, ze dla serwerół \texttt{mgr0-4} otrzymaliśmy linijki pliku \texttt{resolv.conf} zawierające adresy, natomiast dla pozostałych serwerów otrzymaliśmy informację, ze nie udało się połączyć z nimi.
+W tym przypadku było to spowodowane tym, ze nie zostały one włączone.
+
+Inny, bardzo częstym zastosowaniem trybu \textit{ad-hoc} jest wgrywanie pliku na serwer zdalny.
+Należy zaznaczyć, ze z poniższego przykładu, celem zwiększenia czytelności, zostały usunięte komunikaty o błędach połączeń do niewłączonych maszyn, jak również usunięte zostały powtarzające się komunikaty o udanym wykonaniu polecenia na pozostałych hostach.
+Należy również zaznaczyć, ze hosty zostały wcześniej tak przygotowane, aby każdy zwrócił inny komunikat.
+\lstinputlisting{lst/ansible_ad-hoc_copy}
+Na powyższym przykładzie widzimy trzy możliwe stany wywołania polecenia:
+\begin{description}
+	\item{changed=true}\\
+		Oznacza, ze polecenie zakończyło się sukcesem oraz że podmiot operacji uległ zmianie. W tym przypadku oznacza to, ze plik został wgrany na serwer i zmienił on stan.
+		Zmianę stanu należy rozumieć jako utworzenie nowe pliku, zmianę jego treści, bądź któregoś z parametrów takich jak właściciel, prawa dostępu itp.
+	\item{changed=false}\\
+		Oznacza, że przeprowadzona operacja nie wprowadziła żadnych zmian do aktualnego stanu systemu.
+		Jest to pożądany stan przy używaniu \textit{playbook}-ów, co zostanie opisane w następnej sekcji.
+	\item{failed}\\
+		Oznacza, że nie udało się wykonać polecenia.
+		Często komunikat \texttt{failed} niesie ze sobą opis błędu. Bądź zdefiniowany przez autora modułu, bądź odpowiedź systemu operacyjnego.
+\end{description}
+Ostatnim wartym wspomnienia modułem jest moduł \texttt{setup}. Uruchamiany jest poprzez polecenie:
+\begin{lstlisting}
+ansible <host> -m setup
+\end{lstlisting}
+moduł ten służy do tzw. zbierania faktów.
+Czy audytu systemu pod kątem informacji o nim.
+Niestety, wyjście tego polecenia posiada ponad 200 linijek, dlatego nie zostanie ono tutaj załączone.
+Moduł ten dostarcza informacji m.in o:
+\begin{itemize}
+	\item adresach IP maszyny
+	\item architekturze
+	\item wersji jądra
+	\item dokładnych konfiguracji interface-ów sieciowych
+	\item informacji o dyskach twardych: podziale na partycje, sektorach przypadających na partycje, rozmiarze sektora
+	\item dystrybucji systemu
+	\item konfiguracji sprzętowej
+\end{itemize}
+oraz wielu innych nie wspomnianych powyżej.
+\subsubsection{Playbook}
+Głównym celem używania Ansible, nie jest jednokrotne wywoływanie poleceń opisane w poprzednim przykładzie, lecz utrzymywanie stanu serwera w konkretnej konfiguracji.
+Do opisu pożądanego stanu, używane są tzw. \textit{playbook}-i.
+Definiują one stan w jakim ma się znaleźć system po ich wykonaniu.
+I tak na przykład opisem stanu może być zdefiniowanie, że usłucha \texttt{apache2} ma być uruchomiona bądź, że pakiet \texttt{postfix} ma być zainstalowany w wersji $2.10.2-1$.
+Wtedy, przy każdym wywołaniu \textit{playbook}-a, Ansible będzie sprawdzał czy te kryteria są spełnione, i w przypadku gdy któreś nie zostanie, ansible spróbuje doprowadzić system do stanu kiedy kryterium będzie spełnione.\\
+\textit{Playbook}-i wykorzystują do pracy moduły. Te same moduły których możemy używać w trybie \textit{ad-hoc}.
+
+Domyślnie, przed wykonaniem \textit{playbook}-a, następuje zebranie faktów o hostach na których mają zostać wykonane operacje.
+Zbieranie faktów odbywa się przy pomocy modułu \texttt{setup} który został opisany w poprzedniej sekcji.
+Dane które zostaną zebrane mogę posłużyć zarówno do użycia ich w szablonach konfiguracji, jak również do podejmowania decyzji jakie operacje należy wykonać dla hosta. Jedną z najczęstszych decyzji które są podejmowane na podstawie faktów, jest podział systemów na rodziny systemów operacyjnych.
+Dla przykładu, systemy z rodziny \textit{Debian} używają menadżera pakietów \texttt{apt} natomiast rodzina \textit{Red Hat} \texttt{yum}-3.
+
+\textit{Playbook}-i oraz inne pliki wykorzystywane przez Ansible są zapisywane w formacie \textit{Yaml}.
+Po dokładną specyfikację formatu \textit{Yaml} odsyłam do dokumentacji.\\
+
+Poniżej znajduje się przykładowy \textit{playbook}, na podstawie którego zostaną opisane najważniejsze jego elementy.
+\lstinputlisting[caption=example\_playbook.yml]{lst/ansible_playbook_simple.yml}
+zwyczajowo, pliki \texttt{yaml} zaczynają się się od trzech znaków myślnika.\\
+Następnie następuje określenie grupy hostów na których należy wykonać aktualnego \textit{playbook}-a.
+W tym przypadku, jest to grupa \texttt{wwww}.
+Należy tutaj zaznaczyć, że taka grupa musi zostać zdefiniowana w pliku \texttt{inventory}\\
+W następnej kolejności możemy zdefiniować dodatkowe zmienne.
+Zmienne ustawione w \textit{playbook}-u mają wyższy priorytet niż te zdefiniowane w \texttt{host\_vars}, dlatego istnieje możliwość stworzenia \textit{playbook}-a dla środowiska developerskiego nadpisującego parametry używane na środowisku produkcyjnym.\\
+Kolejną, najważniejsza sekcja, jest zdefiniowane operacji które ma wykonać \textit{playbook}.
+Składa się ona z nazwy, która jest nieobowiązkowa i służy jedynie informacji co w danej chwili robi \textit{playbook} oraz z modułu z parametrami.
+Moduły używane w \textit{playbook}-u, są tymi samymi modułami które były używane w trybie \textit{ad-hoc}.\\
+Istnieje możliwość zdefiniowania opcjonalnej sekcji \texttt{notify} w definicji zadania. Jej zadaniem jest wykonanie jakiejś operacji tylko w przypadku gdy efektem wykonania zadania będzie stan \texttt{changed}.
+Na załączonym przykładzie widzimy, że na zdalny serwer jest wgrywany plik konfiguracyjne do dazy MySQL.
+Plik jest tworzony na podstawie szablonu przy użyciu silnika \textit{jinja2}.
+Opcja \textit{notify} sprawia, że jeżeli nowy plik konfiguracyjny różni się od obecnego, następuje ponowne uruchomienie bazy danych.
+Dzięki temu nie ma potrzeby restartować bazy danych przy każdym uruchomieniu \textit{playbook}-a oraz w przypadku zmiany konfiguracji, efekty są zauważalne od razu.
+
+Podczas, gdy w trybie \textit{ad-hoc} wykonanie jakieś modułu miało na celu wykonanie jakiejś operacji oraz zmiana stanu serwera, tak w przypadku \textit{playbook}-ów, dąży się aby wywołanie zwracało jak najwięcej stanów \texttt{ok} oraz jak najmniej \textit{changed}.
+Stan \texttt{ok} oznacza, że stan serwera jest zgodny z naszymi założeniami i nie ma potrzeby podejmować żadnych kroków.
+Stan \texttt{changed} pojawia się w przypadku zmian w konfiguracji jakiś usług, bądź w przypadku ingerencji manualnej administratora lub nieoczekiwanego zachowania aplikacji, np: wystąpienia błędu powodującego wyłączenie się aplikacj.\\
+Uruchomienie \textit{playbook}-a następuje poprzez polecenie \texttt{ansible-playbook} oraz podanie jako parametru nazwy pliku zawierającego konfigurację żądanego \textit{playbook}-a.
+Dodatkowo, do wywołania można dodać parametry sterujące wykonywaniem \textit{playbook}-a. M.in. liczbę równoległych połączeń, wskazać plik \texttt{inventory} bądź ograniczenie wykonywanych \textit{task}-ów tylko do tych oznaczonym określonymi \textit{tag}-ami.
+\subsubsection{Role}
+Jak łatwo zauważyć, w poprzednim przykładzie wykonaliśmy cztery operacje angażujące dwie grupy serwerów a plik zawierał 23 linijki kodu.
+Można w prosty sposób estymować, że rzeczywisty \textit{playbook} będzie tych linii zawierał kilkaset bądź więcej, co sprawi ze jego czytanie i utrzymywanie stanie się bardzo trudne, jeśli nie niemożliwe.
+Dlatego wprowadzono mechanizm ról.
+Jest to zalecana forma definicji stanu poszczególnych typów serwerów.
+Role pozwalają na separacje zadań, zmiennych, plików, szablonów i innych.
+Pozwala to również na migrowanie definicji ról pomiędzy systemami.
+
+Definicje ról znajdują się w katalogu \texttt{roles}, w którym znajdują się podkatalogi z nazwie roli.
+W każdym katalogu z rolą, może znajdować się od jednego do sześciu katalogów odpowiadających za poszczególne elementy roli.
+Poniżej przedstawione jest przykładowe drzewo zawierające dwie role.
+\lstinputlisting{lst/ansible_roles_tree}
+Ansible, podczas ładowania roli, sprawdza po kolei czy istnieją powyższe katalogi.
+Jeżeli katalog istnieje, sprawdzane jest, czy istnieje w nim plik \texttt{main.yml} (nie dotyczy to katalogów \texttt{files} oraz \texttt{templates}) i jeżeli istnieje, jego zawartość zostaje załączona do \textit{playbook}-a.
+Następuje wywołanie dyrektywy \texttt{include}, która pobiera zawartość pliku i wstawia w miejsce w którym została wywołana.\\
+Znaczenie poszczególnych katalogów jest następujące:
+\begin{description}
+	\item{\texttt{files}}\\
+		w katalogu tym powinny znaleźć się wszystkie pliki które dana rola będzie kopiowała na serwer zdalny.
+		Umieszczenie plików w tym katalogu daje możliwość podania do modułu kopiującego jedynie nazwy pliku źródłowego zamiast pełnej ścieżki dostępu. Np:
+		\begin{lstlisting}
+- name: kopiowanie issue.net
+- copy: src=issue.net dest=/etc/issue.net
+		\end{lstlisting}
+		zamiast
+		\begin{lstlisting}
+- name: kopiowanie issue.net
+- copy: src=/home/admin/ansible/all_files/issue.net dest=/etc/issue.net
+		\end{lstlisting}
+		trzeba mieć na uwadze, że niejeden administrator, zamiast zrobić kopię pliku w katalogu z rolą, utworzy katalog zbiorczy ze wszystkimi plikami.
+		W znacznym stopniu może to utrudnić migrację definicji takiej roli, ponieważ, oprócz katalogu z jej definicją, należy przenieść wszystkie pliki jej dotyczące ze wspólnego katalogu.
+		Użycie katalogu \texttt{files} wewnątrz katalogu roli, rozwiązuje ten problem, ponieważ, przekopiowanie katalogu z rolą, zapewnia pełną kompatybilność niezależnie od systemu.
+	\item{\texttt{templates}}\\
+		w katalogu tym, znajdują się wszystkie definicje szablonów których może używać rola.
+		Tego katalogu tyczą się wszystkie zastrzeżenia dotyczące katalogu \texttt{files}
+
+		Ansible korzysta z silnika \textit{jinja2}, który jest wzorowany na silniku szablonów wykorzystywanym we frameworku Django.\\
+		Szablony pozwalają na wykorzystywanie w obie wartości zmiennych.
+		Zmienne te można można podać w pliku \textit{inventory} co zostało opisane wcześniej w sekcji \texttt{vars} w \textit{playbook}-u, bądź w plikach przygotowanych do tego celu.\\
+		Pierwszym miejscem gdzie można umieszczać zmienne są katalogi \texttt{host\_vars} oraz \texttt{group\_vars} które należy utworzyć w katalogu głównym \textit{playbook}-a.
+		Wewnątrz nich tworzy się pliki odpowiednio: z nazwami hostów bądź z nazwami grup.
+w przypadku \texttt{host\_vars} host o nazwie zgodniej z nazwą pliku, będzie zawierał zmienne w nim zdefiniowane, natomiast w przypadku \texttt{group\_vars}, wszystkie hosty należące do grupy zgodnej z nazwą pliku, będą miały zdefiniowane zmienne umieszczone w pliku.\\
+		Przykładowy plik \texttt{host\_vars} definiujący port SSH po którym Ansible powinien łączyć się do hosta:
+		\lstinputlisting[caption=temida.yml]{lst/ansible_host_vars.yml}
+		Natomiast poniższy przykład definiuje nazwę pakietu programu Apache2 oraz lokalizacje konfiguracji \textit{vhost}-ów dla systemu rodziny Debian.
+		\lstinputlisting[caption=debian.yml]{lst/ansible_group_vars.yml}
+		Drugim jest katalog \texttt{vars} który zostanie wyjaśniony poniżej.
+	\item{\texttt{tasks}}\\
+		jest to katalog w którym znajdują się definicje zadań które należy wykonać dla danej roli.
+		Jest to jedyny wymagany katalog w definicji roli.\\
+		W katalogu tym powinien znaleźć się plik \texttt{main.yml}.
+		Po odnalezieniu pliku \texttt{main.yml}, następuje jego załączenie do \textit{playbook}-a.
+		Operacja którą można przestawić w następujący sposób:
+		\begin{lstlisting}
+tasks:
+ - include: tasks/main.yml
+		\end{lstlisting}
+		co jest równoznaczne z wpisaniem zawartości tego pliku do sekcji \textit{tasks} jednak pozwala na zachowanie czytelności kodu.\\
+		Poniżej został przedstawiony przykładowy plik \texttt{tasks/main.yml}
+		\lstinputlisting[caption=tasks/main.yml]{lst/ansible_tasks_main.yml}
+		widzimy, że powyższa rola upewnia się ze w systemie jest zainstalowana najnowsza wersja pakietu \texttt{libselinux-python}. Następnie moduł \texttt{copy} kopiuje konfiguracje dodatkowych repozytoriów na serwer zdalny.
+		Pliki te znajdują się w katalogu \texttt{files}.
+		Następnie widzimy użycie modułu \texttt{ini\_file} który jest w stanie edytować pliki konfiguracyjne.
+		Po wskazaniu mu nazwy pliku oraz sekcji, następuje upewnienie się ze opcji \texttt{enabled} ma ustawioną wrtość $1$.
+		W przypadku gdyby wartość byłą inna, bądź nie istniała, nastąpi jej dopisanie, tak aby stan końcowy był zgodny z założonym.
+	\item{\texttt{handlers}}\\
+		w katalogu tym również umieszcza się plik \texttt{main.yml} w którym umieszcza się funkcje obsługujące wystąpienie statusu \texttt{changed}.\\
+		Stosują się do niego wszystkie zastrzeżenia wymienione w sekcji o katalogu \texttt{tasks}
+		Przykładem takiego pliku jest ten zamieszczony poniżej:
+		\lstinputlisting[caption=handlers/main.yml]{lst/ansible_handlers_main.yml}
+		widzimy tutaj definicję akcji o nazwie \textit{restart\_http}.
+		Używa ona modułu \texttt{service}, który, jak zostało wspomniane wcześniej, obsługuje uruchamianie procesów.
+		Jako nazwę widzimy zmienną o nazwie \texttt{apache}.
+		Jest to zmienna zdefiniowana poprzednio w pliku \texttt{group\_vars} i oznacza nazwę usługi Apache pod systemem Debian.
+	\item{\texttt{vars}}\\
+		znajdują się w nim definicje zmiennych dotyczących roli.
+		Podobnie jak w przypadku poprzednich katalogów, następuje wyszukanie pliku \texttt{main.yml} oraz załadowanie go do sekcji \texttt{vars} w \textit{playbook}-u.
+	\item{\texttt{meta}}\\
+		w tym katalogu znajdują się informacje o zależnościach pomiędzy rolami.
+		Katalog zachowuje się jak \texttt{tasks}.\\
+		Dla przykładu, tworząc role \texttt{apache2}, \texttt{mysql}, \texttt{php} oraz \texttt{lamp}, mamy możliwość w katalogu \texttt{meta} roli \texttt{lamp} zdefiniować zależności:
+		\lstinputlisting[caption=meta/mail.yml]{lst/ansible_meta_main.yml}
+		czego efektem będzie, po przypisaniu do hosta roli \texttt{lamp}, przed wykonaniem zadań z tej roli, zastosowanie ról \texttt{apache2}, \texttt{mysql}, \texttt{php} na tym serwerze.\\
+		Powoduje to zmniejszenie rozmiaru \textit{playbook}-a, jak również tworzenie \textit{playbook}-ów w duchu "co zrobić" a nie "jak zrobić".
+		Definiujemy ze dane hosty mają mieć strukturę \textit{LAMP} bez podawania szczegółów jak należy to zrobić.
+		Jest to niejako stworzenie dodatkowej warstwy abstrakcji pomiędzy wysoko ideowymi \textit{playbook}-ami a nisko ideowymi rolami.\\
+		\LARGE (Jak się pisze wysokoideowy i niskoideowy?) \normalsize
+\end{description}

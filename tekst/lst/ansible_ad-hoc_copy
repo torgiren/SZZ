@@ -1,0 +1,35 @@
+mgr3 | FAILED => failed to parse: {"msg": "Could not replace file: 
+	/root/.ansible/tmp/ansible-tmp-1410485097.3-207744126329446/source 
+	to /tmp/test2.txt: [Errno 1] Operation not permitted", "failed": true}
+	Exception OSError: (2, 'No such file or directory',
+	'/tmp/.ansible_tmpsQm1butest2.txt')
+	in <bound method _TemporaryFileWrapper.__del__ of <closed file '<fdopen>',
+	mode 'w+b' at 0x7f2bf55931e0>> ignored
+
+mgr1 | success >> {
+    "changed": true, 
+    "dest": "/tmp/test2.txt", 
+    "gid": 0, 
+    "group": "root", 
+    "md5sum": "fe60965969111c5638b51944a7575887", 
+    "mode": "0644", 
+    "owner": "root", 
+    "size": 13, 
+    "src": "/root/.ansible/tmp/ansible-tmp-1410485098.33-180775292256028/source", 
+    "state": "file", 
+    "uid": 0
+}
+
+mgr2 | success >> {
+    "changed": false, 
+    "dest": "/tmp/test2.txt", 
+    "gid": 0, 
+    "group": "root", 
+    "md5sum": "fe60965969111c5638b51944a7575887", 
+    "mode": "0644", 
+    "owner": "root", 
+    "path": "/tmp/test2.txt", 
+    "size": 13, 
+    "state": "file", 
+    "uid": 0
+}
