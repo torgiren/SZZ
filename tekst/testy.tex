@@ -517,10 +517,12 @@ Różnice zaczynają się dopiero dla większego obciążenia, co zostało wyja�
 Dodatkowo, można zauważyć różnicę w wykorzystaniu łącza.
 W testowanym środowisku, ani Haproxy ani LVS nie wysyciły łącza, gdyż procesor był elementem limitującym możliwości obu metod, jednak różnica wykorzystania łącza przy obecnych parametrach, pozwala wysnuć teorię, że przy wykorzystaniu mocniejszych maszyn w środowisku produkcyjnym, różnica ta może mieć znaczenie, gdy ich możliwości zaczną być limitowane przez łącze.
 \section{Nietestowane rozwiązania}
+W tym rozdziale nie zostały poruszone wszystkie kwestie związane z wysoką dostępnością.
+Oto najważniejsze pozycje które nie zostały przetestowane.
 \begin{itemize}
-	\item W rozdziale tym nie zostały przetestowane możliwości Nginx-a do rozdzielania połączeń, ponieważ możliwość wykrywania niedostępności usług jest dostępna jedynie w płatnej subskrypcji.\\
-		Z powodu mnogości darmowych rozwiązań open source-owych, płatne moduły nie były testowane.
-	\item Heartbeat/keepalied/ldirector/\ldots - szereg narzędzi dodających funkcjonalność wysokiej dostępności do LVS.
+	\item możliwości Nginx-a do rozdzielania połączeń.
+		Zostały pominięte ponieważ możliwość wykrywania niedostępności usług jest dostępna jedynie w płatnej subskrypcji. Z powodu mnogości darmowych rozwiązań open source-owych, płatne moduły nie były testowane.
+	\item heartbeat/keepalied/ldirector/\ldots - szereg narzędzi dodających funkcjonalność wysokiej dostępności do LVS.
 	\item corosync/\ldots - narzędzia do zapewniania wysokiej dostępności dla urządzeń brzegowych.\\
 		Pozwalają ustawić tzw. \textit{floating IP}.
 		W przypadku awarii jednej maszyny (np: \textit{director}-a LVS), druga, zapasowa, wykrywa ten fakt i ustawia odpowiednie adresy na swoim interface-ie oraz konfiguruje odpowiednie usługi, tak, aby móc przejąć funkcje maszyny która uległa awarii.
