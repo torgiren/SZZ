@@ -7,13 +7,13 @@ DNS (ang {\textit{Domain Name System}) jest to system nazw domenowych. Usługa k
 Oznacza to, że system taki, jest w stanie zamienić nazwę \texttt{www.ftj.agh.edu.pl} na adres \texttt{149.156.110.3}.
 Funkcjonalność taka w znacznym stopniu ułatwia korzystanie z sieci Internet, ponieważ przeciętnemu człowiekowi jest prościej zapamiętać mnemonik \texttt{www.ftj.agh.edu.pl} bądź \texttt{www.duckduckgo.com} niż ciągi czterech liczb.
 Do zamiany nazwy domenowej na adres IP służą rekordy \texttt{A} oraz \texttt{AAAA}, wykorzystywane odpowiednio do adresów IPv4 oraz IPv6.
-Przykład zastosowania rekordu \texttt{A} przedstawiam na poniższym listingu:
-\lstinputlisting{lst/rr_arecord.lst}
+Przykład zastosowania rekordu \texttt{A} oraz \texttt{AAAA} przedstawiam na poniższym listingu:
+\lstinputlisting[caption=rekord A oraz AAAA,label=lst:arecord]{lst/rr_arecord.lst}
 w powyżej konfiguracji widzimy, że odpytując server DNS o wartość \texttt{nazwa4.domenowa.pl} otrzymamy informację, że dana nazwa wskazuje na adres \texttt{1.2.3.4}.\\
 Innymi, często spotykanymi rekordami są rekordy \texttt{CNAME}, \texttt{MX} oraz \texttt{TXT}.
 \begin{description}
 \item[CNAME] jest to rekord będący wskaźnikiem. Dla przykładu:
-\lstinputlisting{lst/rr_cname.lst}
+\lstinputlisting[caption=rekord CNAME]{lst/rr_cname.lst}
 widzimy, że w powyższym przykładzie \texttt{nazwa.domenowa.pl} wskazuje na 1.2.3.4.
 Chcąc aby, \texttt{www.nazwa.domenowa.pl} również wskazywała w to samo miejsce, moglibyśmy również zdefiniować ją jako rekord \texttt{A} z takim samym adresem.
 Jednak, w przypadku migracji serwera z adresu \texttt{1.2.3.4} na \texttt{1.2.3.5}, należałoby zmieniać ten adres w obu rekordach.
@@ -21,7 +21,7 @@ Zastosowanie rekordu \texttt{CNAME}, pozwala powiedzieć "nazwa \texttt{www.nazw
 Prowadzi to do zmniejszenia ryzyka pomyłki przy wpisywaniu adresów IP, jak również zmniejsza liczbę miejsc w których należy zmienić adresację w przypadku migracji serwera.
 \item[MX] rekord wskazujący na adres serwera pocztowego obsługującego daną domenę.
 Strefa może zawierać kilka rekordów \texttt{MX} w celu dystrybucji ruchu na kilka serwerów pocztowych.
-\lstinputlisting{lst/rr_mxrecord.lst}
+\lstinputlisting[caption=rekord MX]{lst/rr_mxrecord.lst}
 Widzimy, że wpis definiujący rekord \texttt{MX} nie posiada nazwy. Zwykle rekord ten definiowany jest na początku definicji strefy, dlatego pominięcie nazwy powoduje, ze rekord ten odnosi się do nazwy tej strefy.
 Jest to kolejna rzecz które uogólnia konfigurację i ułatwia migrowanie.
 Wartość \texttt{5} oznacza poziom preferencji danego serwera. Mając zdefiniowanych kilka rekordów \texttt{MX}, poczta jest dystrybuowana przy pomocy algorytmu ważonego round robin.
@@ -34,7 +34,7 @@ W efekcie, gdy serwer otrzyma zapytanie o daną nazwę domenową, zostanie mu zw
 Aplikacja która otrzyma listę adresów IP, powinna połączyć się na losowy z nich.
 Niestety nigdy nie ma pewności, że aplikacja posiada zaimplementowaną obsługę wielu adresów zwracanych przez serwer DNS, dlatego serwer wprowadza zabezpieczenie przed takim zachowaniem, a mianowicie tytułowy algorytm \textit{round robin}, który zwraca adresy IP, jednak za każdym razem ich permutację.\\
 Dla przykładu, poniżej zamieszczone trzy zapytania wykonane po sobie.
-\lstinputlisting{lst/rr_dig.shell}
+\lstinputlisting[caption=dig rr.mgr.fabrykowski.pl +short]{lst/rr_dig.shell}
 Widzimy, że przy każdym zapytaniu, jako pierwszy adres zwracany jest kolejny adres z puli. Zapewnia to prawidłowe balansowanie ruchu, nawet przy aplikacjach nie potrafiących obsłużyć wielu adresów i łączących się na pierwszy otrzymany.
 
 Metoda ta jest metodą wysokiej wydajności, ponieważ pozwala w sposób niewidoczny dla użytkownika rozdzielić ruch na kilka serwerów, a tym samym rozłożyć obciążenie, to skutkować będzie szybszą odpowiedzią klientowi na zapytanie.
@@ -79,7 +79,7 @@ Jest to zachowanie typowe dla klastrów \textbf{wysokiej dostępności}
 Istnieje możliwość modyfikacji domyślnego algorytmu używanego przez Nginx-a.
 \begin{itemize}
 	\item zmiana sposobu dystrybucji zapytań dodając opcjonalny parametr \texttt{weight} mówiący o wadze danego węzła. Dla przykładu, w poniższej konfiguracji:
-	\lstinputlisting{lst/nx_weight.conf}
+		\lstinputlisting[caption=nginx upstream]{lst/nx_weight.conf}
 	na każde 6 zapytań do \texttt{pula1}, 5 zostanie przekazanych do \texttt{server1} a jedno do \texttt{server2}.
 	Opcja ta wykorzystywana jest głównie tam, gdzie poszczególne serwery różnią się parametrami bądź obciążeniem nie wynikającym z obsługiwania tej puli.
 	\item zmiana sposobu określania serwera jako niedostępnego.
