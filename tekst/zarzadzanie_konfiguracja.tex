@@ -33,7 +33,7 @@ Wady:
 \item wiedza o konfiguracji zależna od jednego pracownika.
 \end{itemize}
 \subsection{Przykład}
-\lstinputlisting{lst/conf_ssh.sh}
+\lstinputlisting[caption=konfiguracja ręczna przez SSH]{lst/conf_ssh.sh}
 \subsection{CSSH}
 Istnieje narzędzie CSSH (\textit{Cluster SSH}), które wychodzi na przeciw osobom chcącym konfigurować kilka serwerów jednocześnie poprzez SSH.
 Narzędzie to potrafi otworzyć wiele sesji SSH równolegle (każda sesja w osobnym terminalu).
@@ -70,7 +70,7 @@ Wady:
 \subsection{Przykład}
 \lstinputlisting[language=python,caption=fabfile.py]{lst/conf_fabfile.py}
 przykład działania powyższego skryptu:
-\lstinputlisting{lst/conf_fabfile_run.sh}
+\lstinputlisting[caption=użycie fabric]{lst/conf_fabfile_run.sh}
 Aplikacja została uruchomiona z parametrami:
 \begin{description}
 \item[-P] równolegle wykonywanie zadań;
@@ -165,7 +165,8 @@ W efekcie Ansible daje możliwość pracy zarówno w trybie aktywnym, jak i pasy
 Istnieje kilka metod instalacji Ansible:
 \begin{itemize}
 \item ze źródeł - jest to najprostsza metoda instalacji. Ponieważ Ansible jest napisane w języku Python, nie wymaga on kompilacji ani ingerencji w system.
-\lstinputlisting{lst/ansible_install_git.sh}
+\lstinputlisting[caption=instalacja ze źródeł]{lst/ansible_install_git.sh}
+
 Metoda ta wymaga jednak aby w systemie zainstalowane były biblioteki Pythonowe:
 \begin{itemize}
 \item paramiko
@@ -182,7 +183,7 @@ Ta metoda może powodować problemy z używaniem Ansible w wirtualnym środowisk
 \item przez PIP - jest to zalecana metoda instalacji, ponieważ łączy w sobie prostotę procesu z elastycznością.
 Wykorzystuje on repozytorium bibliotek Pythonowych - \texttt{pip}.\\
 Instalacja Ansible poprzez \texttt{pip} wymaga wykonania polecenia:\\
-\lstinputlisting{lst/ansible_install_pip.sh}
+\lstinputlisting[caption=instalacja poprzez PIP]{lst/ansible_install_pip.sh}
 Polecenie to spowoduje ściągnięcie najnowszej wersji Ansible, jak również zależnych pakietów.
 Instalacja odbędzie się do katalogów zdefiniowanych w zmiennych środowiskowych. Domyślnie są to główne katalogi \texttt{/usr}, jednak mogą one zostać nadpisane przez użycie wirtualnego środowiska.
 \end{itemize}
@@ -191,7 +192,7 @@ Wirtualne środowisko jest narzędziem pozwalającym na stworzenie odizolowanego
 
 Nowe środowisko tworzone jest przy pomocy polecenia \texttt{virtualenv}.
 Tworzy ono strukturę katalogów potrzebną interpreterowi Pythona do działania. Poniżej znajduje się przykład takiej struktury:
-\lstinputlisting{lst/ansible_install_tree.sh}
+\lstinputlisting[caption=struktura wirtualnego środowiska]{lst/ansible_install_tree.sh}
 Poleceniem \texttt{source <plik\_aktywacji>} aktywujemy wirtualne środowisko.
 Powoduje to nadpisanie domyślnych ścieżek przeszukiwania z domyślnych systemowych na lokalne w wirtualnym środowisku.
 Następnie należy uruchamiać interpreter Pythona nie podając bezpośredniej ścieżki do niego (np: \texttt{/usr/bin/python2}), lecz poprzez zmodyfikowane środowisko: \texttt{/usr/bin/env python}.
@@ -302,17 +303,17 @@ Pełnej listy modułów oraz ich parametrów należy szukać w dokumentacji
 \subsection{Użytkowanie}
 \subsubsection{Tryb pracy Ad-Hoc}
 Ansible pozwala na wywołanie konkretnego modułu z konkretnymi parametrami. W przeciwieństwie do opisywanych w kolejnej sekcji \textit{playbooków}, tryb Ad-Hoc przydaje się do szybkich jednorazowych operacji takich jak restart systemu bądź sprawdzenie aktualnych ustawień serwerów DNS na maszynach.
-\lstinputlisting{lst/ansible_ad-hoc_resolve}
+\lstinputlisting[caption=ansbile ad-hoc]{lst/ansible_ad-hoc_resolve}
 Na powyższym przykładzie widzimy wywołanie \textit{ad-hoc} polecenia \texttt{shell}, które wywołuje powłokę na zdalnej maszynie.
 Polecenie zostało wywoływane dla grupy \texttt{all}, która oznacza, że należy wywołać polecenie dla wszystkich hostów zdefiniowanych w pliku \texttt{inventory}.
 Parametrem podanym do modułu było polecenie \texttt{cat /etc/resolv.conf|grep nameserver}, które wypisuje adresy serwerów DNS używanych przez serwer.
 Na wyjściu widzimy, że dla serwerół \texttt{mgr0-4} otrzymaliśmy linijki pliku \texttt{resolv.conf} zawierające adresy, natomiast dla pozostałych serwerów otrzymaliśmy informację, że nie udało się połączyć z nimi.
 W tym przypadku było to spowodowane tym, że nie zostały one włączone.
 
-Inny bardzo częstym zastosowaniem trybu \textit{ad-hoc} jest wgrywanie pliku na serwer zdalny.
+Innym bardzo częstym zastosowaniem trybu \textit{ad-hoc} jest wgrywanie pliku na serwer zdalny.
 Należy zaznaczyć, że z poniższego przykładu, celem zwiększenia czytelności, zostały usunięte komunikaty o błędach połączeń dla niewłączonych maszynoraz powtarzające się komunikaty o udanym wykonaniu polecenia na pozostałych hostach.
 Należy również zaznaczyć, że hosty zostały wcześniej tak przygotowane, aby każdy zwrócił inny komunikat.
-\lstinputlisting{lst/ansible_ad-hoc_copy}
+\lstinputlisting[caption=ansible ah-hoc output]{lst/ansible_ad-hoc_copy}
 Na powyższym przykładzie widzimy trzy możliwe stany wywołania polecenia:
 \begin{description}
 	\item{changed=true}\\
@@ -395,7 +396,7 @@ Pozwala to również na migrowanie definicji ról pomiędzy systemami.
 Definicje ról znajdują się w katalogu \texttt{roles}, w którym występują podkatalogi o nazwie roli.
 W każdym katalogu z rolą może znajdować się od jednego do sześciu katalogów odpowiadających za poszczególne elementy roli.
 Poniżej przedstawione jest przykładowe drzewo zawierające dwie role.
-\lstinputlisting{lst/ansible_roles_tree}
+\lstinputlisting[caption=struktura roli w ansible]{lst/ansible_roles_tree}
 Ansible, podczas ładowania roli, sprawdza po kolei czy istnieją powyższe katalogi.
 Jeżeli katalog istnieje, sprawdzane jest czy istnieje w nim plik \texttt{main.yml} (nie dotyczy to katalogów \texttt{files} oraz \texttt{templates}) i jeżeli istnieje, jego zawartość zostaje załączona do \textit{playbooka}.
 potem następuje wywołanie dyrektywy \texttt{include}, która pobiera zawartość pliku i wstawia w miejsce, w którym została wywołana.\\
