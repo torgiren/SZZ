@@ -1,25 +1,31 @@
 \chapter{Wstęp do klastrowania}
 \section{Idea klastrowania}
-W czasach kiedy powstał internet, narodziła się potrzeba udostępniania informacji. Początkowo był to zwykle czysty tekst, który umieszczano na wtedy standardowych komputerach. Liczba odbiorców również nie była nie była duża, co wynikało z dopiero tworzącej się sieci internet.
-W miarę upływu czasu, strony internetowe zaczęły się rozrastać. Zaczęto dodawać obrazy a następnie animacje i inne elementy poprawiające możliwości stron oraz odczucia wizualne. Zaczęła również, w związku z coraz łatwiejszym dostępem do internetu, liczba użytkowników chcących uzyskać dostęp do stron.\\
-Wymusiło to potrzebę używania coraz to mocniejszych maszyn do serwowania treści. Niestety, liczba użytkowników oraz wymagań stawianych stronom internetowym rosła szybciej niż postępował rozwój mocy obliczeniowych komputerów. Zaczęto używać dedykowanych serwerów dla aplikacji WWW zamiast zwykłych komputerów domowych. Jednak i to okazało się niewystarczające w obliczu wymaganiom stawianym przez dzisiejszy świat.
+W czasach kiedy powstał internet, narodziła się potrzeba udostępniania informacji. Początkowo był to zwykle czysty tekst, który umieszczano na wtedy standardowych komputerach. Liczba odbiorców również nie była duża, co wynikało z dopiero tworzącej się sieci internet.
+
+W miarę upływu czasu, strony internetowe zaczęły się rozrastać. Dodawano obrazy a następnie animacje i inne elementy poprawiające możliwości stron oraz odczucia wizualne odbiorców. Wzrosła również, w związku z coraz łatwiejszym dostępem do internetu, liczba użytkowników chcących uzyskać dostęp do stron internetowych.
+
+Wymusiło to potrzebę używania coraz mocniejszych maszyn do serwowania treści. Niestety liczba użytkowników oraz wymagania stawiane stronom internetowym rosły szybciej niż postępował rozwój mocy obliczeniowych komputerów. Zaczęto używać dedykowanych serwerów dla aplikacji WWW zamiast zwykłych komputerów domowych. Jednak i to okazało się niewystarczające w obliczu wymagań stawianych przez dzisiejszy świat.
 
 Aby rozwiązać ten problem, narodziła się idea połączenia kilku maszyn w jeden twór, tak aby zwiększyć całkowitą moc przeznaczoną na serwowanie treści.
 \section{Rodzaje klastrów}
-Istnieją dwa główne rodzaje klastrów.
+Istnieją dwa główne rodzaje klastrów:
 \begin{itemize}
-\item klastry wysokiej dostępności
-\item klastry wysokiej wydajności
-\end{itemize}ch 
+\item klastry wysokiej dostępności,
+\item klastry wysokiej wydajności.
+\end{itemize} 
 Podział ten nie jest jednak bardzo sztywny.
 Niektóre rzeczywiste klastry należą tylko do jednej grupy, jednak najczęściej mają one cechy obu tych grup.
 \subsection{Klastry wysokiej dostępności}
 Klastry wysokiej dostępności (ang. \textit{high availability, HA}) tworzone są głównie po to, aby zapewnić jak najwyższy poziom dostępności danej usługi.
-Konstrukcje te składają się zwykle z wielu maszyn, z których jakaś część nie uczestniczy w serwowaniu danych, a jedynie czeka w gotowości i w przypadku awarii maszyn aktywnych, przejmuje ich zadanie. Efektem jest ciągła dostępność usługi dla klienta.\\
+
+Konstrukcje te składają się zwykle z wielu maszyn, z których jakaś część nie uczestniczy w serwowaniu danych, a jedynie czeka w gotowości i w przypadku awarii maszyn aktywnych przejmuje ich zadanie. Efektem jest ciągła dostępność usługi dla klienta.
+
 Brak dostępności portalu może wiązać się z kosztami bądź brakiem zysków dla właściciela, dlatego często stosuje się klastry wysokiej dostępności.
 \subsection{Klastry wysokiej wydajności}
 Klastry wysokiej wydajności (ang. \textit{high performance, HP}) tworzone są głównie po to, aby zapewnić jak najwyższy poziom wydajności danej usługi.
-Celem tego typu klastrów jest zapewnienie komfortu korzystania z serwisu dla klienta. W tej architekturze, pracują wszystkie maszyny, oraz każda z nim wykonuje jakąś część zadania w celu jak najszybszego skonstruowania odpowiedzi dla klienta.\\
+
+Celem tego typu klastrów jest zapewnienie klientowi komfortu podczas korzystania z serwisu. W tej architekturze, pracują wszystkie maszyny, oraz każda z nim wykonuje jakąś część zadania w celu jak najszybszego skonstruowania odpowiedzi dla klienta.\\
+
 W wersji ideowej, awaria jakiejś maszyny, unieruchamia klaster, ponieważ nie jest możliwe uzyskanie części odpowiedzi za którą odpowiadała maszyna która uległa awarii. W praktyce rzadko spotyka się czyste klastry wysokiej wydajności.
 \subsection{Klastry mieszane}
 Klastry mieszane są najczęściej spotykanymi klastrami. Posiadają one cechy obu powyższych grup, czyli najczęściej pracują wszystkie maszyny w klastrze, jednak ich konfiguracja pozwala im na wykonywanie dowolnego zadania (z puli przewidzianych zadań), w taki sposób, że podczas pracy wszystkich maszyn w klastrze, następuje szybsza odpowiedź do klienta - cecha wysokiej wydajności - jednak po awarii którejś z maszyn, pozostałe są w stanie przejąć jej obowiązki pozwalając odpowiedzieć na zapytanie - wysoka dostępność.\\
