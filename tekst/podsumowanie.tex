@@ -4,4 +4,19 @@ Niniejsza praca wykazała potrzebę stosowania klastrów WWW.
 Przy obecnym rozwoju internetu, ilość zapotrzebowania na dane jest daleko wykraczająca poza możliwości pojedynczych komputerów.
 Ponadto, niemożność dostarczenia klientowi żądanych danych jest równoznaczne z ponoszonymi przez firmę stratami finansowymi oraz wizerunkowymi.
 
-Trzeba jednak pamiętać, że nawet najlepszy klaster WWW nie zastąpi optymalizacji aplikacji działającej 
+Obecnie każdy popularny serwis internetowy wykorzystuje różnego rodzaju klastry.
+Poziom zaawansowanie konfiguracji w przypadku dużych firm wykracza daleko poza możliwości opisywanego systemu.\\
+
+Ponadto, w niniejszej pracy zostały opisane tylko metody \textit{software}owe, a zostały pominięte metody \textit{hardware}owe.
+Wynika to z braku dostępu do profesjonalnego sprzętu.\\
+Dodatkowo, z racji objętości pracy, pominiętę zostały niektóre, bardziej zaawansowane metody wykorzystywane przez duże korporacjie, np: zastosowanie modułu \texttt{GeoIP}, pozwalającego na serwowanie różnej treści klientowi w zależności od jego położenia geograficznego.
+Wykorzystywane jest to np: przy zwracaniu różnych adresów IP dla danej domeny.
+Klientowi zwraca się adres serwera w \textit{datacenter} znajdującego się najbliżej, w celu zmiejszenia czasu odpowiedzi.\\
+Nie został również poruszony temat tworzenia własnych modułów do \texttt{nginx}a pozwalających dostosować sposób dystrybucji ruchu do konkretnych warunków panujących w firmie.\\
+Nie został również przetestowany serwer \texttt{lighthttp}.
+Wynika to z faktu dość specyficznej charakterystyki tego serwera, sprawiającej że potrafi w szybki sposób serwować pliki statyczne, lecz posiada mniejsze możliwości konfiguracyjne niż \texttt{apache} lub \texttt{nginx}.
+
+Jednak opisany system jest w stanie wystarzyć dla małej lub średniej strony.
+Wykorzystuje on najczęściej używane metody klastrowania i daje duże możliwości profilowania konfiguracji na potrzeby konkretnego rozwiązania.
+
+Trzeba jednak pamiętać, że nawet najlepszy klaster wysokiej wydajności nie zastąpi optymalizacji aplikacji działającej 
