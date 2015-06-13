@@ -466,10 +466,9 @@ tasks:
 		w tym katalogu znajdują się informacje o zależnościach pomiędzy rolami.
 		Katalog zachowuje się jak \texttt{tasks}.\\
 		Dla przykładu, tworząc role \texttt{apache2}, \texttt{mysql}, \texttt{php} oraz \texttt{lamp}, mamy możliwość w katalogu \texttt{meta} roli \texttt{lamp} zdefiniować zależności:
-		\lstinputlisting[caption=meta/mail.yml]{lst/ansible_meta_main.yml}
+		\lstinputlisting[caption=meta/main.yml]{lst/ansible_meta_main.yml}
 		czego efektem będzie, po przypisaniu do hosta roli \texttt{lamp}, przed wykonaniem zadań z tej roli, zastosowanie ról \texttt{apache2}, \texttt{mysql}, \texttt{php} na tym serwerze.\\
 		Powoduje to zmniejszenie rozmiaru \textit{playbook}-a, jak również tworzenie \textit{playbook}-ów w duchu "co zrobić" a nie "jak zrobić".
 		Definiujemy ze dane hosty mają mieć strukturę \textit{LAMP} bez podawania szczegółów jak należy to zrobić.
 		Jest to niejako stworzenie dodatkowej warstwy abstrakcji pomiędzy wysoko ideowymi \textit{playbook}-ami a nisko ideowymi rolami.\\
-		\LARGE (Jak się pisze wysokoideowy i niskoideowy?) \normalsize
 \end{description}
