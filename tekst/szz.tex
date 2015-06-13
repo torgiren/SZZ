@@ -22,6 +22,8 @@
 \assignpagestyle{\chapter}{empty}
 \newcommand{\param}[1]{\textit{\textless #1\textgreater}}
 
+\DeclareUnicodeCharacter{00A0}{~}
+
 %konfiguracja listingow
 \usepackage{listings}
 \DeclareCaptionFont{white}{\color{white}}
@@ -88,6 +90,7 @@
 \include{metody_klastrowania}
 \include{zarzadzanie_konfiguracja}
 \include{testy}
+\include{projekt}
 \include{podsumowanie}
 \addcontentsline{toc}{chapter}{Bibliografia}
 \bibliography{szz}

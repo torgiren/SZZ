@@ -1,1 +1,27 @@
-\chapter{Wstęp}
+\addcontentsline{toc}{chapter}{Wstep}
+\chapter*{Wstęp}
+Niniejsza praca opisuje aplikację ułatwiającą administratorowi tworzenie oraz administrację klasterm dla aplikacji WWW.\\
+Została ona podzielona na pięć rozdziałów tworzących trzy grupy.\\
+Pierwsza grupa skupia się na rozważaniach teoretycznych.
+W jej skład wchodzą rozdziały:
+\begin{description}
+\item{"Wstęp do klastrowania"}\\
+Opisuje on powody z których zaczęto stosować klastry WWW.
+Przybliża podział klastrów oraz cechy każdego rodzaju.
+Dodatkowo zarysowywuje problem wynikający z trudności zarządzania konfiguracją na klastrach.
+\item{"Metody klastrowania"}
+Rozdział ten opisuje najbardziej znane metody służące klastrowaniu aplikacji.
+Opisuje on metody takie jak \textit{DNS round robin}, \textit{Nginx upstream}, \textit{Haproxy}, \textit{LSV}.
+Każda z powyższych metod zostałą krótko opisana, sposób jej działania oraz sposób konfiguracji.
+\item{"Zarządzanie konfiguracja"}\\
+Ten rozdział przedstawia problem konsystentnej konfiguracji dużej ilości serwerów.
+Opisuje on podstawowy, ręczny sposób konfiguracji maszyn.
+Jego zalety i wady, a następnie kolejne metody usprawniające i eliminujące wady ręcznej konfiguracji.
+Zostały opisane aplikacje takie jak: \textit{Fabric}, \textit{Puppet}, \textit{CFEngine}, \textit{Ansible}, ze szczególnym naciskiem na ostatni.
+\end{description}
+
+W drugiej części pracy, znajduje się jeden rozdział, opisujący praktyczne testy wydajnościowe opisywanych wcześniej metod klastrowania.
+Skupia się on zarówno na testowaniu możliwości zwiększania wydajności jak i zapewnianiu wysokiej dostępności.
+
+Trzecia część opisuje tytułowy \textit{System zautomatyzowanego zarządzania konfiguracją farmy serwerów aplikacji WWW}.
+Opisuje on powody wyboru konkretnych technologii, opis ich konfiguracji oraz sposobu współdziałania.
