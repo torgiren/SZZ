@@ -1,0 +1,86 @@
+\chapter{Opis projektu}
+\section{Opis}
+W poprzednich rozdziałach zostały przedstawione metody klastrowania oraz zarządzania konfiguracją, a następnie zostały one przetestowane.
+Została również wykazana zasadność ich stosowania.\\
+Jednak, aby wdrożyć takie rozwiązania, potrzebna jest wiedza oraz czas pracy administratora.
+
+\textit{System zautomatyzowanego zarządzania konfiguracją farmy serwerów aplikacji WWW} (zwany dalej \textit{SZZ}) ma za zadanie uprościć konfigurację klastra WWW, pozwalając zaoszczędzić czas i pieniądze.
+Opisywany system będzie mógł być obsługiwany przez osoby nie posiadające dogłębnej wiedzy z zakresu administracji systemami linux ani serwerami WWW.
+Wymagana jest jedynie podstawowa wiedza techniczna, którą posiada przeciętny programista.
+
+Konfiguracja odbywa się poprzez edycję plików, dlatego obsługująca system powinna być w stanie obsługiwać połączenia \texttt{ssh} oraz edytor tekstowy.
+\section{Struktura}
+\textit{SZZ} wykorzystuje różne metody klastrowania.
+Struktura systemu została przedstawiona na rys~\ref{fig:struktura}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{obrazy/struktura_szz.png}
+	\caption{Struktura SZZ}
+	\label{fig:struktura}
+\end{figure}
+Pierwszą warstwą klastrowania jest LVS (por.~\ref{sec:LVS}).
+Zapytanie trafiające na serwer obsługiwane są przez \textit{direcotor}-a.
+Następnie przekazywane są do serwerów WWW, które analizując zapytania serwują treści statyczne ze wspólnego zasobu NFS.
+W przypadku zapytania o treści dynamiczne, zapytania przekazywane jest do warstwy trzeciej projektu, czyli usługi Haproxy, która przekazuje zadania do odpowiedniego serwera z usługą \textit{PHP-fpm}.
+Po wygenerowaniu odpowiedzi, serwer roboczy zwraca odpowiedź do Haproxy, które przekazuje je do serwera WWW.
+Ten natomiast, będąc \textit{real server}-em w klastrze LVS, odpowiada bezpośrednio klientowi.
+\subsection{Warstwa zero - storage}
+Projekt posiada wspólny zasób dyskowy wystawiany poprzez protokół NFS.
+Metoda ta w znaczny sposób uprasza aktualizację aplikacji na wszystkich węzłach równocześnie - kosztem braku możliwości wykonywania tzw. \textit{rolling update}.
+Ta technologi rozwiązuje również problem wgrywania plików na serwer oraz ich propagacji ponieważ każdy wgrywany plik trafia na wspólny zasób i jest od razu widziany przez pozostałe węzły.\\
+Wydajność NFS jest zadowalająca przy wykorzystywaniu w obrębie jeden serwerowni i jednej sieci LAN.
+W przypadku chęci użycia rozproszenia systemu między kilkoma \textit{datacenter} należy ze własnym zakresie obsłużyć synchronizację wgrywanych plików oraz aktualizacji.
+\subsection{Warstwa pierwsza - LVS}
+Jedynym wystawionym na świat serwerem jest \textit{director}. Do niego trafiają wszystkie zapytania od klientów.
+Wykorzystana w projekcie konfiguracja używa \textit{scheduler}-a opartego o algorytm \textit{round robin}, czyli przekazuje zapytania na wszystkie serwery po kolei.
+Technologia LVS pozwala na posiadanie tylko jednego serwera typu \textit{director}, ponieważ jego zadaniem jest jedynie przekazywanie zapytać do \textit{real server}-ów.
+Ponadto, jak zostało omówione wcześniej, odpowiedzi do klienta wysyłane są bezpośrednio od \textit{real server}-ów, bez udziału \textit{director}-a co pozwala na obsługę nawet dużego ruchu.\\
+Obecna konfiguracja nie posiada narzędzi do wykrywania niedostępności \textit{director}-a bądź \textit{real server}-ów, dlatego konfiguracja narzędzi typu \textit{heartbeat} oraz technologi \textit{floating IP} i/lub monitoringu stanu serwerów, leży po stronie użytkownika.
+\subsection{Warstwa druga - Nginx}
+Drugą warstwą jest warstwa serwerów WWW.
+Do nich trafiają zapytania przekazywane z pierwszej warstwy.
+Serwer WWW obsługujący wiele \textit{Virtual Host}-ów, analizuje zapytanie pod kontem, czy żądana ścieżka jest istniejącym plikiem na dysku.
+Jeżeli plik istnieje, jest on serwowany klientowi.
+W przeciwnym wypadku, zapytanie zostaje przekazywane do haproxy.
+\subsection{Warstwa trzecia - Haproxy}
+Haproxy jest trzecią warstwą systemu.
+Przez tą warstwę przechodzą wszystkie zapytania o treści dynamiczne.
+Usługa tworzy osobny \textit{frontend} oraz \textit{backend} dla każdego projektu.\\
+Haproxy posiada wbudowaną obsługę wykrywania, dlatego warstwa trzecia zapewnia pełna \textit{HA}.\\
+Wysycenie łącza dla warstwy trzeciej nie powinna być problemem, ponieważ zapytania odbywają się jedynie po dane dynamiczne - zwykle tekstowe.
+Wszystkie zapytania o obrazy i inne treści statyczne zostają obsłużone warstwę wcześniej.
+System nie zapewnia wysokiej dostępności dla usługi haproxy.
+Administrator powinien skonfigurować monitoring aby móc taką awarię wykryć maksymalnie szybko i usunąć usterkę.
+W przypadku niemożliwości naprawy maszyny, system pozwala na skonfigurowanie nowej maszyny dla warstwy trzeciej oraz przekonfigurowanie w stosunkowo krótkim czasie.
+\subsection{Warstwa czwarta - PHP-fpm}
+Najniższą warstwą systemu jest warstwa robocza.
+PHP-fpm odpowiedzialny jest za generowanie treści dynamicznych.
+Podobnie jak serwer WWW, korzysta on ze współdzielonego zasobu dyskowego udostępnianego po NFS.
+Na jednej maszynie może być uruchomionych kilka aplikacji PHP-fpm.
+\section{Nazwa robocza: backend}
+Sekcja ta opisuje kroki jakie podejmuje system, aby skonfigurować klaster zgodnie z założeniami.
+\subsection{NFS}
+Aby skonfigurować serwer NFS, system instaluje potrzebne pakiety a następnie kopiuje plik konfiguracyjny na serwer.
+W następnej kolejności ustawia autostart server NFS oraz go uruchamia.\\
+W drugiej kolejności, następuje instalacja \textit{git}-a.
+Ostatnią wykonywaną rzeczą, jest \textit{deploy} wszystkich aplikacji.
+\textit{Deploy} wykonywany jest do aktualnej wersji w gałęzi \textit{master}.
+\subsection{Director}
+Do skonfigurowania \textit{Directora}, potrzebna jest instalacja pakietu \texttt{ipvsadm}, który dostarcza narzędzia do konfiguracji \textit{Linux Virtual Server}.
+Konfiguracja \textit{LVS} przeprowadzana jest poprzez użycie mechanizmu zapisu i odczytu aktualnej tablicy \textit{LVS}.
+Tuż po instalacji, wykonywany jest zapis konfiguracji, w celu przeprowadzenia całej procedury zapisu tablicy do pliku.
+Następnie, generowany jest nowy plik konfiguracji na podstawie parametrów zadanych przez użytkownika.
+Plik ten jest wgrywany na serwer i podmienia poprzednio utworzony przy poleceniu zapisu.
+Następnie wykonywana jest procedura wczytywania tablicy z pliku do aktualnie działającej instancji.
+W efekcie, tablica wygenerowana przez system staje się aktualnie działającą.
+Następnie ustawia się autouruchamianie usługi \texttt{LVS}.\\
+W drugiej kolejności, tworzony jest wirtualny interface sieciowy, oraz zostają mu przypisane adresy IP odpowiednie dla konkretnych projektów.\\
+Każdy projekt nasłuchuje na dedykowanym sobie adresie IP.
+Daje to możliwość dedykowania konkretnych serwerów WWW dla projektów, zamiast przypisywać obsługę wszystkich serwerów dla każdego projektu.
+\subsection{Real server}
+Konfiguracja \textit{real server}-ów jest zbliżona do \textit{director}-a.
+Następuje stworzenie wirtualnego interface-u a następnie przypisanie mu odpowiednich adresów IP.
+Ważną różnicą w przypadku \textit{real server}-ów jest zapewnienie, aby \textit{real server}-y nie odpowiadały na zapytania \texttt{ARP}.
+Uzyskiwane jest to poprzez użycie \texttt{arptables}.
+System blokuje wszystkie pakiety typu \textit{ARP response} i pochodzące z adresacji używanej przez \textit{LVS} do nasłuchiwania przez projekty.
+\subsection{Server WWW}
