@@ -84,3 +84,10 @@ Ważną różnicą w przypadku \textit{real server}-ów jest zapewnienie, aby \
 Uzyskiwane jest to poprzez użycie \texttt{arptables}.
 System blokuje wszystkie pakiety typu \textit{ARP response} i pochodzące z adresacji używanej przez \textit{LVS} do nasłuchiwania przez projekty.
 \subsection{Server WWW}
+Serwer WWW instalowany jest na \textit{real server}-rze.
+Następuje instalacja serwera \texttt{nginx} oraz ustawienie jego autouruchamiania.\\
+W kolejnym kroku generowana jest konfiguracja \textit{vhost}-ów.
+Dla każdej \textit{hostgroup}-y z konfiguracji, zaczynającej się od \textit{proj\_} (założenie konfiguracji), tworzona jest osobna sekcja \texttt{server}.
+\texttt{Document root} jest ustawiany do odpowiedniego katalogu na zasobie sieciowym.
+Następnie konfigurowane jest \textit{proxy} plików \texttt{php} do serwera z odpowiednio skonfigurowanym \textit{haproxy}.\\
+Obecna wersja oprogramowania nie wspiera przyjaznych linków, prowadzących do skryptów PHP a nie kończących się rozsrzerzeniem \texttt{.php}.
