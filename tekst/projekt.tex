@@ -91,3 +91,9 @@ Dla każdej \textit{hostgroup}-y z konfiguracji, zaczynającej się od \textit{p
 \texttt{Document root} jest ustawiany do odpowiedniego katalogu na zasobie sieciowym.
 Następnie konfigurowane jest \textit{proxy} plików \texttt{php} do serwera z odpowiednio skonfigurowanym \textit{haproxy}.\\
 Obecna wersja oprogramowania nie wspiera przyjaznych linków, prowadzących do skryptów PHP a nie kończących się rozsrzerzeniem \texttt{.php}.
+\subsection{Server haproxy}
+Konfiguracja serwera haproxy polega, podobnie jak innych komponentów, na instalacji aplikacji, wgraniu konfiguracji oraz uruchomieniu usługi.
+System tworzy konfigurację dla haproxy bazując na ustawieniach projektów użytkownika.
+Dla każdego zdefiniowanego w systemie projektu, \texttt{backend}, wykorzystujący algorytm \textit{round robin}, a następnie umieszcza w nim wszystkie serwery typu \texttt{worker} odpowiedzialne za procesowany projekt.
+Następnie tworzy \texttt{frontend} nasłuchujący na porcie odpowiadającym \textit{id} projetu oraz wykorzystujący odpowiedni \texttt{backend}\\
+Dodatkowo, \textit{haproxy} wystawia na standardowym porcie $9000$ statystyki aktualnie działającej instancji.
