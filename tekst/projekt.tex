@@ -97,3 +97,17 @@ System tworzy konfigurację dla haproxy bazując na ustawieniach projektów uży
 Dla każdego zdefiniowanego w systemie projektu, \texttt{backend}, wykorzystujący algorytm \textit{round robin}, a następnie umieszcza w nim wszystkie serwery typu \texttt{worker} odpowiedzialne za procesowany projekt.
 Następnie tworzy \texttt{frontend} nasłuchujący na porcie odpowiadającym \textit{id} projetu oraz wykorzystujący odpowiedni \texttt{backend}\\
 Dodatkowo, \textit{haproxy} wystawia na standardowym porcie $9000$ statystyki aktualnie działającej instancji.
+\subsection{Serwer roboczy - \texttt{worker}}
+Serwery robocze pracują w oparciu o \texttt{PHP-fpm}, dlatego pierwszym krokiem konfiguracji jest upewnienie się, że jest on zainstalowany, a jeśli nie, to jego instalacja.
+Następnie wgrywana jest konfiguracja, która w typ przypadku zawiera konfiguracje \textit{pool}-i dla każdego projektu obsługiwanego przez dany serwer roboczy.
+Każda pula nasługuje na porcie odpowiadającym \texttt{id} projektu.
+\section{Konfiguracja}
+\subsection{Maszyny konfigurowane}
+Podstawowa konfiguracja maszyn będących w klastrze jest w gestii administratora oraz powinien posiadać system \texttt{Debian Linux} bądź \texttt{CentOS Linux}.
+Dodatkowo, muszą mieć uruchomioną usługę \texttt{SSH}.
+Zalecane jest również wgranie kluczy \texttt{RSA}.
+Nalezy również zapewnić, aby na maszynie był zainstalowany interpreter Pythona w wersji min. $2.6$.
+\subsection{Maszyna konfigurująca}
+Podobnie jak w przypadku maszyn konfigurowanych, administrator musi zadbać, aby na maszynie był zainstalowany system GNU/Linux, Interpreter języka Python w wersji min. $2.6$ oraz zalecane jest wygenerowanie pary kluczy \texttt{RSA}.
+Instalacja oprogramowanie Ansible, została opisane w rozdziale~\ref{sec:konfiguracja_ansible_instalacja}.
+\subsection{Konfiguracja właściwa}
