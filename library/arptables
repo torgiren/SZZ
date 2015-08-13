@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+from ansible.module_utils.basic import *
+def main():
+	module = AnsibleModule(
+		argument_spec = dict(
+			state = dict(default='present', choices=['present', 'absent']),
+			source_ip = dict(required=True),
+			chain = dict(required=True),
+			action = dict(required=True),
+		)
+	)
+	ret = {}	
+	ret['aa'] = 'Marcin'
+	rc, out, err = module.run_command("arptables -L")
+
+	actual = None
+	found = False
+	changed = False
+	failed = False
+	msg = ""
+	for i in out.split('\n'):
+		j = i.split()
+		if i.startswith('Chain'):
+			actual = j[1]
+		if i.startswith('-j'):
+			if actual == module.params['chain'] and i.strip() == "-j %s -s %s" % (module.params['action'], module.params['source_ip']):
+				found = True
+				break
+					
+	if found and module.params['state'] == 'absent':
+		rc, out, msg = module.run_command("arptables -D %s --source-ip %s -j %s" % (module.params['chain'], module.params['source_ip'], module.params['action']))
+		if rc:
+			failed = True
+		changed = True	
+	elif not found and module.params['state'] == 'present':
+		rc, out, msg = module.run_command("arptables -A %s --source-ip %s -j %s" % (module.params['chain'], module.params['source_ip'], module.params['action']))
+		if rc:
+			failed = True
+		changed = True
+#	ret['out'] = out
+#	print module.params.items()
+	if failed:
+		module.fail_json(msg=msg, **ret)		
+	else:
+		module.exit_json(changed=changed, **ret)
+main()

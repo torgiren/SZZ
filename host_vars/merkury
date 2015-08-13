@@ -1,0 +1,8 @@
+---
+warn_users: 2
+crit_users: 5
+
+smtp_ehlo: 220 exphost.pl ESMTP Postfix
+
+warn_mem: 93
+crit_mem: 96

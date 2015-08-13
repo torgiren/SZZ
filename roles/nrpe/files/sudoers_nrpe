@@ -1,0 +1,5 @@
+Defaults:nrpe !requiretty
+Defaults:nagios !requiretty
+Cmnd_Alias NRPE = /etc/init.d/nginx restart, /etc/init.d/postgresql restart, /etc/init.d/crond restart, /etc/init.d/cron restart, /etc/init.d/rsyslog restart
+nrpe    ALL=NOPASSWD: NRPE
+nagios    ALL=NOPASSWD: NRPE

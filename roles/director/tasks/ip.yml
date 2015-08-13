@@ -1,0 +1,12 @@
+- name: dodanie source-directory do interfaces
+  lineinfile: dest=/etc/network/interfaces line="source-directory /etc/network/interfaces.d/" state=present
+- name: kopiowaniu skryptu restartujacego
+  copy: src=ifdownup.sh dest=/etc/init.d/ifdownup.sh mode=755
+- name: wgrywanie konfiguracji glownej
+  copy: src=interfaces dest=/etc/network/interfaces
+  notify: eth0 up
+- name: wgrywanie konfiguracji vip0
+  template: src=vip0.jinja2 dest=/etc/network/interfaces.d/vip0
+  notify:
+    - vip0 down
+    - vip0 up

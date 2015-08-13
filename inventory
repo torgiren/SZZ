@@ -1,11 +1,29 @@
+[backend]
+#kojos	
+#japet	
+#temida	
+#rea	
+#hyperion
+
+[fronend]
+helios.fabrykowski.pl ansible_ssh_port=2223
+merkury
+
+[nrpe]
+#venus
+kronos	ansible_ssh_port=1	ansible_ssh_host=95.85.57.200
+
 [centos]
-node[1:6]
+kronos
+merkury
+helios.fabrykowski.pl ansible_ssh_port=2223
+teja
+krios ansible_ssh_host=104.206.199.244
+hyperion
+#okeanos
 
-[http]
-node2
-node3
-
-[director]
-
-[haproxy]
-node1
+[debian]
+#fojbe
+ajgajon
+gyges
+krottos

@@ -11,22 +11,61 @@ defaults
 	option dontlognull
 	retries 3
 	option redispatch
-	timeout connect 5000
-	timeout client 10000
-	timeout server 10000
+	timeout connect 60000
+	timeout client 60000
+	timeout server 60000
+	srvtimeout 60000
 
-listen test 0.0.0.0:{{haproxy_port}}
-	mode http
-	stats enable
-	stats uri /haproxy?stats
-	stats realm Strictly\ Private
+frontend http-in
+	bind 0.0.0.0:80
+{% for i in group_names %}
+{%	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+	acl is_{{i[5:]}} hdr_end(host) -i {{i[5:]}}
+	use_backend {{i[5:]}} if is_{{i[5:]}}
+{%	endif %}
+{% endfor %}
+
+{% for i in group_names %}
+{%	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+backend {{i[5:]}}
 	balance roundrobin
-	option httpclose
-	option forwardfor
-	{% for host in groups['http'] %}
-	{% if hostvars[host]['ip_for_haproxy'] is defined %}
-		server {{host}} {{hostvars[host]['ip_for_haproxy']}}:80 check
-	{% else %}
-		server {{host}} {{host}}:80 check
-	{% endif %}
-	{% endfor %}
+	option forwardfor except 127.0.0.1
+{%	for j in groups[i] %}
+{%		if j in groups['http'] %}
+	server {{j}} {{hostvars[j]['ansible_eth0']['ipv4']['address']}}:80 check
+{%		endif %}
+{%	endfor %}
+{%	endif %}
+
+{% endfor %}
+
+{% for i in projects %}
+frontend php_{{i}}-in
+	bind 0.0.0.0:{{projects[i]['id']}}
+	default_backend php_{{i}}
+{% endfor %}
+
+{% for i in group_names %}
+{%	if inventory_hostname in groups[i] and i[:5] == "proj_" %}
+backend php_{{i[5:]}}
+	balance roundrobin
+{%	for j in groups[i] %}
+{%		if j in groups['workers'] %}
+	server {{j}} {{hostvars[j]['ansible_eth0']['ipv4']['address']}}:{{projects[i[5:]]['id']}} check
+{%		endif %}
+{%	endfor %}
+{%	endif %}
+{% endfor %}
+
+listen stats 0.0.0.0:9000       #Listen on all IP's on port 9000
+    mode http
+    balance
+    timeout client 5000
+    timeout connect 4000
+    timeout server 30000
+
+    stats uri /haproxy_stats        
+
+    stats realm HAProxy\ Statistics 
+    stats auth admin:admin
+    stats admin if TRUE

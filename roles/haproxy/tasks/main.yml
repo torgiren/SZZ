@@ -3,8 +3,11 @@
 - include: debian.yml
   when: ansible_os_family == "Debian"
 - name: wgrywanie configu
-  template: src=haproxy.cfg.jinja2 dest={{haproxy_conf}}
+#  template: src=haproxy.cfg.jinja2 dest={{haproxy_conf}}
+  template: src=haproxy.cfg.jinja2 dest=/etc/haproxy/haproxy.cfg
   notify: restart_haproxy
+  tags:
+    - configure
 - name: uruchomienie haproxy
   service: name=haproxy state=started
 - name: autostart haproxy

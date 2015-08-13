@@ -1,0 +1,8 @@
+- name: restart-nrpe
+  service: name={{nrpe_service}} state=restarted
+#  service: name=nagios-nrpe-server state=restarted
+#  when: ansible_os_family == "Debina"
+#  service: name=nrpe state=restarted
+#  when: ansible_os_family == "RedHat"
+- name: apt_update
+  apt: update_cache=yes

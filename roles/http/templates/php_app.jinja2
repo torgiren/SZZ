@@ -1,7 +1,0 @@
-NameVirtualHost *:80
-{% for name, app in php_apps.iteritems() %}
-<VirtualHost *:80>
-	ServerName {{ name }}
-	DocumentRoot {{ app.dest }}
-</VirtualHost>
-{% endfor %}

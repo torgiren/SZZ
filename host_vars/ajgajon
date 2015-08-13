@@ -1,0 +1,3 @@
+---
+warn_mem: 99
+crit_mem: 100

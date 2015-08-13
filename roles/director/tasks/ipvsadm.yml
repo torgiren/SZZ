@@ -1,0 +1,11 @@
+- name: instalacja ipvsadm
+  apt: name=ipvsadm state=latest
+- name: zapisywanie aktualnej konfiguracji
+  command: /etc/init.d/ipvsadm save
+- name: konfiguracja ipvsadm
+  template: src=ipvsadm.jinja2 dest=/etc/ipvsadm.rules
+  notify: ipvsadm load
+- name: uruchamianie ipvsdm
+  service: name=ipvsadm state=started
+- name: automatyczne uruchamianie ipvsdm
+  service: name=ipvsadm enabled=true

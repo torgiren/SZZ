@@ -1,0 +1,6 @@
+- name: dodanie repo testing
+  copy: src=test.list dest=/etc/apt/sources.list.d/test.list
+  notify: apt_update
+- name: instalacja oprogramowania
+  apt: name={{item}} state=latest
+  with_items: install_apps

@@ -1,0 +1,3 @@
+- name: instalacja orogramowania
+  yum: name={{item}} state=latest
+  with_items: install_apps

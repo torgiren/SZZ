@@ -1,0 +1,6 @@
+- name: eth0 up
+  command: ifup --force eth0
+- name: vip0 down
+  command: ifdown vip0
+- name: vip0 up
+  command: ifup vip0

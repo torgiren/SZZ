@@ -1,0 +1,7 @@
+- include: centos.yml
+  when: ansible_os_family == "RedHat"
+- include: debian.yml
+  when: ansible_os_family == "Debian"
+- include: ip.yml
+- name: blokowanie arpów
+  arptables: source_ip=10.13.0.96/27 chain=OUTPUT action=DROP

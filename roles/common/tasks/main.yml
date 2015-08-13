@@ -1,0 +1,36 @@
+#- name: instalacja nfs
+#  apt: name=nfs-common state=latest
+#- name: Tworzenie katalogu
+#  file: path=/datastore state=directory
+#- name: dodawanie zasobu
+#  mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=present
+#- name: montowanie zasobu
+#  mount: name=/datastore src={{hostvars[groups['datastore'][0]]['ansible_eth0']['ipv4']['address']}}:/projects fstype=nfs state=mounted
+#- name: ustawianie hostname
+#  hostname: name={{inventory_hostname}}
+#- name: wyłączanie apt-xapian-index
+#  file: path=/etc/cron.weekly/apt-xapian-index mode=0644
+- include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+  - config
+- include: centos.yml
+  when: ansible_os_family == "RedHat"
+- include: debian.yml
+  when: ansible_os_family == "Debian"
+- name: tworzenie grupy logread
+  group: name=logread
+- name: dodawanie nrpe do grupy logread
+  user: name={{item}} groups=logread append=yes
+  with_items:
+  - nrpe
+  - nagios
+- name: prawa plików dla rsysloga
+  copy: src=rsyslog_perms.conf dest=/etc/rsyslog.d/perms.conf
+  notify: restart-rsyslog
+- name: ustawienie praw dla secure_log
+  file: name={{secure_log}} group=logread
+- name: wywalanie create z logrotate.conf
+  lineinfile: dest=/etc/logrotate.conf line="create" state=absent
+- name: dodanie nocreate do logrotate.conf
+  lineinfile: dest=/etc/logrotate.conf line="nocreate" state=present insertbefore="include*"
+
