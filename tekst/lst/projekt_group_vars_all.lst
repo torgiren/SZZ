@@ -1,0 +1,16 @@
+---
+ansible_ssh_user: root
+projects:
+  test.pl:
+    id: 9005
+    repo: 'https://github.com/torgiren/mgr_test1.git'
+    address: 10.13.0.101
+  test.ru:
+    id: 9006
+    repo: 'https://github.com/torgiren/mgr_test2.git'
+    address: 10.13.0.102
+  test2.pl:
+    id: 9007
+    repo: 'https://github.com/torgiren/mgr_test1.git'
+    address: 10.13.0.103
+

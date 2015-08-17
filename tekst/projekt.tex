@@ -100,14 +100,92 @@ Dodatkowo, \textit{haproxy} wystawia na standardowym porcie $9000$ statystyki ak
 \subsection{Serwer roboczy - \texttt{worker}}
 Serwery robocze pracują w oparciu o \texttt{PHP-fpm}, dlatego pierwszym krokiem konfiguracji jest upewnienie się, że jest on zainstalowany, a jeśli nie, to jego instalacja.
 Następnie wgrywana jest konfiguracja, która w typ przypadku zawiera konfiguracje \textit{pool}-i dla każdego projektu obsługiwanego przez dany serwer roboczy.
-Każda pula nasługuje na porcie odpowiadającym \texttt{id} projektu.
+Każda pula nasłuchuje na porcie odpowiadającym \texttt{id} projektu.
 \section{Konfiguracja}
 \subsection{Maszyny konfigurowane}
 Podstawowa konfiguracja maszyn będących w klastrze jest w gestii administratora oraz powinien posiadać system \texttt{Debian Linux} bądź \texttt{CentOS Linux}.
 Dodatkowo, muszą mieć uruchomioną usługę \texttt{SSH}.
 Zalecane jest również wgranie kluczy \texttt{RSA}.
-Nalezy również zapewnić, aby na maszynie był zainstalowany interpreter Pythona w wersji min. $2.6$.
+Należy również zapewnić, aby na maszynie był zainstalowany interpreter Pythona w wersji min. $2.6$.
 \subsection{Maszyna konfigurująca}
 Podobnie jak w przypadku maszyn konfigurowanych, administrator musi zadbać, aby na maszynie był zainstalowany system GNU/Linux, Interpreter języka Python w wersji min. $2.6$ oraz zalecane jest wygenerowanie pary kluczy \texttt{RSA}.
 Instalacja oprogramowanie Ansible, została opisane w rozdziale~\ref{sec:konfiguracja_ansible_instalacja}.
 \subsection{Konfiguracja właściwa}
+Konfiguracja systemu odbywa się poprzez edycję dwóch plików.
+Pierwszym jest plik \texttt{inventory}, drugim \texttt{group\_vars/all}.
+\subsubsection{Plik \texttt{inventory}}
+W celu popranej pracy systemu, należy umieścić w tym pliku odpowiednie sekcje.
+Sekcje dzielą się na 3 poziomy abstrakcji.\\
+\paragraph*{Poziom pierwszy}~\\
+Definiuje on najniższą warstwę, czyli wszystkie \textit{host}-y wykorzystywane do konfiguracji klastra.
+Zostały one podzielone na następujące sekcje:
+\begin{description}
+\item{\texttt{datastore}}\\
+w sekcji tej należy umieścić \textit{host}-a który ma zostać skonfigurowany jako serwer \textit{NFS}.
+System nie oferuje w tym zakresie żadnego wsparcia dla \textit{HA}, dlatego w tej sekcji powinien się znaleźć tylko jeden \textit{host}.
+\item{\texttt{workers}}\\
+ta sekcja definiuje \textit{host}-y które mają pełnić rolę \textit{worker}-ów, tj. będą serwować usługę \texttt{PHP}.
+Należy tutaj wpisać wszystkie serwery robocze, niezależnie od projektu dla którego mają serwować dane.
+\item{\texttt{haproxy}}
+sekcja ta określa, który \textit{host} będzie odpowiedzialny za oferowanie usługi \texttt{Haproxy}.
+Podobnie jak w przypadku \texttt{datastore}, należy tutaj umieścić tylko jednego \textit{host}-a.
+\item{\texttt{http}}
+w tej sekcji należy umieścić wszystkie serwery na który ma zostać skonfigurowany serwer \texttt{HTTP}.
+Hosty tutaj zdefiniowane, zostaną również skonfigurowane tak, aby mogły pełnić rolę \texttt{real server}-ów dla \texttt{LVS}.
+\item{\texttt{director}}
+ta sekcja zawiera hosty odpowiedzialne na rozdzielanie ruchu \texttt{LVS}.
+Tutaj podobnie jak \texttt{datastore} oraz \texttt{haproxy}, należy podać tylko jednego \textit{host}-a.
+Przykładowa konfiguracja warstwy pierwszej znajduję się na listingu~\ref{lst:projekt_inventory1}.
+\lstinputlisting[caption=inventory,label=lst:projekt_inventory1]{lst/projekt_inventory1.lst}
+\end{description}
+\paragraph*{Poziom drugi}~\\
+Drugi poziom abstrakcji wydziela spośród zdefiniowanych \textit{host}-ów logiczne pule.
+Pule są opcjonalne.
+Istnieje możliwość podania bezpośrednio do warstwy trzeciej \textit{host}-ów, jednak używając pul, mamy większą swobodę jeśli chodzi o rozszerzanie klastra.\\
+Przy dużej ilości serwerów, pozwala na swobodne przełączanie całych grup serwerów pomiędzy projektami.
+Przykład konfiguracji drugiej warstwy został przedstawiony na listingu~\ref{lst:projekt_inventory2}
+\lstinputlisting[caption=inventory,label=lst:projekt_inventory2]{lst/projekt_inventory2.lst}
+\paragraph*{Poziom trzeci}~\\
+Na poziomie trzeci definiowane są projekty konfigurowanie na obsługiwanym klastrze.
+Definicja projektu musi zaczynać się od frazy \texttt{proj\_} po której następuje nazwa projektu.
+Zaleca się wykorzystywanie puli z warstwy drugiej, dlatego po nazwie projektu, należy dodać frazę \texttt{:children}.
+Jest to składnia \textit{ansible} wykorzystywana do tworzenia grup z innych grup.
+Więcej na ten temat jest opisanych w rozdziale~\ref{sec:zarzadzanie_ansible_inventory}.
+Przykład konfiguracji trzech projektów z wykorzystaniem pul przedstawiony został na listingu~\ref{lst:projekt_inventory3.lst}
+\lstinputlisting[caption=inventory,label=lst:projekt_inventory3]{lst/projekt_inventory3.lst}
+
+W przedstawionym przykładzie, zostały utworzone dwie pule serwerów, oraz trzy projekty.
+Do projektu \texttt{test.pl} została podpięta jedna pula składająca się z serwerów \texttt{mgr1, mgr2, mgr3 mgr7}, natomiast to projektów \texttt{test.ru} oraz \texttt{test2.pl} po dwie pule, dające razem następujące serwery obsługujące te projekty: \texttt{mgr1, mgr2, mgr3, mgr4, mgr5, mgr6, mgr7, mgr8}
+\subsubsection{\texttt{group\_vars/all}}
+Plik \texttt{group\_vars/all} zawiera zmienne widoczne przez wszystkie maszyny obsługiwane przez system.
+Tutaj tez umieszczana jest konfiguracja projektów.
+Definicja projektów znajduje się w słowniku \texttt{projects}, w którym należy umieścić słowniki o nazwie projektu oraz zawierające następujące zmienne:
+\begin{description}
+\item{\texttt{id}}\\
+Unikalny identyfikator projektu.
+Wykorzystywany głównie do określania portów nasłuchów oraz odróżniania projektów.
+Zalecane jest aby były to wartości od $9000$ wzwyż.
+\item{\texttt{repo}}\\
+Zawiera adres do repozytorium \texttt{git} z którego będą prowadzone \textit{deploy}-e.
+Aktualny poziom zaawansowania projektu prowadzi \textit{deploy} wyłącznie z gałęzi \texttt{master}.
+\item{\texttt{address}}\\
+Określa adres na którym będzie nasłuchiwać \texttt{LVS}.
+Dla każdego projektu ustalany jest adres na \texttt{director}-rze, oraz na \texttt{real server}-ach.
+Adresy mogą się powtarzać, jeżeli dwa projekty mają współdzielić publiczny adres IP.
+\end{description}
+Przykładowa konfiguracja projektów została przedstawiona na listingu~\ref{lst:projekt_group_vars_all}.
+\lstinputlisting[caption=group\_vars/all,label=lst:projekt_group_vars_all]{lst/projekt_group_vars_all.lst}
+\section{Uruchamianie}
+Uruchomienie systemu powoduje natychmiastowe przystąpienie do konfiguracji węzłów w obsługiwanym klastrze. Uruchomienie polega na wywołaniu \textit{playbook}-a poprzez polecenie:
+\begin{lstlisting}
+ansible-playbook szz.yml
+\end{lstlisting}
+Spowoduje to pełny cykl konfiguracyjny, włączając w to instalację oprogramowania oraz tworzenie plików konfiguracyjnych.\\
+W przypadku wprowadzenia drobnych zmian konfiguracyjnych, np: dodanie nowego projektu, istnieje możliwość jedynie przekonfigurowania węzłów, dodając parametr \texttt{-t configure}.
+Powoduje on wykonanie jedynie tych zadań, które są odpowiedzialne za konfiguracje usług.
+Opcja ta jest przydatna, ponieważ najbardziej obciążającym i czasochłonnym procesem jest przeszukiwanie repozytorium w poszukiwaniu pakietów.
+Dlatego ominięcie tego procesu pozwala kilkukrotnie zmniejszyć czas potrzebny systemowi na przejście cyklu.
+Wywołanie wygląda wtedy następująco
+\begin{lstlisting}
+ansible-playbook szz.yml -t configure
+\end{lstlisting}

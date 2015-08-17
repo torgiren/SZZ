@@ -1,0 +1,11 @@
+[proj_test.pl:children]
+pula1
+
+[proj_test.ru:children]
+pula1
+pula2
+
+[proj_test2.pl:children]
+pula1
+pula2
+
