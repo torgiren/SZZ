@@ -7,12 +7,12 @@ W rozdziale tym przedstawię podstawowe metody wykorzystywane przy tworzeniu kla
 DNS (ang {\textit{Domain Name System}) jest to system nazw domenowych. Usługa której najważniejszą funkcją jest przyporządkowanie nazwom domenowym (czytelnym dla człowieka) adresów IP.
 Oznacza to, że system taki, jest w stanie zamienić nazwę \texttt{www.ftj.agh.edu.pl} na adres \texttt{149.156.110.3}.
 Funkcjonalność taka w znacznym stopniu ułatwia korzystanie z sieci Internet, ponieważ przeciętnemu człowiekowi jest prościej zapamiętać mnemonik \texttt{www.ftj.agh.edu.pl} bądź \texttt{www.duckduckgo.com} niż ciągi czterech liczb.
-Do zamiany nazwy domenowej na adres IP służą rekordy \texttt{A} oraz \texttt{AAAA}, wykorzystywane odpowiednio do adresów IPv4 oraz IPv6.
+Najczęściej spotykanymi rekordami są rekordy \texttt{A}, \texttt{AAAA}, \texttt{CNAME}, \texttt{MX} oraz \texttt{TXT}.
+\begin{description}
+\item[A, AAAA] Do zamiany nazwy domenowej na adres IP służą rekordy \texttt{A} oraz \texttt{AAAA}, wykorzystywane odpowiednio do adresów IPv4 oraz IPv6.
 Przykład zastosowania rekordu \texttt{A} oraz \texttt{AAAA} przedstawiam na poniższym listingu:
 \lstinputlisting[caption=rekord A oraz AAAA,label=lst:arecord]{lst/rr_arecord.lst}
 w powyżej konfiguracji widzimy, że odpytując server DNS o wartość \texttt{nazwa4.domenowa.pl} otrzymamy informację, że dana nazwa wskazuje na adres \texttt{1.2.3.4}.\\
-Innymi, często spotykanymi rekordami są rekordy \texttt{CNAME}, \texttt{MX} oraz \texttt{TXT}.
-\begin{description}
 \item[CNAME] jest to rekord będący wskaźnikiem. Dla przykładu:
 \lstinputlisting[caption=rekord CNAME]{lst/rr_cname.lst}
 widzimy, że w powyższym przykładzie \texttt{nazwa.domenowa.pl} wskazuje na 1.2.3.4.
@@ -56,7 +56,7 @@ W powyższym przykładzie, dla nazwy \texttt{rr.mgr.fabrykowski.pl} zostały zde
 Nginx jest serwerem proxy oraz serwerem treści statycznych.
 Wykorzystywany jest zwykle w połączeniu z serwerem Apache który serwuje treści PHP, podczas gdy sam dostarcza pliki statyczne (JavaScript, CSS, JPEG itp).
 Drugim często wykorzystywanym modelem wykorzystania Nginx-a jest serwowanie treści statycznych oraz wykonywanie \textit{fastcgi pass}
-\paragraph{Fastcgi pass} \hspace{0pt} \\
+\paragraph*{Fastcgi pass} \hspace{0pt} \\
 Moduł ten pozwala na komunikacje z procesami FastCGI.
 Wykorzystanie FastCGI daje dużą niezależność w technologi opracowania aplikacji, która może zostać wykonana w PHP, Pythonie bądź Rubym.
 Istnieje również możliwość zmiany wersji aplikacji, bądź technologii jej wykonania bez zmian w konfiguracji serwera, jeżeli aplikacja udostępnia to samo api FastCGI.

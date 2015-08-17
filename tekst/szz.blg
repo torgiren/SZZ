@@ -1,57 +1,69 @@
-This is BibTeX, Version 0.99d (TeX Live 2012)
+This is BibTeX, Version 0.99d (TeX Live 2014)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: szz.aux
 The style file: amsplain.bst
 A level-1 auxiliary file: title.aux
+A level-1 auxiliary file: wstep.aux
 A level-1 auxiliary file: wstep_do_klastrowania.aux
 A level-1 auxiliary file: metody_klastrowania.aux
 A level-1 auxiliary file: zarzadzanie_konfiguracja.aux
 A level-1 auxiliary file: testy.aux
+A level-1 auxiliary file: projekt.aux
+A level-1 auxiliary file: podsumowanie.aux
 Database file #1: szz.bib
-Warning--I didn't find a database entry for "apache_dnsrr"
 Warning--to sort, need author or key in netfilter
 Warning--to sort, need author or key in http_upstream
 Warning--to sort, need author or key in http_fastcgi
 Warning--to sort, need author or key in ab_dnsrr
-You've used 4 entries,
+Warning--to sort, need author or key in ansible
+Warning--to sort, need author or key in haproxy
+Warning--to sort, need author or key in lvs1
+Warning--to sort, need author or key in lvs2
+Warning--to sort, need author or key in lvs3
+Warning--to sort, need author or key in lvs4
+Warning--to sort, need author or key in puppet
+Warning--to sort, need author or key in chef
+Warning--to sort, need author or key in cfengine
+Warning--to sort, need author or key in ab
+You've used 14 entries,
             2213 wiz_defined-function locations,
-            512 strings with 4283 characters,
-and the built_in function-call counts, 654 in all, are:
-= -- 44
-> -- 4
+            534 strings with 4846 characters,
+and the built_in function-call counts, 2206 in all, are:
+= -- 154
+> -- 14
 < -- 0
-+ -- 4
++ -- 14
 - -- 0
-* -- 22
-:= -- 73
-add.period$ -- 4
-call.type$ -- 4
-change.case$ -- 8
+* -- 72
+:= -- 235
+add.period$ -- 14
+call.type$ -- 14
+change.case$ -- 28
 chr.to.int$ -- 0
-cite$ -- 8
-duplicate$ -- 40
-empty$ -- 101
+cite$ -- 28
+duplicate$ -- 140
+empty$ -- 351
 format.name$ -- 0
-if$ -- 157
+if$ -- 547
 int.to.chr$ -- 0
-int.to.str$ -- 4
-missing$ -- 4
-newline$ -- 22
+int.to.str$ -- 14
+missing$ -- 14
+newline$ -- 52
 num.names$ -- 0
-pop$ -- 48
+pop$ -- 168
 preamble$ -- 1
-purify$ -- 8
+purify$ -- 28
 quote$ -- 0
-skip$ -- 24
+skip$ -- 83
 stack$ -- 0
-substring$ -- 20
+substring$ -- 70
 swap$ -- 0
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 16
-warning$ -- 4
+type$ -- 56
+warning$ -- 14
 while$ -- 0
-width$ -- 5
-write$ -- 29
-(There were 5 warnings)
+width$ -- 16
+write$ -- 79
+(There were 14 warnings)

@@ -5,7 +5,7 @@
   \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
 }
 \providecommand{\href}[2]{#2}
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{netfilter}
 \url{http://www.shorewall.net/images/Netfilter.png}.
@@ -18,5 +18,35 @@
 
 \bibitem{ab_dnsrr}
 \url{https://bz.apache.org/bugzilla/show_bug.cgi?id=57616}.
+
+\bibitem{ansible}
+\url{http://www.ansible.com}.
+
+\bibitem{haproxy}
+\url{http://cbonte.github.io/haproxy-dconv/configuration-1.5.html}.
+
+\bibitem{lvs1}
+\url{http://www.austintek.com/LVS/LVS-HOWTO/HOWTO/}.
+
+\bibitem{lvs2}
+\url{http://www.linuxvirtualserver.org/VS-NAT.html}.
+
+\bibitem{lvs3}
+\url{http://www.linuxvirtualserver.org/VS-IPTunneling.html}.
+
+\bibitem{lvs4}
+\url{http://www.linuxvirtualserver.org/VS-DRouting.html}.
+
+\bibitem{puppet}
+\url{http://docs.puppetlabs.com/pe/latest/quick_start.html}.
+
+\bibitem{chef}
+\url{https://learn.chef.io/learn-the-basics/ubuntu/}.
+
+\bibitem{cfengine}
+\url{http://cfengine.com/learn/}.
+
+\bibitem{ab}
+\url{http://linux.die.net/man/1/ab}.
 
 \end{thebibliography}
