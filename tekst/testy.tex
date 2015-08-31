@@ -47,91 +47,8 @@ Wszystkie czasy zostały podane w milisekundach.
 \subsection{Pliki statyczne}
 Testy plików statycznych przeprowadzone zostaną przy użyciu dwóch plików HTML{.}
 Jeden o rozmiarze 10 bajtów, drugi o rozmiarze 100 kilobajtów.
-
-\begin{figure}
-	\centering
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_1.png}
-		\caption{1 równoległe zapytanie}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_2.png}
-		\caption{2 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_4.png}
-		\caption{4 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_8.png}
-		\caption{8 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_16.png}
-		\caption{16 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_32.png}
-		\caption{32 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_64.png}
-		\caption{64 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_128.png}
-		\caption{128 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_maly_256.png}
-		\caption{256 równoległych zapytań}
-	\end{subfigure}
-	\caption{Zapytania o mały plik statyczny}\label{fig:wyb_index_maly}
-\end{figure}
-\begin{figure}
-	\centering
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_1.png}
-		\caption{1 równoległe zapytanie}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_2.png}
-		\caption{2 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_4.png}
-		\caption{4 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_8.png}
-		\caption{8 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_16.png}
-		\caption{16 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_32.png}
-		\caption{32 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_64.png}
-		\caption{64 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_128.png}
-		\caption{128 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_index_duzy_256.png}
-		\caption{256 równoległych zapytań}
-	\end{subfigure}
-	\caption{Zapytania o duży plik statyczny}\label{fig:wyb_index_duzy}
-\end{figure}
+\wykresy{wybor_index_maly}{Zapytanie o mały plik statyczny}{wyb_index_maly}
+\wykresy{wybor_index_duzy}{Zapytanie o duży plik statyczny}{wyb_index_duzy}
 Wykresy na rys.~\ref{fig:wyb_index_maly} przedstawiają czasy obsłużenia zapytań o plik HTML o rozmiarze 10 bajtów, natomiast wykresy na rys.~\ref{fig:wyb_index_duzy} czasy zapytań o plik o rozmiarze 100 kilobajtów.\\
 Można zauważyć, że wyniki dla małych plików statycznych są zbliżone zarówno dla Apache jak i Nginx z lekką przewagą dla Nginx.
 Największą przewagę Nginx-a widać przy średnim i dużym obciążeniu.
@@ -145,90 +62,8 @@ Obliczane są wyrazy: piąty --- dla skryptu wykonującego się szybko, oraz pi�
 Wykorzystany został model obliczanie wartości rekurencyjny, ponieważ w przeciwieństwie do iteracyjnego wymaga większej mocy obliczeniowej.
 Jest to pożądane aby czas obsługi zapytania obejmował czas wykonywania skryptu, a nie jedynie obsługi sesji HTTP oraz transferu danych (zostało to przetestowane przy wykorzystaniu \textit{szybkiego skryptu}).
 \lstinputlisting[caption=fib.php,label=lst:fib,language=php]{lst/fib.php}
-\begin{figure}
-	\centering
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_1.png}
-		\caption{1 równoległe zapytanie}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_2.png}
-		\caption{2 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_4.png}
-		\caption{4 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_8.png}
-		\caption{8 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_16.png}
-		\caption{16 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_32.png}
-		\caption{32 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_64.png}
-		\caption{64 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_128.png}
-		\caption{128 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_5_256.png}
-		\caption{256 równoległych zapytań}
-	\end{subfigure}
-	\caption{Zapytania o szybki skrypt PHP}\label{fig:wyb_fib_5}
-\end{figure}
-\begin{figure}
-	\centering
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_1.png}
-		\caption{1 równoległe zapytanie}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_2.png}
-		\caption{2 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_4.png}
-		\caption{4 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_8.png}
-		\caption{8 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_16.png}
-		\caption{16 równoległych zapytań}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_32.png}
-		\caption{32 równoległe zapytania}
-	\end{subfigure}
-
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_64.png}
-		\caption{64 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_128.png}
-		\caption{128 równoległe zapytania}
-	\end{subfigure}
-	\begin{subfigure}[h]{0.3\textwidth}
-		\includegraphics[width=\textwidth]{testy/wybor_fib_15_256.png}
-		\caption{256 równoległych zapytań}
-	\end{subfigure}
-	\caption{Zapytania o wolny skrypt PHP}\label{fig:wyb_fib_15}
-\end{figure}
+\wykresy{wybor_fib_5}{Zapytanie o szybki skrypt PHP}{wyb_fib_5}
+\wykresy{wybor_fib_15}{Zapytanie o wolny skrypt PHP}{wyb_fib_15}
 Na wykresach~\ref{fig:wyb_fib_5} oraz~\ref{fig:wyb_fib_15} obrazujących czasy obsługi zapytań do skryptów PHP, można zauważyć że różnice pomiędzy Apache a Nginx są mniejsze niż dla plików statycznych.
 Wynika to z faktu, ze obsługą zapytań w obu przypadkach zajmuje się PHP-fpm, natomiast serwer WWW odpowiedzialny jest jedynie za przekazywanie zapytań do \textit{backendu}.
 \subsection{Podsumowanie}
@@ -440,7 +275,7 @@ Rozdział ten skupi się na przetestowaniu wydajności Haproxy.
 Testowane zostanie bezpośrednie połączenie do Nginx-a oraz połączenia czterech usług Haproxy, zawierające odpowiednia, jeden, dwa, trzy i cztery serwery \textit{backend}-owe.\\
 Zapytania, podobnie jak w LVS będą kierowane o mały plik statyczny.
 \wykresy{four_haproxy_maly}{Czasy odpowiedzi Haproxy w zależności od ilości serwerów}{four_haproxy_maly}
-Wykres~\ref{fig:fout_haproxy_maly} przedstawia czasy odpowiedzi Haproxy oraz Nginxa w zależności od ilości równoległych zapytań.\\
+Wykres~\ref{fig:four_haproxy_maly} przedstawia czasy odpowiedzi Haproxy oraz Nginxa w zależności od ilości równoległych zapytań.\\
 Jak można zauważyć, dla niewielkiej liczby równoległych zapytać, czasy odpowiedzi Haproxy są zbliżone do natywnego Nginx-a.
 Wzrost wydajności widać dopiero przy większej ilości zapytań, tj. od około 64 równoległych zapytań.
 \subsection{Odporność na awarie}

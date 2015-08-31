@@ -67,9 +67,9 @@ Wady:
 \item wykonywanie tylko poleceń powłoki
 \end{itemize}
 \subsection{Przykład}
-\lstinputlisting[language=python,caption=fabfile.py]{lst/conf_fabfile.py}
-przykład działania powyższego skryptu:
-\lstinputlisting[caption=użycie fabric]{lst/conf_fabfile_run.sh}
+\lstinputlisting[language=python,caption=fabfile.py,label=lst:fabfile]{lst/conf_fabfile.py}
+przykład działania skryptu~\ref{lst:fabfile} został przedstawiony na listingu~\ref{lst:uzycie_fabric}
+\lstinputlisting[caption=użycie fabric,label=lst:uzycie_fabric]{lst/conf_fabfile_run.sh}
 Aplikacja została uruchomiona z parametrami:
 \begin{description}
 \item[-P] równolegle wykonywanie zadań
@@ -163,7 +163,7 @@ Istnieje kilka metod instalacji Ansible
 \begin{itemize}
 \item ze źródeł\\
 Jest to najprostsza metoda instalacji. Ponieważ Ansible jest napisane w języku Python, nie wymaga on kompilacji ani ingerencji w system.
-\lstinputlisting[caption=instalacja ze źródeł]{lst/ansible_install_git.sh}
+\lstinputlisting[caption=instalacja ze źródeł,label=lst:instalacja_ze_zrodel]{lst/ansible_install_git.sh}
 Metoda ta wymaga jednak aby w systemie zainstalowane były biblioteki Pythonowe:
 \begin{itemize}
 \item paramiko
@@ -171,7 +171,7 @@ Metoda ta wymaga jednak aby w systemie zainstalowane były biblioteki Pythonowe:
 \item jinja2
 \item httplib2
 \end{itemize}
-Wykonanie powyższego kodu powoduje przełączenie się na wirtualne środowisko Pythona przygotowane przez developerów Ansible.\\
+Wykonanie kodu powoduje przedstawionego na listingu~\ref{lst:instalacja_ze_zrodel} przełączenie się na wirtualne środowisko Pythona przygotowane przez developerów Ansible.\\
 Wirtualne środowisko zostanie opisane w kolejnym podrozdziale.
 \item przez repozytorium\\
 Ansible jest obecne w repozytorium praktycznie każdej dystrybucji. Instalacja zależna jest od konkretnej dystrybucji.\\
@@ -187,8 +187,8 @@ Instalacja odbędzie się do katalogów zdefiniowanych w zmiennych środowiskowy
 \subsubsection{Wirtualne środowisko Pythonowe}
 Wirtualne środowisko jest narzędziem pozwalającym na stworzenie odizolowanego od bibliotek systemowych środowiska uruchomieniowego dla aplikacji pythonowych.\\
 Nowe środowisko tworzone jest przy pomocy polecenia \texttt{virtualenv}.
-Tworzy ono strukturę katalogów potrzebną interpreterowi Pythona do działania. Poniżej znajduje się przykład takiej struktury:
-\lstinputlisting[caption=struktura wirtualnego środowiska]{lst/ansible_install_tree.sh}
+Tworzy ono strukturę katalogów potrzebną interpreterowi Pythona do działania. Na listingu~\ref{lst:ansible_install_tree} znajduje się przykład takiej struktury:
+\lstinputlisting[caption=struktura wirtualnego środowiska,label=lst:ansible_install_tree]{lst/ansible_install_tree.sh}
 Poleceniem \texttt{source <plik\_aktywacji>} aktywujemy wirtualne środowisko.
 Powoduje to nadpisanie domyślnych ścieżek przeszukiwania z domyślnych systemowych na lokalne w wirtualnym środowisku.
 Następnie należy uruchamiać interpreter Pythona nie podając bezpośredniej ścieżki do niego (np: \texttt{/usr/bin/python2}) lecz poprzez zmodyfikowane środowisko: \texttt{/usr/bin/env python}.
@@ -309,18 +309,18 @@ Pełnej listy modułów oraz ich parametrów należy szukać w dokumentacji
 \subsection{Użytkowanie}
 \subsubsection{Tryb pracy Ad-Hoc}
 Ansible pozwala na wywołanie konkretnego modułu z konkretnymi parametrami. W przeciwieństwie do opisywanych w kolejnej sekcji \textit{playbook}-ów, tryb Ad-Hoc przydaje się do szybkich jednorazowych operacji takich jak restart systemu bądź sprawdzenie aktualnych ustawień serwerów DNS na maszynach.
-\lstinputlisting[caption=ansbile ad-hoc]{lst/ansible_ad-hoc_resolve}
-na powyższym przykładzie widzimy wywołanie \textit{ad-hoc} polecenia \texttt{shell} który wywołuje powłokę na zdalnej maszynie.
+\lstinputlisting[caption=ansbile ad-hoc,label=lst:ansible_ad_hoc]{lst/ansible_ad-hoc_resolve}
+na przykładzie~\ref{lst:ansible_ad_hoc}widzimy wywołanie \textit{ad-hoc} polecenia \texttt{shell} który wywołuje powłokę na zdalnej maszynie.
 Widzimy ze wywoływane jest to dla grupy \texttt{all} która oznacza, ze należy wywołać polecenie dla wszystkich hostów zdefiniowanych w pliku \texttt{inventory}.
 Parametrem podanym do modułu było polecenie \texttt{cat /etc/resolv.conf|grep nameserver} które wypisuje adresy serwerów DNS używanych przez serwer.
 Na wyjściu widzimy, ze dla serwerół \texttt{mgr0-4} otrzymaliśmy linijki pliku \texttt{resolv.conf} zawierające adresy, natomiast dla pozostałych serwerów otrzymaliśmy informację, ze nie udało się połączyć z nimi.
 W tym przypadku było to spowodowane tym, ze nie zostały one włączone.
 
 Inny, bardzo częstym zastosowaniem trybu \textit{ad-hoc} jest wgrywanie pliku na serwer zdalny.
-Należy zaznaczyć, ze z poniższego przykładu, celem zwiększenia czytelności, zostały usunięte komunikaty o błędach połączeń do niewłączonych maszyn, jak również usunięte zostały powtarzające się komunikaty o udanym wykonaniu polecenia na pozostałych hostach.
+Należy zaznaczyć, ze z listingu~\ref{lst:ad-hoc}, celem zwiększenia czytelności, zostały usunięte komunikaty o błędach połączeń do niewłączonych maszyn, jak również usunięte zostały powtarzające się komunikaty o udanym wykonaniu polecenia na pozostałych hostach.
 Należy również zaznaczyć, ze hosty zostały wcześniej tak przygotowane, aby każdy zwrócił inny komunikat.
-\lstinputlisting[caption=ansible ah-hoc output]{lst/ansible_ad-hoc_copy}
-Na powyższym przykładzie widzimy trzy możliwe stany wywołania polecenia:
+\lstinputlisting[caption=ansible ad-hoc output,label=lst:ad-hoc]{lst/ansible_ad-hoc_copy}
+Na przykładzie~\ref{lst:ad-hoc} widzimy trzy możliwe stany wywołania polecenia:
 \begin{description}
 	\item{changed=true}\\
 		Oznacza, ze polecenie zakończyło się sukcesem oraz że podmiot operacji uległ zmianie. W tym przypadku oznacza to, ze plik został wgrany na serwer i zmienił on stan.
@@ -366,8 +366,8 @@ Dla przykładu, systemy z rodziny \textit{Debian} używają menadżera pakietów
 \textit{Playbook}-i oraz inne pliki wykorzystywane przez Ansible są zapisywane w formacie \textit{Yaml}.
 Po dokładną specyfikację formatu \textit{Yaml} odsyłam do dokumentacji.\\
 
-Poniżej znajduje się przykładowy \textit{playbook}, na podstawie którego zostaną opisane najważniejsze jego elementy.
-\lstinputlisting[caption=example\_playbook.yml]{lst/ansible_playbook_simple.yml}
+Na listingu~\ref{lst:ansible_playbook_simple} znajduje się przykładowy \textit{playbook}, na podstawie którego zostaną opisane najważniejsze jego elementy.
+\lstinputlisting[caption=example\_playbook.yml,label=lst:ansible_playbook_simple]{lst/ansible_playbook_simple.yml}
 zwyczajowo, pliki \texttt{yaml} zaczynają się się od trzech znaków myślnika.\\
 Następnie następuje określenie grupy hostów na których należy wykonać aktualnego \textit{playbook}-a.
 W tym przypadku, jest to grupa \texttt{wwww}.
@@ -398,8 +398,8 @@ Pozwala to również na migrowanie definicji ról pomiędzy systemami.
 
 Definicje ról znajdują się w katalogu \texttt{roles}, w którym znajdują się podkatalogi z nazwie roli.
 W każdym katalogu z rolą, może znajdować się od jednego do sześciu katalogów odpowiadających za poszczególne elementy roli.
-Poniżej przedstawione jest przykładowe drzewo zawierające dwie role.
-\lstinputlisting[caption=struktura roli w ansible]{lst/ansible_roles_tree}
+Na listingu~\ref{lst:ansible_roles_tree} przedstawione jest przykładowe drzewo zawierające dwie role.
+\lstinputlisting[caption=struktura roli w ansible,label=lst:ansible_roles_tree]{lst/ansible_roles_tree}
 Ansible, podczas ładowania roli, sprawdza po kolei czy istnieją powyższe katalogi.
 Jeżeli katalog istnieje, sprawdzane jest, czy istnieje w nim plik \texttt{main.yml} (nie dotyczy to katalogów \texttt{files} oraz \texttt{templates}) i jeżeli istnieje, jego zawartość zostaje załączona do \textit{playbook}-a.
 Następuje wywołanie dyrektywy \texttt{include}, która pobiera zawartość pliku i wstawia w miejsce w którym została wywołana.\\
@@ -432,9 +432,9 @@ Znaczenie poszczególnych katalogów jest następujące:
 w przypadku \texttt{host\_vars} host o nazwie zgodniej z nazwą pliku, będzie zawierał zmienne w nim zdefiniowane, natomiast w przypadku \texttt{group\_vars}, wszystkie hosty należące do grupy zgodnej z nazwą pliku, będą miały zdefiniowane zmienne umieszczone w pliku.\\
 		Przykładowy plik \texttt{host\_vars} definiujący port SSH po którym Ansible powinien łączyć się do hosta:
 		\lstinputlisting[caption=temida.yml]{lst/ansible_host_vars.yml}
-		Natomiast poniższy przykład definiuje nazwę pakietu programu Apache2 oraz lokalizacje konfiguracji \textit{vhost}-ów dla systemu rodziny Debian.
-		\lstinputlisting[caption=debian.yml]{lst/ansible_group_vars.yml}
-		Drugim jest katalog \texttt{vars} który zostanie wyjaśniony poniżej.
+		Natomiast listing~\ref{lst:debian} definiuje nazwę pakietu programu Apache2 oraz lokalizacje konfiguracji \textit{vhost}-ów dla systemu rodziny Debian.
+		\lstinputlisting[caption=debian.yml,label=lst:debian]{lst/ansible_group_vars.yml}
+		Drugim jest katalog \texttt{vars} który zostanie wyjaśniony w daleszej częsci rozdziału.
 	\item{\texttt{tasks}}\\
 		jest to katalog w którym znajdują się definicje zadań które należy wykonać dla danej roli.
 		Jest to jedyny wymagany katalog w definicji roli.\\
@@ -446,9 +446,9 @@ tasks:
  - include: tasks/main.yml
 		\end{lstlisting}
 		co jest równoznaczne z wpisaniem zawartości tego pliku do sekcji \textit{tasks} jednak pozwala na zachowanie czytelności kodu.\\
-		Poniżej został przedstawiony przykładowy plik \texttt{tasks/main.yml}
-		\lstinputlisting[caption=tasks/main.yml]{lst/ansible_tasks_main.yml}
-		widzimy, że powyższa rola upewnia się ze w systemie jest zainstalowana najnowsza wersja pakietu \texttt{libselinux-python}. Następnie moduł \texttt{copy} kopiuje konfiguracje dodatkowych repozytoriów na serwer zdalny.
+		Na listingu~\ref{lst:ansible_tasks_main} został przedstawiony przykładowy plik \texttt{tasks/main.yml}
+		\lstinputlisting[caption=tasks/main.yml,label=lst:ansible_tasks_main]{lst/ansible_tasks_main.yml}
+						widzi  my, że rola przedstawiona na listingu~\ref{lst:ansible_tasks_main} upewnia się ze w systemie jest zainstalowana najnowsza wersja pakietu \texttt{libselinux-python}. Następnie moduł \texttt{copy} kopiuje konfiguracje dodatkowych repozytoriów na serwer zdalny.
 		Pliki te znajdują się w katalogu \texttt{files}.
 		Następnie widzimy użycie modułu \texttt{ini\_file} który jest w stanie edytować pliki konfiguracyjne.
 		Po wskazaniu mu nazwy pliku oraz sekcji, następuje upewnienie się ze opcji \texttt{enabled} ma ustawioną wrtość $1$.
@@ -456,8 +456,8 @@ tasks:
 	\item{\texttt{handlers}}\\
 		w katalogu tym również umieszcza się plik \texttt{main.yml} w którym umieszcza się funkcje obsługujące wystąpienie statusu \texttt{changed}.\\
 		Stosują się do niego wszystkie zastrzeżenia wymienione w sekcji o katalogu \texttt{tasks}
-		Przykładem takiego pliku jest ten zamieszczony poniżej:
-		\lstinputlisting[caption=handlers/main.yml]{lst/ansible_handlers_main.yml}
+		Przykładem takiego pliku jest ten zamieszczony na listingu~\ref{lst:handlers_main}.
+		\lstinputlisting[caption=handlers/main.yml,label=lst:handlers_main]{lst/ansible_handlers_main.yml}
 		widzimy tutaj definicję akcji o nazwie \textit{restart\_http}.
 		Używa ona modułu \texttt{service}, który, jak zostało wspomniane wcześniej, obsługuje uruchamianie procesów.
 		Jako nazwę widzimy zmienną o nazwie \texttt{apache}.

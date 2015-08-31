@@ -18,6 +18,7 @@
 \usepackage[font=footnotesize,labelfont=bf]{caption}
 \usepackage{multirow}
 \usepackage{booktabs}
+\usepackage{float}
 \geometry{hmargin={2cm, 2cm}, height=10.0in}
 \assignpagestyle{\chapter}{empty}
 \newcommand{\param}[1]{\textit{\textless #1\textgreater}}
@@ -31,43 +32,58 @@
 \captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
 \lstset{basicstyle=\footnotesize\ttfamily}
 \newcommand{\wykresy}[3] {
-	\begin{figure}
+	\begin{figure}[H]
 		\centering
-		\begin{subfigure}[h]{0.3\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_1.png}
 			\caption{1 równoległe zapytanie}
 		\end{subfigure}
-		\begin{subfigure}[h]{0.3\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_2.png}
 			\caption{2 równoległe zapytania}
 		\end{subfigure}
-		\begin{subfigure}[h]{0.3\textwidth}
+	\end{figure}
+
+	\begin{figure}[H]
+		\ContinuedFloat
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_4.png}
 			\caption{4 równoległe zapytania}
 		\end{subfigure}
-
-		\begin{subfigure}[h]{0.3\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_8.png}
 			\caption{8 równoległych zapytań}
 		\end{subfigure}
-		\begin{subfigure}[h]{0.3\textwidth}
+	\end{figure}
+
+	\begin{figure}[H]
+		\ContinuedFloat
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_16.png}
 			\caption{16 równoległych zapytań}
 		\end{subfigure}
-		\begin{subfigure}[h]{0.3\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_32.png}
 			\caption{32 równoległe zapytania}
 		\end{subfigure}
-
-		\begin{subfigure}[h]{0.3\textwidth}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\ContinuedFloat
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_64.png}
 			\caption{64 równoległe zapytania}
 		\end{subfigure}
-		\begin{subfigure}[h]{0.3\textwidth}
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_128.png}
 			\caption{128 równoległe zapytania}
 		\end{subfigure}
-		\begin{subfigure}[h]{0.3\textwidth}
+	\end{figure}
+
+	\begin{figure}[H]
+		\ContinuedFloat
+		\centering
+		\begin{subfigure}{0.48\textwidth}
 			\includegraphics[width=\textwidth]{testy/#1_256.png}
 			\caption{256 równoległych zapytań}
 		\end{subfigure}
