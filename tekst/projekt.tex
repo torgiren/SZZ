@@ -27,7 +27,7 @@ Ten natomiast, będąc \textit{real server}-em w klastrze LVS, odpowiada bezpoś
 \subsection{Warstwa zero - storage}
 Projekt posiada wspólny zasób dyskowy wystawiany poprzez protokół NFS.
 Metoda ta w znaczny sposób uprasza aktualizację aplikacji na wszystkich węzłach równocześnie - kosztem braku możliwości wykonywania tzw. \textit{rolling update}.
-Ta technologi rozwiązuje również problem wgrywania plików na serwer oraz ich propagacji ponieważ każdy wgrywany plik trafia na wspólny zasób i jest od razu widziany przez pozostałe węzły.\\
+Ta technologia rozwiązuje również problem wgrywania plików na serwer oraz ich propagacji, ponieważ każdy wgrywany plik trafia na wspólny zasób i jest od razu widziany przez pozostałe węzły.\\
 Wydajność NFS jest zadowalająca przy wykorzystywaniu w obrębie jeden serwerowni i jednej sieci LAN.
 W przypadku chęci użycia rozproszenia systemu między kilkoma \textit{datacenter} należy ze własnym zakresie obsłużyć synchronizację wgrywanych plików oraz aktualizacji.
 \subsection{Warstwa pierwsza - LVS}
@@ -35,7 +35,7 @@ Jedynym wystawionym na świat serwerem jest \textit{director}. Do niego trafiaj�
 Wykorzystana w projekcie konfiguracja używa \textit{scheduler}-a opartego o algorytm \textit{round robin}, czyli przekazuje zapytania na wszystkie serwery po kolei.
 Technologia LVS pozwala na posiadanie tylko jednego serwera typu \textit{director}, ponieważ jego zadaniem jest jedynie przekazywanie zapytać do \textit{real server}-ów.
 Ponadto, jak zostało omówione wcześniej, odpowiedzi do klienta wysyłane są bezpośrednio od \textit{real server}-ów, bez udziału \textit{director}-a co pozwala na obsługę nawet dużego ruchu.\\
-Obecna konfiguracja nie posiada narzędzi do wykrywania niedostępności \textit{director}-a bądź \textit{real server}-ów, dlatego konfiguracja narzędzi typu \textit{heartbeat} oraz technologi \textit{floating IP} i/lub monitoringu stanu serwerów, leży po stronie użytkownika.
+Obecna konfiguracja nie posiada narzędzi do wykrywania niedostępności \textit{director}-a bądź \textit{real server}-ów, dlatego konfiguracja narzędzi typu \textit{heartbeat} oraz technologii  \textit{floating IP} i/lub monitoringu stanu serwerów, leży po stronie użytkownika.
 \subsection{Warstwa druga - Nginx}
 Drugą warstwą jest warstwa serwerów WWW.
 Do nich trafiają zapytania przekazywane z pierwszej warstwy.

@@ -57,7 +57,7 @@ Nginx jest serwerem proxy oraz serwerem treści statycznych.
 Wykorzystywany jest zwykle w połączeniu z serwerem Apache który serwuje treści PHP, podczas gdy sam dostarcza pliki statyczne (JavaScript, CSS, JPEG itp).
 Drugim często wykorzystywanym modelem wykorzystania Nginx-a jest serwowanie treści statycznych oraz wykonywanie \textit{fastcgi pass}
 \paragraph*{Fastcgi pass} \hspace{0pt} \\
-Moduł ten pozwala na komunikacje z procesami FastCGI.
+Moduł FastCGI\cite{http_fastcgi} pozwala na komunikacje z procesami obsługującymi FastCGI..
 Wykorzystanie FastCGI daje dużą niezależność w technologi opracowania aplikacji, która może zostać wykonana w PHP, Pythonie bądź Rubym.
 Istnieje również możliwość zmiany wersji aplikacji, bądź technologii jej wykonania bez zmian w konfiguracji serwera, jeżeli aplikacja udostępnia to samo api FastCGI.
 
@@ -67,7 +67,7 @@ Pozwala ona na większą kontrolę w zakresie pul procesów - ich liczby oraz sp
 
 Porównanie testów wydajności PHP-fpm oraz mod\_php do Apache jak również szybkość serwowania treści statycznych zostanie przedstawione w późniejszych rozdziałach.
 \subsection{Opis metody}
-Metoda klastrowania przy pomocy Nginx-a polega na zdefiniowaniu sekcji \texttt{upstream}.
+Metoda klastrowania przy pomocy Nginx-a polega na zdefiniowaniu sekcji \texttt{upstream}\cite{http_upstream}.
 Pozwala to na skonfigurowanie puli adresów do których będą przekazywane zapytania.
 Aby dodać serwer do puli, należy podać jego adres IP bądź nazwę domenową oraz port.
 
@@ -104,7 +104,7 @@ Listring~\ref{lst:nginx_config} przedstawia zmodyfikowany na potrzeby tego listi
 \lstinputlisting[caption=nginx.conf,label=lst:nginx_config]{lst/nginx.conf}
 \section{Haproxy}
 \subsection{Możliwości haproxy}
-Haproxy jest serwerem proxy wysokiej dostępności (ang. High Availability Proxy).\\
+Haproxy\cite{haproxy} jest serwerem proxy wysokiej dostępności (ang. High Availability Proxy).\\
 Posiada on dwie główne funkcjonalności, które czynią go powszechnie używanym narzędziem.
 Są nimi:\\
 \begin{itemize}
@@ -206,21 +206,21 @@ Zakłada ona istnienie dwóch typów serwerów w klastrze:
 \end{description}
 LVS może działać w jednym z trzech trybów:
 \begin{description}
-	\item{\textit{NAT}}\\
+	\item{\textit{NAT}\cite{lvs2}}\\
 		W tym trybie zapytania przychodzące od klienta do \textit{Directora} zostają znatowane na adres jednego z \textit{Real server}-ów.
 		Po obsłużeniu zapytania, \textit{real server} przekazuje odpowiedź do \textit{director}-a który następnie przekazuje odpowiedź do klienta.\\
 		Tłumaczenie pakietów wymaga pewnej mocy obliczeniowej, ponadto \textit{director} uczestniczy w przesyłaniu zapytania oraz odpowiedzi, co sprawia, że tryb NAT ma ograniczoną skalowalność ograniczoną mocą procesora oraz łącza internetowego.
-	\item{\textit{Direct Routing}}\\
+	\item{\textit{Direct Routing}\cite{lvs4}}\\
 		Tryb ten jest wolny od problemów z mocą obliczeniową oraz utylizacją łącza występujących w przypadku trybu NAT.\\
 		W przypadku \textit{direct routing}-u \textit{real server}-y posiadają dodatkowe adresy IP, takie same jak adresy IP używane do \textit{load balancingu} na \textit{directorze} jednak \textit{real server} musi być tak skonfigurowany aby nie odpowiadał na zapytania ARP o te adresy.\\
 		Gdy pakiet dochodzi do \textit{directora}, zostaje on przekazany w niezmienionej formie (od trzeciej warstwy wzwyż) do jednego z \textit{real server}-ów. \textit{Director} musi mieć możliwość bezpośredniego połączenia z \textit{real server}-em aby móc opakować pakiet w odnowienie nagłówki warstwy drugiej.
-		Ponieważ \textit{real server} posiada dodatkowy adres IP, pakiet przekazany przez \textit{director}-a jest akceptowany ponieważ adres docelowy w pakiecie zgadza się z adresem posiadanym przez \textit{real server}.
+		Ponieważ \textit{real server} posiada dodatkowy adres IP, pakiet przekazany przez \textit{director}-a jest akceptowany, ponieważ adres docelowy w pakiecie zgadza się z adresem posiadanym przez \textit{real server}.
 		Po przyjęciu pakiety, \textit{real server} odpowiada na niego na adres źródłowy zawarty w pakiecie, czyli bezpośrednio do klienta - omijając \textit{director}-a.
 		Następnie, klient wysyłając kolejne kieruje je do \textit{director}-a, który śledząc połączenia, przekazuje je zawsze do odpowiedniego \textit{real server}-a.
 
 		Powyższa procedura powoduje, iż \textit{director} nie jest obciążany obliczaniem adresacji dla NAT, gdyż przekazuje pakiety w niezmienionej formie, oraz zmniejsza utylizacje łącza, ponieważ na łączy \textit{director}-a przesyłane są jedynie pakiety z żądaniami (na wejściu - od klienta, i na wyjściu - do \textit{real server}-a), natomiast pakiety z odpowiedzią, np: HTTP, które są zwykle znacznie większe niż zapytania, są przesyłane łączami używanymi przez \textit{real server}-y.
 		W efekcie, metoda ta jest wysoko skalowalna.
-	\item{\textit{IP tunneling}}\\
+	\item{\textit{IP tunneling}\cite{lvs3}}\\
 		Tryb ten działa identycznie jak \textit{direct routing}, z tą różnicą, ze \textit{director} oraz \textit{real server}-y nie znajdują się w jednej fizycznej sieci, lecz są spięte jakimś tunelem.
 \end{description}
 LVS wpiera kilka algorytmów rozdzielających zapytania. Najważniejsze z nich to:

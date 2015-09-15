@@ -84,7 +84,7 @@ W wyniku wykonywania widzimy, ze plik \texttt{/var/problem} istniał tylko na se
 \section{Puppet}
 \subsection{Opis}
 \label{sec:puppet_opis}
-Puppet jest jednym z najbardziej rozpowszechnionych systemów do zarządzania konfiguracją.
+Puppet\cite{puppet} jest jednym z najbardziej rozpowszechnionych systemów do zarządzania konfiguracją.
 U podstaw ideologii działania puppeta stoi definicja oczekiwanego stanu serwera.
 Administrator definiuje oczekiwany stan systemu, np: istnienie użytkownika o podanych parametrach, bądź istnienie pliku o zadanej zawartości, a puppet dąży do uzyskania takiego stanu - stworzy użytkownika lub plik taki aby spełniał zadane wymagania.\\
 Puppet został napisany w języku Ruby, co wpływa na składnię manifestów przez niego wykorzystywanych.
@@ -120,7 +120,7 @@ Wady:
 
 \section{CFEngine}
 \subsection{Opis}
-CFEngine jest jednym z najstarszych systemów do zarządzania konfiguracją.
+CFEngine\cite{cfengine} jest jednym z najstarszych systemów do zarządzania konfiguracją.
 Powstał z myślą o systemach w których nie jest zapewniona dostateczna jakoś łącza, np: łodzie podwodne.
 
 Z racji swojego wieku, architektura CFEngine, w odpowiedzi na zmieniające się potrzeby systemów, ulegała zmianom.
@@ -147,7 +147,7 @@ Wady:
 \section{Ansible}
 \label{sec:konfiguracja_ansible}
 \subsection{Opis}
-Ansible jest również narzędziem do zarządzania konfiguracja serwerów. Został napisany w języku Python i w przeciwieństwie do poprzedników nie wymaga instalacji żadnego oprogramowania na maszynach klienckich.
+Ansible\cite{ansible} jest również narzędziem do zarządzania konfiguracja serwerów. Został napisany w języku Python i w przeciwieństwie do poprzedników nie wymaga instalacji żadnego oprogramowania na maszynach klienckich.
 Wymaga jedynie, aby na maszynach które będą miały być obsługiwane przez Ansible, był zainstalowany serwer SSH oraz interpreter języka Python. Obie te rzeczy są instalowany domyślnie przez znaczna większość dystrybucji.
 Zalecane jest również skonfigurowanie logowania przy użyciu kluczy SSH, jednak wpływa to tylko na bezpieczeństwo i wygodę użytkowania.\\
 \subsubsection{Tryb aktywny i pasywny}
@@ -175,7 +175,7 @@ Wykonanie kodu powoduje przedstawionego na listingu~\ref{lst:instalacja_ze_zrode
 Wirtualne środowisko zostanie opisane w kolejnym podrozdziale.
 \item przez repozytorium\\
 Ansible jest obecne w repozytorium praktycznie każdej dystrybucji. Instalacja zależna jest od konkretnej dystrybucji.\\
-Ta metoda może powodować problemy z używaniem Ansible w wirtualnym środowisku Pythona ponieważ narzędzie instalowane jest globalnie, natomiast środowisko wirtualne często tworzone jest bez dostępu do globalnych bibliotek.
+Ta metoda może powodować problemy z używaniem Ansible w wirtualnym środowisku Pythona, ponieważ narzędzie instalowane jest globalnie, natomiast środowisko wirtualne często tworzone jest bez dostępu do globalnych bibliotek.
 \item przez PIP\\
 Jest to zalecana metoda instalacji, ponieważ łączy w sobie prostotę procesu z elastycznością.
 Wykorzystuje on repozytorium bibliotek Pythonowych - \texttt{pip}.\\

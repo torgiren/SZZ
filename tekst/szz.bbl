@@ -7,57 +7,55 @@
 \providecommand{\href}[2]{#2}
 \begin{thebibliography}{10}
 
-\bibitem{ansible}
-\emph{Ansible documentation}, \url{http://docs.ansible.com/}, 2014.
-
 \bibitem{http_fastcgi}
 \emph{Module ngx\_http\_fastcgi\_module},
-  \url{http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html}, 2014.
+  \url{http://nginx.org/en/docs/http/ngx_http_fastcgi_module.html}, 2014-06-02.
 
 \bibitem{http_upstream}
 \emph{Module ngx\_http\_upstream\_module},
-  \url{http://nginx.org/en/docs/http/ngx_http_upstream_module.html}, 2014.
+  \url{http://nginx.org/en/docs/http/ngx_http_upstream_module.html},
+  2014-06-02.
 
-\bibitem{ab}
-\emph{ab(1) - linux man page}, \url{http://linux.die.net/man/1/ab}, 2015.
-
-\bibitem{cfengine}
-\emph{Cfengine learning center}, \url{http://cfengine.com/learn/}, 2015.
-
-\bibitem{chef}
-\emph{Learn the chef basics on ubuntu},
-  \url{https://learn.chef.io/learn-the-basics/ubuntu/}, 2015.
-
-\bibitem{puppet}
-\emph{Puppet enterprise quick start guide series: 2015.2},
-  \url{http://docs.puppetlabs.com/pe/latest/quick_start.html}, 2015.
+\bibitem{ansible}
+\emph{Ansible documentation}, \url{http://docs.ansible.com/}, 2014-08-20.
 
 \bibitem{lvs4}
 \emph{Virtual server via direct routing},
-  \url{http://www.linuxvirtualserver.org/VS-DRouting.html}, 2015.
+  \url{http://www.linuxvirtualserver.org/VS-DRouting.html}, 2015-02-14.
 
 \bibitem{lvs3}
 \emph{Virtual server via ip tunneling},
-  \url{http://www.linuxvirtualserver.org/VS-IPTunneling.html}, 2015.
+  \url{http://www.linuxvirtualserver.org/VS-IPTunneling.html}, 2015-02-14.
 
 \bibitem{lvs2}
 \emph{Virtual server via nat},
-  \url{http://www.linuxvirtualserver.org/VS-NAT.html}, 2015.
+  \url{http://www.linuxvirtualserver.org/VS-NAT.html}, 2015-02-14.
+
+\bibitem{ab}
+\emph{ab(1) - linux man page}, \url{http://linux.die.net/man/1/ab}, 2015-02-23.
+
+\bibitem{cfengine}
+\emph{Cfengine learning center}, \url{http://cfengine.com/learn/}, 2015-07-12.
+
+\bibitem{puppet}
+\emph{Puppet enterprise quick start guide series: 2015.2},
+  \url{http://docs.puppetlabs.com/pe/latest/quick_start.html}, 2015-07-12.
 
 \bibitem{netfilter}
 Tom Eastep, \emph{Netfilter overview},
-  \url{http://www.shorewall.net/images/Netfilter.png}, 2014.
+  \url{http://www.shorewall.net/images/Netfilter.png}, 2014-06-02.
 
 \bibitem{ab_dnsrr}
 Marcin Fabrykowski, \emph{Bug 57616 - ab - dns roundrobin support},
-  \url{https://bz.apache.org/bugzilla/show_bug.cgi?id=57616}, 2014.
+  \url{https://bz.apache.org/bugzilla/show_bug.cgi?id=57616}, 2015-03-04.
 
 \bibitem{lvs1}
 Joseph Mack, \emph{Lvs-howto},
-  \url{http://www.austintek.com/LVS/LVS-HOWTO/HOWTO/}, 2015.
+  \url{http://www.austintek.com/LVS/LVS-HOWTO/HOWTO/}, 2015-02-14.
 
 \bibitem{haproxy}
 Willy Tarreau, \emph{Haproxy configuration manual},
-  \url{http://cbonte.github.io/haproxy-dconv/configuration-1.5.html}, 2014.
+  \url{http://cbonte.github.io/haproxy-dconv/configuration-1.5.html},
+  2014-06-20.
 
 \end{thebibliography}

@@ -52,7 +52,6 @@ Jeden o rozmiarze 10 bajtów, drugi o rozmiarze 100 kilobajtów.
 Wykresy na rys.~\ref{fig:wyb_index_maly} przedstawiają czasy obsłużenia zapytań o plik HTML o rozmiarze 10 bajtów, natomiast wykresy na rys.~\ref{fig:wyb_index_duzy} czasy zapytań o plik o rozmiarze 100 kilobajtów.\\
 Można zauważyć, że wyniki dla małych plików statycznych są zbliżone zarówno dla Apache jak i Nginx z lekką przewagą dla Nginx.
 Największą przewagę Nginx-a widać przy średnim i dużym obciążeniu.
-\clearpage
 \subsection{Treść dynamiczna}
 Testy treści dynamicznej przeprowadzane są przy użyciu konfiguracji Nginx + php-fpm oraz Apache + php-fpm.
 Konfiguracja Apache + mod\_php została odrzucona, ponieważ wymaga umieszczenia serwera WWW oraz serwera PHP na jednym serwerze, co uniemożliwia użycie wielu serwerów PHP dla jednego serwera WWW.\\
@@ -68,14 +67,13 @@ Na wykresach~\ref{fig:wyb_fib_5} oraz~\ref{fig:wyb_fib_15} obrazujących czasy o
 Wynika to z faktu, ze obsługą zapytań w obu przypadkach zajmuje się PHP-fpm, natomiast serwer WWW odpowiedzialny jest jedynie za przekazywanie zapytań do \textit{backendu}.
 \subsection{Podsumowanie}
 Jak wykazały testy, Nginx daje krótsze czasy odpowiedzi we wszystkich testowanych sytuacjach, dlatego został wybrany jako podstawowy serwer wykorzystywany w przedstawionym projekcie.
-\clearpage
 \section{DNS round robin}
 \subsection{Uwagi wstępne}
 Jak zostało wspomniane w rozdziale~\ref{sec:dns}, DNS round robin nie jest metodą \textit{load balancingu} a jedynie wstępną metodą dystrybucji ruchu.
 Pociąga to za sobą pewne konsekwencje.
 Przeciętna aplikacja sieciowa, np: Chrome bądź links, dokonuje rozwiązania nazwy przy pierwszym odwołaniu się do danego adresu a następnie w celu zwiększenia wydajności, \textit{cachuje} jej adres.
 Efektem tego takiego zachowania jest nawiązywanie późniejszych połączeń do tego samego adresu IP\@.
-Aplikacja \textit{Apache Benchmark} która jest wykorzystywana do testowania rozwiązań w poniższej pracy również dokonywała jednorazowego rozwiązania nazwy i łączenia się do jednego adresu, co uniemożliwiało przeprowadzenie testów wydajnościowych \textit{DNS round robin} przy użyciu tego narzędzia.
+Aplikacja \textit{Apache Benchmark}\cite{ab} która jest wykorzystywana do testowania rozwiązań w poniższej pracy również dokonywała jednorazowego rozwiązania nazwy i łączenia się do jednego adresu, co uniemożliwiało przeprowadzenie testów wydajnościowych \textit{DNS round robin} przy użyciu tego narzędzia.
 Została zgłoszona poprawka\cite{ab_dnsrr} poprawiająca tą niedogodność.
 Testy z wykorzystaniem tej poprawki symulują łączenie się dużej liczby niezależnych użytkowników.
 
@@ -84,7 +82,7 @@ Przy testowanie \textit{DNS round robin} nie zostanie przeprowadzona tak dokład
 W testach tych, w przeciwieństwie do wyboru serwera WWW, użyto opcji \texttt{Keep Alive} powodującej utrzymywanie połączenia i wykonywanie kolejnych bez ponownego nawiązywania połączeń TCP\@.
 W przypadku użycia poprawki~\cite{ab_dnsrr} każde połączenie jest tworzone do serwera wynikającego z technologi \textit{DNS round robin} a następnie jest ono utrzymywane aż do zakończenia programu. Liczba połączeń zależy od parametru \texttt{concurrent}
 \subsection{Testy wydajnościowe}
-Testowanie rozwiązania \textit{DNS round robin} zostanie przedstawione na odpytywaniu jedynie pliku statycznego ponieważ testy dla pozostałych treści będą analogiczne do tych przedstawionych w rozdziale~\ref{sec:wybor}.\\
+Testowanie rozwiązania \textit{DNS round robin} zostanie przedstawione na odpytywaniu jedynie pliku statycznego, ponieważ testy dla pozostałych treści będą analogiczne do tych przedstawionych w rozdziale~\ref{sec:wybor}.\\
 Do testów został wykorzystany \textit{DNS round robin} przedstawiony na listingu~\ref{lst:test_dnsrr}.
 \lstinputlisting[caption=DNS round robin, label=lst:test_dnsrr]{lst/test_dnsrr.bash}
 Zawiera on cztery serwery z identyczną konfiguracją.\\
@@ -118,13 +116,13 @@ Tabela~\ref{tab:test_dnsrr} przedstawia liczbę obsłużonych zapytań na sekund
 	256&2190&9821& +348\%\\
 	\bottomrule
 \end{tabular}
-\caption{Obsłużonych zapytań na sekundę}
+\caption{Obsłużonych zapytań na sekundę przy użyciu DNS RR}
 \label{tab:test_dnsrr}
 \end{table}
 \subsection{Podsumowanie}
 Jak można zaobserwować na wykresach, użycie dystrybucji ruchy zmniejsza czasy oczekiwania na przetworzenie zapytań.\\
 Dane przedstawione w tabeli~\ref{tab:test_dnsrr} pokazują, iż użycie czterech serwerów zamiast jednego daje w większości przypadków przyrost ok 300\%, co jest wartością oczekiwaną, ponieważ przy użyciu trzech dodatkowych serwerów oczekujemy trzykrotnego przyrostu wydajności.\\
-W przypadku jednego równoległego połączenia oczekiwanym przyrostem były przyrost 0\% ponieważ wykonywane jest jedno połączenie, jednak specyfika serwera Nginx jest taka, że po przyjęciu stu połączeń w trybie \texttt{Keep-Alive} zamyka on połączenie.
+W przypadku jednego równoległego połączenia oczekiwanym przyrostem były przyrost 0\%, ponieważ wykonywane jest jedno połączenie, jednak specyfika serwera Nginx jest taka, że po przyjęciu stu połączeń w trybie \texttt{Keep-Alive} zamyka on połączenie.
 Następuje wtedy nawiązanie kolejnego, które zostaje przekierowane do kolejnego serwera z puli \textit{DNS round robin}.
 Jest to przyczyną zwiększonego przyrostu dla jednego i dwóch równoległych połączeń.\\
 Przy liczbie połączeń cztery i więcej powyższy efekt nie ma znaczenia, ponieważ w obsłudze zapytań biorą udział wszystkie serwery.
@@ -261,7 +259,7 @@ Niestety LVS nie posiada żadnych metod wykrywania awarii \textit{real server}-�
 	256&2648.01&9499.84&258\%\\
 	\bottomrule
 \end{tabular}
-\caption{Obsłużonych zapytań na sekundę}
+\caption{Obsłużonych zapytań na sekundę przy użyciu LVS}
 \label{tab:test_lvs}
 \end{table}
 Tabela~\ref{tab:test_lvs} potwierdza przedstawione wnioski.
@@ -357,7 +355,7 @@ W tym rozdziale nie zostały poruszone wszystkie kwestie związane z wysoką dos
 Oto najważniejsze pozycje które nie zostały przetestowane.
 \begin{itemize}
 	\item możliwości Nginx-a do rozdzielania połączeń.
-		Zostały pominięte ponieważ możliwość wykrywania niedostępności usług jest dostępna jedynie w płatnej subskrypcji. Z powodu mnogości darmowych rozwiązań open source-owych, płatne moduły nie były testowane.
+		Zostały pominięte, ponieważ możliwość wykrywania niedostępności usług jest dostępna jedynie w płatnej subskrypcji. Z powodu mnogości darmowych rozwiązań open source-owych, płatne moduły nie były testowane.
 	\item heartbeat/keepalied/ldirector/\ldots - szereg narzędzi dodających funkcjonalność wysokiej dostępności do LVS.
 	\item corosync/\ldots - narzędzia do zapewniania wysokiej dostępności dla urządzeń brzegowych.\\
 		Pozwalają ustawić tzw. \textit{floating IP}.
